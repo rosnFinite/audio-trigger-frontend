@@ -14,35 +14,32 @@ interface GridElement {
   fill: string
 }
 
-const createGrid = (numCols: number= 10, numRows: number= 10, height: number= 1000, width: number = 1000) => {
+const createGrid = (numCols: number= 10, numRows: number= 10) => {
   let grid: GridElement[] = [];
-  let rectHeight = height / numRows;
-  let rectWidth = width / numCols;
   for (let col = 0; col < numCols; col++) {
     for (let row = 0; row < numRows; row++) {
       if (row === numRows-1 && col === numCols-1) {
         grid.push({
-          x: col * rectWidth,
-          y: row * rectHeight,
+          x: col,
+          y: row,
           fill: "#ff0000"
         });} else {
           if (row === 0 && col === 0) {
             grid.push({
-              x: col * rectWidth,
-              y: row * rectHeight,
+              x: col,
+              y: row,
               fill: "#003cff"
             });
           } else {
             grid.push({
-              x: col * rectWidth,
-              y: row * rectHeight,
+              x: col,
+              y: row,
               fill: "#fff"
             });
           }
         }
       }
     }
-  console.log("done")
   return grid;
 }
 
@@ -53,7 +50,7 @@ export default function Grid({numCols, numRows}: GridProps) {
   const [height, setHeight] = useState(0);
   const demoRef = useRef<HTMLDivElement | null>(null);
 
-  const defaultGrid = useMemo(() => createGrid(numCols, numRows, height, width), [numRows, numCols, height, width])
+  const defaultGrid = useMemo(() => createGrid(numCols, numRows), [numRows, numCols])
 
   const [grid, setGrid] = useState<GridElement[]>([]);
   useEffect(() => {
@@ -62,8 +59,6 @@ export default function Grid({numCols, numRows}: GridProps) {
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((event) => {
-      // Depending on the layout, you may need to swap inlineSize with blockSize
-      // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/contentBoxSize
       if (event && event[0]) {
         const { blockSize, inlineSize } = event[0].contentBoxSize[0];
         setWidth(inlineSize || blockSize);
@@ -87,8 +82,8 @@ export default function Grid({numCols, numRows}: GridProps) {
           {Object.values(grid).map((n, i) => (
             <Rect
               key={i}
-              x={n.x}
-              y={n.y}
+              x={n.x * (width / numCols)}
+              y={n.y * (height / numRows)}
               width={width / numCols}
               height={height / numRows}
               fill={n.fill}
