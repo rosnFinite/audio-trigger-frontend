@@ -1,11 +1,10 @@
 import {Stage, Layer, Rect} from 'react-konva';
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Container} from "@mantine/core";
+import {Container, ContainerProps} from "@mantine/core";
 
-interface GridProps {
+interface GridProps extends ContainerProps{
   numCols: number,
   numRows: number,
-  nodeSize: number
 }
 
 interface GridElement {
@@ -45,7 +44,7 @@ const createGrid = (numCols: number= 10, numRows: number= 10) => {
 
 //TODO: Grid wird bei Resize aktuell neu erstellt -> feste Größe evtl. besser / einfacher
 
-export default function Grid({numCols, numRows}: GridProps) {
+export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const demoRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +75,7 @@ export default function Grid({numCols, numRows}: GridProps) {
   }, [demoRef]);
 
   return (
-    <Container size={"95%"} h={"100vh"} ref={demoRef} bg="var(--mantine-color-blue-light)">
+    <Container {...containerProps} ref={demoRef}>
       <Stage width={width} height={height}>
         <Layer>
           {Object.values(grid).map((n, i) => (
