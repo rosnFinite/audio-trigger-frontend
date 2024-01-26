@@ -1,4 +1,4 @@
-import Grid from "../components/Grid";
+import Grid from "../components/grid/Grid";
 
 export default function VoiceField() {
   return (
