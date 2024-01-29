@@ -1,6 +1,9 @@
 import {Stage, Layer, Rect} from 'react-konva';
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Container, ContainerProps} from "@mantine/core";
+import {useDispatch, useSelector} from "react-redux";
+import type {RootState} from "../../redux/store";
+import {initializeGrid, updateElementColor} from "./gridDataSlice";
 
 interface GridProps extends ContainerProps{
   numCols: number,
@@ -14,31 +17,34 @@ interface GridElement {
 }
 
 const createGrid = (numCols: number= 10, numRows: number= 10) => {
-  let grid: GridElement[] = [];
+  let grid: GridElement[][] = [];
   for (let col = 0; col < numCols; col++) {
+    let row_elements = [];
     for (let row = 0; row < numRows; row++) {
-      if (row === numRows-1 && col === numCols-1) {
-        grid.push({
+      if (row === numRows - 1 && col === numCols - 1) {
+        row_elements.push({
           x: col,
           y: row,
           fill: "#ff0000"
-        });} else {
-          if (row === 0 && col === 0) {
-            grid.push({
-              x: col,
-              y: row,
-              fill: "#003cff"
-            });
-          } else {
-            grid.push({
-              x: col,
-              y: row,
-              fill: "#fff"
-            });
-          }
+        });
+      } else {
+        if (row === 0 && col === 0) {
+          row_elements.push({
+            x: col,
+            y: row,
+            fill: "#003cff"
+          });
+        } else {
+          row_elements.push({
+            x: col,
+            y: row,
+            fill: "#fff"
+          });
         }
       }
     }
+    grid.push(row_elements);
+  }
   return grid;
 }
 
@@ -49,12 +55,16 @@ export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
   const [height, setHeight] = useState(0);
   const demoRef = useRef<HTMLDivElement | null>(null);
 
-  const defaultGrid = useMemo(() => createGrid(numCols, numRows), [numRows, numCols])
+  const gridData = useSelector<RootState, GridElement[][]>((state) => state.gridData.value)
+  const dispatch = useDispatch()
 
-  const [grid, setGrid] = useState<GridElement[]>([]);
   useEffect(() => {
-    setGrid(defaultGrid);
-  }, [defaultGrid]);
+    console.log("useEffect");
+    console.log(gridData);
+    const defaultGrid = createGrid(numCols, numRows);
+    dispatch(initializeGrid(defaultGrid));
+  }, [numRows, numCols]);
+
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((event) => {
@@ -78,7 +88,7 @@ export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
     <Container {...containerProps} ref={demoRef}>
       <Stage width={width} height={height}>
         <Layer>
-          {Object.values(grid).map((n, i) => (
+          {Object.values(gridData.flat(1)).map((n, i) => (
             <Rect
               key={i}
               x={n.x * (width / numCols)}
@@ -87,6 +97,10 @@ export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
               height={height / numRows}
               fill={n.fill}
               stroke="#EEEEF4"
+              onMouseEnter={function(this:any) {
+                this.fill("#00ff97");
+                dispatch(updateElementColor({x: n.x, y:n.y, fill:"#00ff97"}));
+              }}
             />
           ))}
         </Layer>
