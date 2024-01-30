@@ -1,11 +1,36 @@
 import { configureStore } from '@reduxjs/toolkit'
 import gridDataReducer from "../components/grid/gridDataSlice";
+import storage from 'redux-persist/lib/storage';
+import {
+  persistReducer,
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER
+} from 'redux-persist';
+
+const persistConfig = {
+  key: "root",
+  storage
+}
+
+const persistedReducer = persistReducer(persistConfig, gridDataReducer)
 
 export const store = configureStore({
   reducer: {
-    gridData: gridDataReducer,
+    gridData: persistedReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+    }
+  })
 })
+
+export const persistor = persistStore(store);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

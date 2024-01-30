@@ -1,9 +1,8 @@
 import {Stage, Layer, Rect} from 'react-konva';
 import React, {useEffect, useRef, useState} from "react";
 import {Container, ContainerProps} from "@mantine/core";
-import {useDispatch, useSelector} from "react-redux";
-import type {RootState} from "../../redux/store";
 import {initializeGrid, updateElementColor} from "./gridDataSlice";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 
 interface GridProps extends ContainerProps{
   numCols: number,
@@ -55,15 +54,15 @@ export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
   const [height, setHeight] = useState(0);
   const demoRef = useRef<HTMLDivElement | null>(null);
 
-  const gridData = useSelector<RootState, GridElement[][]>((state) => state.gridData.value)
-  const dispatch = useDispatch()
+  const gridData = useAppSelector((state) => state.gridData.value)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    console.log("useEffect");
-    console.log(gridData);
-    const defaultGrid = createGrid(numCols, numRows);
-    dispatch(initializeGrid(defaultGrid));
-  }, [numRows, numCols]);
+    if (gridData.length <= 2) {
+      let defaultGrid = createGrid(numCols, numRows);
+      dispatch(initializeGrid(defaultGrid));
+    }
+  }, []);
 
 
   useEffect(() => {
