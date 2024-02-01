@@ -3,10 +3,12 @@ import React, {useEffect, useRef, useState} from "react";
 import {Container, ContainerProps} from "@mantine/core";
 import {initializeGrid, updateElementColor} from "./gridDataSlice";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {Socket} from "socket.io-client";
 
 interface GridProps extends ContainerProps{
   numCols: number,
   numRows: number,
+  socket: Socket|undefined
 }
 
 interface GridElement {
@@ -20,27 +22,11 @@ const createGrid = (numCols: number= 10, numRows: number= 10) => {
   for (let col = 0; col < numCols; col++) {
     let row_elements = [];
     for (let row = 0; row < numRows; row++) {
-      if (row === numRows - 1 && col === numCols - 1) {
-        row_elements.push({
-          x: col,
-          y: row,
-          fill: "#ff0000"
-        });
-      } else {
-        if (row === 0 && col === 0) {
-          row_elements.push({
-            x: col,
-            y: row,
-            fill: "#003cff"
-          });
-        } else {
-          row_elements.push({
-            x: col,
-            y: row,
-            fill: "#fff"
-          });
-        }
-      }
+      row_elements.push({
+        x: col,
+        y: row,
+        fill: "#fff"
+      });
     }
     grid.push(row_elements);
   }
@@ -49,7 +35,7 @@ const createGrid = (numCols: number= 10, numRows: number= 10) => {
 
 //TODO: Grid wird bei Resize aktuell neu erstellt -> feste Größe evtl. besser / einfacher
 
-export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
+export default function Grid({numCols, numRows, socket, ...containerProps}: GridProps) {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const demoRef = useRef<HTMLDivElement | null>(null);
@@ -58,11 +44,13 @@ export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (gridData.length <= 2) {
+    // only reset grid on change in number of cols and rows
+    if (gridData.length !== numCols){
       let defaultGrid = createGrid(numCols, numRows);
       dispatch(initializeGrid(defaultGrid));
     }
-  }, []);
+  }, [numCols, numRows]);
+
 
 
   useEffect(() => {
@@ -96,8 +84,8 @@ export default function Grid({numCols, numRows, ...containerProps}: GridProps) {
               height={height / numRows}
               fill={n.fill}
               stroke="#EEEEF4"
-              onMouseEnter={function(this:any) {
-                this.fill("#00ff97");
+              onClick={function(this:any) {
+                this.stroke("#ff0000");
                 dispatch(updateElementColor({x: n.x, y:n.y, fill:"#00ff97"}));
               }}
             />
