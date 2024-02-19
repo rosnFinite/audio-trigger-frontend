@@ -13,7 +13,7 @@ export default function App() {
   const [opened, {toggle}] = useDisclosure();
 
   return (
-    <AppShell header={{height:60}} navbar={{width: 200, breakpoint:"sm", collapsed: {mobile: !opened}}} padding="md">
+    <AppShell header={{height:60}} navbar={{width: 150, breakpoint:"sm", collapsed: {mobile: !opened}}} padding="md">
       <AppShell.Header>
         <Flex justify="flex-start" align="center">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
@@ -36,7 +36,7 @@ export default function App() {
         </Flex>
       </AppShell.Header>
 
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar p="sm">
         <NavLink href="/" label="Einstellung" leftSection={<TbSettings />}/>
         <NavLink href='/field' label="Stimmfeld" leftSection={<TbMusicSearch />} />
       </AppShell.Navbar>
