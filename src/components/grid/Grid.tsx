@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {Container} from "@mantine/core";
 import {initializeGrid, updateElement} from "./gridDataSlice";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {GridElement, GridProps} from "./Grid.types";
+import {GridElement, GridProps} from "../../types/Grid.types";
 
 
 const createGrid = (numCols: number= 10, numRows: number= 10) => {
@@ -22,7 +22,6 @@ const createGrid = (numCols: number= 10, numRows: number= 10) => {
   return grid;
 }
 
-//TODO: Grid wird bei Resize aktuell neu erstellt -> feste Größe evtl. besser / einfacher
 
 export default function Grid({numCols, numRows, socket, ...containerProps}: GridProps) {
   const [width, setWidth] = useState(0);
@@ -80,7 +79,8 @@ export default function Grid({numCols, numRows, socket, ...containerProps}: Grid
               width={width / numCols}
               height={height / numRows}
               fill={n.fill}
-              stroke="#EEEEF4"
+              stroke="#CED4DA"
+              onMouseOver={(e) => { e.target.getStage()!.container().style.cursor = "crosshair"; }}
             />
           ))}
         </Layer>

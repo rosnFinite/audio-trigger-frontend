@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {GridElement} from "./Grid.types";
+import {GridElement} from "../../types/Grid.types";
 
 export const gridDataSlice = createSlice({
   name: "gridData",
