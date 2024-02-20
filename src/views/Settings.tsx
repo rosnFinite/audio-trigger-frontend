@@ -2,8 +2,38 @@ import React, {useEffect, useState} from 'react';
 import '@mantine/core/styles.css';
 import {Accordion, Blockquote, Button, Checkbox, Container, Divider, FileInput, Group, NativeSelect, NumberInput, Stack, Title, Text} from "@mantine/core";
 import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck, TbJson } from "react-icons/tb";
+import axios from "axios";
+
+const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 
 export default function Settings() {
+  const [devices, setDevices] = useState(initialDevices);
+  const [selectedDevice, setSelectedDevice] = useState('');
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/device/devices');
+        const data = response.data;
+        // transform data to match the format of the NativeSelect component
+        const tranformed = data.devices.map((device: any) => {
+          return {
+            label: device.name,
+            value: device.id
+          }
+        });
+        // reset to initial devices state, then add the transformed devices
+        setDevices(initialDevices);
+        setDevices([...devices, ...tranformed]);
+        console.log("Angeschlossene Geräte erfolgreich geladen: ");
+        console.log(devices);
+      } catch (error: any) {
+        console.log("Fehler beim Laden der angeschlossenen Geräte: " + error.message);
+      }
+    };
+
+    fetchDevices();
+  }, []);
 
   return (
     <Stack
@@ -20,7 +50,12 @@ export default function Settings() {
           </Accordion.Control>
           <Accordion.Panel>
             <Stack>
-              <NativeSelect label="Aufnahmegerät" description="Falls angeschlossen wird standardmäßig das EGG-Gerät (iMic) ausgewählt, sont muss hier ein Eingabegerät ausgewählt werden." data={[]}/>
+              <NativeSelect 
+                label="Aufnahmegerät" 
+                description="Falls angeschlossen wird standardmäßig das EGG-Gerät (iMic) ausgewählt, sont muss hier ein Eingabegerät ausgewählt werden." 
+                data={devices}
+                onChange={(event) => setSelectedDevice(event.currentTarget.value)}
+              />
               <Group grow>
                 <NumberInput 
                   label="Sampling rate [Hz]" 
