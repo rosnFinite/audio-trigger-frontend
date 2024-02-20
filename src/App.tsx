@@ -1,11 +1,11 @@
 import React from 'react';
 import './styles/App.css';
 import '@mantine/core/styles.css';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Settings from "./views/Settings";
 import VoiceField from "./views/VoiceField";
 import {socket} from "./socket";
-import { AppShell, Badge, Burger, Center, Container, Flex, Group, Indicator, NavLink, Text } from '@mantine/core';
+import { AppShell, Badge, Burger, Container, Flex, Group, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 
@@ -55,12 +55,12 @@ export default function App() {
 
       <AppShell.Navbar p="sm">
         <NavLink href="/" label="Einstellung" leftSection={<TbSettings />}/>
-        <NavLink href='/field' label="Stimmfeld" leftSection={<TbMusicSearch />} />
+        <NavLink href='/stimmfeld' label="Stimmfeld" leftSection={<TbMusicSearch />} />
       </AppShell.Navbar>
       <AppShell.Main>
         <Routes>
           <Route path="/" element={<Settings />} />
-          <Route path="/field" element={<VoiceField socket={socket} />} />
+          <Route path="/stimmfeld" element={<VoiceField socket={socket} />} />
         </Routes>
       </AppShell.Main>
     </AppShell>
