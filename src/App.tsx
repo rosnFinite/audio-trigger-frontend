@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Settings from "./views/Settings";
 import VoiceField from "./views/VoiceField";
 import {socket} from "./socket";
-import { AppShell, Badge, Burger, Center, Container, Flex, NavLink, Text } from '@mantine/core';
+import { AppShell, Badge, Burger, Center, Container, Flex, Group, Indicator, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 
@@ -33,6 +33,23 @@ export default function App() {
           >
             Alpha
           </Badge>
+          <Group justify='flex-end' gap="xs" ml={"auto"}>
+            <Badge 
+              size="xl"
+              variant="gradient"
+              gradient={{ from: 'gray', to: 'red', deg: 270 }}
+            >
+              Aufnahme
+            </Badge>
+            <Badge 
+              size="xl" 
+              mr={30}
+              variant="gradient"
+              gradient={{ from: 'gray', to: 'red', deg: 270 }}
+            >
+              Trigger
+            </Badge>
+          </Group>
         </Flex>
       </AppShell.Header>
 
