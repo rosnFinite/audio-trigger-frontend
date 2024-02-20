@@ -1,5 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit'
-import gridDataReducer from "../components/grid/gridDataSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import voicemapDataReducer from "../components/map/voicemapDataSlice";
+import settingsDataReducer from "../components/settings/settingsDataSlice";
 import storage from 'redux-persist/lib/storage';
 import {
   persistReducer,
@@ -17,11 +18,13 @@ const persistConfig = {
   storage
 }
 
-const persistedReducer = persistReducer(persistConfig, gridDataReducer)
+const persistedVoicemapReducer = persistReducer(persistConfig, voicemapDataReducer)
+const persistedSettingsReducer = persistReducer(persistConfig, settingsDataReducer)
 
 export const store = configureStore({
   reducer: {
-    gridData: persistedReducer,
+    voicemap: persistedVoicemapReducer,
+    settings: persistedSettingsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: {
