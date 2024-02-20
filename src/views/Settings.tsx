@@ -5,10 +5,29 @@ import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck,
 import axios from "axios";
 
 const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
+const initialSettings = {
+  device: "-1",
+  sampleRate: 44100,
+  bufferSize: 0.2,
+  chunkSize: 1024,
+  mono: false,
+  calibrationFile: "",
+  frequency: {
+    lower: 55,
+    upper: 1600,
+    steps: 2
+  },
+  db: {
+    lower: 35,
+    upper: 115,
+    steps: 5
+  },
+  qualityScore: 50
+};
 
 export default function Settings() {
   const [devices, setDevices] = useState(initialDevices);
-  const [selectedDevice, setSelectedDevice] = useState('');
+  const [settings, setSettings] = useState(initialSettings);
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -22,11 +41,8 @@ export default function Settings() {
             value: device.id
           }
         });
-        // reset to initial devices state, then add the transformed devices
-        setDevices(initialDevices);
-        setDevices([...devices, ...tranformed]);
-        console.log("Angeschlossene Geräte erfolgreich geladen: ");
-        console.log(devices);
+        // reset to initial devices state on first component render, then add the loaded devices
+        setDevices([...initialDevices, ...tranformed]);
       } catch (error: any) {
         console.log("Fehler beim Laden der angeschlossenen Geräte: " + error.message);
       }
@@ -34,6 +50,16 @@ export default function Settings() {
 
     fetchDevices();
   }, []);
+
+  useEffect(() => {
+    console.log("Settings changed");
+    console.log(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    console.log("Devices changed");
+    console.log(devices);
+  }, [devices]);
 
   return (
     <Stack
@@ -54,29 +80,43 @@ export default function Settings() {
                 label="Aufnahmegerät" 
                 description="Falls angeschlossen wird standardmäßig das EGG-Gerät (iMic) ausgewählt, sont muss hier ein Eingabegerät ausgewählt werden." 
                 data={devices}
-                onChange={(event) => setSelectedDevice(event.currentTarget.value)}
+                onChange={(event) => {
+                  setSettings({ ...settings, device: event.currentTarget.value });
+                }}
               />
               <Group grow>
                 <NumberInput 
                   label="Sampling rate [Hz]" 
                   defaultValue={44100}
-                  placeholder='44100'
+                  value={settings.sampleRate}
+                  placeholder="44100"
                   withAsterisk 
                   hideControls 
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, sampleRate: Number(event.value)});
+                  }}
                 />
                 <NumberInput 
                   label="Buffergröße [Sek.]" 
                   defaultValue={0.2}
+                  value={settings.bufferSize}
                   placeholder='0.2'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, bufferSize: Number(event.value)});
+                  }} 
                 />
                 <NumberInput 
                   label="Chunksize" 
                   defaultValue={1024}
+                  value={settings.chunkSize}
                   placeholder='1024'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, chunkSize: Number(event.value)});
+                  }} 
                 />
               </Group>
               <Blockquote color='red' icon={<TbInfoCircle size={"25"}/>} mt="xs" pt={10} pb={10}>
@@ -84,7 +124,11 @@ export default function Settings() {
               </Blockquote>
               <Checkbox 
                 label="Monosignal (1 Kanal)"
+                checked={settings.mono}
                 size='md'
+                onChange={(event) => {
+                  setSettings({ ...settings, mono: event.currentTarget.checked});
+                }}
               />
               <Blockquote color='yellow' icon={<TbInfoCircle size={"25"}/>} mt="xs" pt={10} pb={10}>
                 Soll das Mikrofon zusätzlich als Dezibelmessgerät verwendet werden, muss zur Gewährleistung einer möglichst hohen Messgenauigkeit eine zugehörige Kalibrierungdatei beigefügt werden.
@@ -117,25 +161,37 @@ export default function Settings() {
                   label="Frequenz Hz [untere Grenze]" 
                   description="Untere Grenze des relevanten Frequenzbereichs"
                   defaultValue={55}
+                  value={settings.frequency.lower}
                   placeholder='55'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, frequency: {...settings.frequency, lower: Number(event.value)}});
+                  }} 
                 />
                 <NumberInput 
                   label="Frequenz Hz [obere Grenze]"
                   description="Obere Grenze des relevanten Frequenzbereichs"
                   defaultValue={1600}
+                  value={settings.frequency.upper}
                   placeholder='1600'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, frequency: {...settings.frequency, upper: Number(event.value)}});
+                  }}  
                 />
                 <NumberInput 
                   label="Halbtonschritte"
                   description="Größe der zusammengefassten Frequenzbereiche" 
                   defaultValue={2}
+                  value={settings.frequency.steps}
                   placeholder='2'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, frequency: {...settings.frequency, steps: Number(event.value)}});
+                  }}  
                 />
               </Group>
               <Group grow>
@@ -143,25 +199,37 @@ export default function Settings() {
                   label="dB(A) [untere Grenze]" 
                   description="Untere Grenze des relevanten Schalldruckpegels"
                   defaultValue={35}
+                  value={settings.db.lower}
                   placeholder='35'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, db: {...settings.db, lower: Number(event.value)}});
+                  }}  
                 />
                 <NumberInput 
                   label="dB(A) [obere Grenze]"
                   description="Obere Grenze des relevanten Schalldruckpegels"
                   defaultValue={115}
+                  value={settings.db.upper}
                   placeholder='115'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, db: {...settings.db, upper: Number(event.value)}});
+                  }} 
                 />
                 <NumberInput 
                   label="dB(A)-Schritte"
                   description="Größe der zusammengefassten Schalldruckpegelbereiche" 
                   defaultValue={5}
+                  value={settings.db.steps}
                   placeholder='5'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, db: {...settings.db, steps: Number(event.value)}});
+                  }} 
                 />
               </Group>
               <Text fw={700}>Triggerschwelle</Text>
@@ -171,9 +239,13 @@ export default function Settings() {
                   label="Oberer Quality Score"
                   description="ZU unterschreitender Quality Score, um einen Trigger auszulösen" 
                   defaultValue={50}
+                  value={settings.qualityScore}
                   placeholder='50'
                   withAsterisk 
-                  hideControls 
+                  hideControls
+                  onValueChange={(event) => {
+                    setSettings({ ...settings, qualityScore: Number(event.value)});
+                  }} 
                 />
               </Container>
             </Stack>
@@ -182,7 +254,13 @@ export default function Settings() {
       </Accordion>
       <Group justify='center'>
         <Button rightSection={<TbCheck size={"20"}/>}>Anwenden</Button>
-        <Button color='red' rightSection={<TbArrowBackUp size={"20"} />}>Zurücksetzen</Button>
+        <Button 
+          color='red' 
+          rightSection={<TbArrowBackUp size={"20"} />}
+          onClick={() => {setSettings(initialSettings)}}
+        >
+          Zurücksetzen
+        </Button>
       </Group>
     </Stack>
   );
