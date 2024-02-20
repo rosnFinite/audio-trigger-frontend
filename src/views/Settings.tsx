@@ -3,6 +3,7 @@ import '@mantine/core/styles.css';
 import {Accordion, Blockquote, Button, Checkbox, Container, Divider, FileInput, Group, NativeSelect, NumberInput, Stack, Title, Text} from "@mantine/core";
 import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck, TbJson } from "react-icons/tb";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
 const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 const initialSettings = {
@@ -27,12 +28,13 @@ const initialSettings = {
 
 export default function Settings() {
   const [devices, setDevices] = useState(initialDevices);
-  const [settings, setSettings] = useState(initialSettings);
+  const settings = useAppSelector((state) => state.settings.value);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchDevices = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/device/devices');
+        const response = await axios.get('http://localhost:5001/devices');
         const data = response.data;
         // transform data to match the format of the NativeSelect component
         const tranformed = data.devices.map((device: any) => {
@@ -81,7 +83,7 @@ export default function Settings() {
                 description="Falls angeschlossen wird standardmäßig das EGG-Gerät (iMic) ausgewählt, sont muss hier ein Eingabegerät ausgewählt werden." 
                 data={devices}
                 onChange={(event) => {
-                  setSettings({ ...settings, device: event.currentTarget.value });
+                  dispatch({type: "settings/updateSettings", payload: {device: event.currentTarget.value}});
                 }}
               />
               <Group grow>
@@ -93,7 +95,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls 
                   onValueChange={(event) => {
-                    setSettings({ ...settings, sampleRate: Number(event.value)});
+                    dispatch({type: "settings/updateSettings", payload: {sampleRate: Number(event.value)}});
                   }}
                 />
                 <NumberInput 
@@ -104,7 +106,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, bufferSize: Number(event.value)});
+                    dispatch({type: "settings/updateSettings", payload: {bufferSize: Number(event.value)}});
                   }} 
                 />
                 <NumberInput 
@@ -115,7 +117,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, chunkSize: Number(event.value)});
+                    dispatch({type: "settings/updateSettings", payload: {chunkSize: Number(event.value)}});
                   }} 
                 />
               </Group>
@@ -127,7 +129,7 @@ export default function Settings() {
                 checked={settings.mono}
                 size='md'
                 onChange={(event) => {
-                  setSettings({ ...settings, mono: event.currentTarget.checked});
+                  dispatch({type: "settings/updateSettings", payload: {mono: event.currentTarget.checked}});
                 }}
               />
               <Blockquote color='yellow' icon={<TbInfoCircle size={"25"}/>} mt="xs" pt={10} pb={10}>
@@ -166,7 +168,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, frequency: {...settings.frequency, lower: Number(event.value)}});
+                    dispatch({type: "settings/updateSettings", payload: {frequency: {...settings.frequency, lower: Number(event.value)}}});
                   }} 
                 />
                 <NumberInput 
@@ -178,7 +180,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, frequency: {...settings.frequency, upper: Number(event.value)}});
+                    dispatch({type: "settings/updateSettings", payload: {frequency: {...settings.frequency, upper: Number(event.value)}}});
                   }}  
                 />
                 <NumberInput 
@@ -190,7 +192,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, frequency: {...settings.frequency, steps: Number(event.value)}});
+                    dispatch({type: "settings/updateSettings", payload: {frequency: {...settings.frequency, steps: Number(event.value)}}});
                   }}  
                 />
               </Group>
@@ -204,7 +206,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, db: {...settings.db, lower: Number(event.value)}});
+                    dispatch({type: "settings/updateSettings", payload: {db: {...settings.db, lower: Number(event.value)}}});
                   }}  
                 />
                 <NumberInput 
@@ -216,7 +218,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, db: {...settings.db, upper: Number(event.value)}});
+                    dispatch({type: "settings/updateSettings", payload: {db: {...settings.db, upper: Number(event.value)}}});
                   }} 
                 />
                 <NumberInput 
@@ -228,7 +230,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, db: {...settings.db, steps: Number(event.value)}});
+                    dispatch({type: "settings/updateSettings", payload: {db: {...settings.db, steps: Number(event.value)}}});
                   }} 
                 />
               </Group>
@@ -244,7 +246,7 @@ export default function Settings() {
                   withAsterisk 
                   hideControls
                   onValueChange={(event) => {
-                    setSettings({ ...settings, qualityScore: Number(event.value)});
+                    dispatch({type: "settings/updateSettings", payload: {qualityScore: Number(event.value)}});
                   }} 
                 />
               </Container>
@@ -253,11 +255,18 @@ export default function Settings() {
         </Accordion.Item>
       </Accordion>
       <Group justify='center'>
-        <Button rightSection={<TbCheck size={"20"}/>}>Anwenden</Button>
+        <Button
+          color='green' 
+          rightSection={<TbCheck size={"20"}/>}
+        >
+          Aufnahme starten
+        </Button>
         <Button 
           color='red' 
           rightSection={<TbArrowBackUp size={"20"} />}
-          onClick={() => {setSettings(initialSettings)}}
+          onClick={() => {
+            dispatch({type: "settings/initialize", payload: initialSettings});
+          }}
         >
           Zurücksetzen
         </Button>
