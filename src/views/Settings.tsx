@@ -10,7 +10,10 @@ const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 export default function Settings() {
   const [devices, setDevices] = useState(initialDevices);
   const settings = useAppSelector((state) => state.settings.value);
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch(); 
+
+  // TODO: Überlegen ob es besser ist Einstellungen nur nach drücken des Knopfes und nicht
+  // bei jeder Änderung zu speichern
 
   useEffect(() => {
     const fetchDevices = async () => {
