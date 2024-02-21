@@ -62,9 +62,10 @@ const options: ApexOptions = {
   }
 };
 
+
 export default function Voicemap() {
   return (
-    <Container ml={0} mr={30} h={"80vh"}>
+    <Container ml={0} mr={30} h={"80vh"} fluid>
       <Chart 
         options={options} series={series} type="heatmap" height={"100%"} width={"100%"} />
     </Container>
