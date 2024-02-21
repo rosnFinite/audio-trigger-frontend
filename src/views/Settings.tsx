@@ -6,25 +6,6 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 
 const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
-const initialSettings = {
-  device: "-1",
-  sampleRate: 44100,
-  bufferSize: 0.2,
-  chunkSize: 1024,
-  mono: false,
-  calibrationFile: "",
-  frequency: {
-    lower: 55,
-    upper: 1600,
-    steps: 2
-  },
-  db: {
-    lower: 35,
-    upper: 115,
-    steps: 5
-  },
-  qualityScore: 50
-};
 
 export default function Settings() {
   const [devices, setDevices] = useState(initialDevices);
@@ -265,7 +246,7 @@ export default function Settings() {
           color='red' 
           rightSection={<TbArrowBackUp size={"20"} />}
           onClick={() => {
-            dispatch({type: "settings/initialize", payload: initialSettings});
+            dispatch({type: "settings/initialize", payload: {}});
           }}
         >
           Zurücksetzen

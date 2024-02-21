@@ -21,14 +21,35 @@ interface Settings {
   qualityScore: number;
 }
 
+const initialSettings: Settings = {
+  status: "offline",
+  device: "-1",
+  sampleRate: 44100,
+  bufferSize: 0.2,
+  chunkSize: 1024,
+  mono: false,
+  calibrationFile: "",
+  frequency: {
+    lower: 55,
+    upper: 1600,
+    steps: 2
+  },
+  db: {
+    lower: 35,
+    upper: 115,
+    steps: 5
+  },
+  qualityScore: 50
+};
+
 export const settingsDataSlice = createSlice({
   name: "settings",
   initialState: {
-    value:  {} as Settings
+    value:  initialSettings
   },
   reducers: {
     initialize: (state, action) => {
-      state.value = action.payload;
+      state.value = initialSettings;
     },
     updateSettings: (state, action) => {
       state.value = {...state.value, ...action.payload};
