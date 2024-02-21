@@ -3,6 +3,7 @@ import Voicemap from "../components/map/Voicemap";
 import {Socket} from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { initialize } from "../components/map/voicemapDataSlice";
+import NivoVoicemap from "../components/map/NivoVoicemap";
 
 interface VoiceFieldProps {
   socket: Socket
@@ -25,6 +26,6 @@ export default function VoiceField({socket}: VoiceFieldProps) {
   }, []);
   
   return (
-    <Voicemap />
+    <NivoVoicemap />
   )
 }
