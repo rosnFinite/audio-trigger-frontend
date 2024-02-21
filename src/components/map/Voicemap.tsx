@@ -3,8 +3,6 @@ import { ApexOptions } from "apexcharts";
 import Chart from "react-apexcharts";
 import { Series } from "../../types/Voicemap.types";
 
-// create a function that a returns a array of objects with key name, which contains an increasing number from 35 to 115 in which step size of 5
-// and key data, which contains an array of 33 random numbers between 10 and 90
 function generateMockData(numYLabels: number, numXLabels: number) {
   let i = 0;
   const series = [];
@@ -66,9 +64,9 @@ const options: ApexOptions = {
 
 export default function Voicemap() {
   return (
-    <Container ml={0} mr={30} fluid>
+    <Container ml={0} mr={30} h={"80vh"}>
       <Chart 
-        options={options} series={series} type="heatmap" height={"1000"} width={"100%"} />
+        options={options} series={series} type="heatmap" height={"100%"} width={"100%"} />
     </Container>
   );
 }
