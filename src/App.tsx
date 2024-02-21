@@ -35,19 +35,19 @@ export default function App() {
           </Badge>
           <Group justify='flex-end' gap="xs" ml={"auto"}>
             <Badge 
-              size="xl"
+              size="md"
               variant="gradient"
               gradient={{ from: 'gray', to: 'red', deg: 270 }}
             >
-              Aufnahme
+              REC
             </Badge>
             <Badge 
-              size="xl" 
+              size="md"
               mr={30}
               variant="gradient"
               gradient={{ from: 'gray', to: 'red', deg: 270 }}
             >
-              Trigger
+              TRIG
             </Badge>
           </Group>
         </Flex>
