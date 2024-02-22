@@ -5,6 +5,7 @@ import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck,
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { initialSettings } from '../components/settings/initialSettings';
+import { notifications } from '@mantine/notifications';
 
 const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 
@@ -251,6 +252,13 @@ export default function Settings() {
           rightSection={<TbCheck size={"20"}/>}
           onClick={() => {
             dispatch({type: "settings/updateSettings", payload: settings});
+            notifications.show({
+              title: "Einstellungen gespeichert", 
+              message: "Die Einstellungen wurden erfolgreich gespeichert.", 
+              color: "green",
+              icon: <TbCheck size={"20"}/>,
+              autoClose: 3000,
+            });
           }}
         >
           Aufnahme starten
@@ -261,6 +269,13 @@ export default function Settings() {
           onClick={() => {
             setSettings(initialSettings);
             dispatch({type: "settings/initialize", payload: {}});
+            notifications.show({
+              title: "Einstellungen zurückgesetzt", 
+              message: "Die Einstellungen wurden auf die Standardeinstellungen zurückgesetzt.", 
+              color: "red",
+              autoClose: 3000,
+              icon: <TbArrowBackUp size={"20"} />,
+            });
           }}
         >
           Zurücksetzen
