@@ -56,7 +56,7 @@ export default function Settings() {
 
   return (
     <Stack
-      h="100vh"
+      h="100%"
     >
       <Title order={2}>
         Einstellungen
