@@ -46,100 +46,71 @@ export default function NivoVoicemap() {
   }, [freqBin, dbaBin]);
 
   return (
-    <Stack mt={20}>
-      <Slider
-        label="Frequency Bin"
-        color="blue"
-        defaultValue={0}
-        min={0}
-        max={32}
-        marks={[
-          { value: 0, label: '0' },
-          { value: 16, label: '16' },
-          { value: 32, label: '32' },
-        ]}
-        onChange={(value) => setFreqBin(value)}
-      />
-      <Slider
-        label="dBA Bin"
-        color="red"
-        defaultValue={0}
-        min={0}
-        max={16}
-        marks={[
-          { value: 0, label: '0' },
-          { value: 8, label: '8' },
-          { value: 16, label: '16' },
-        ]}
-        onChange={(value) => setDbaBin(value)}
-      />
-      <Container ml={0} mr={30} h={"80vh"} fluid>
-        <ResponsiveHeatMapCanvas
-          data={data}
-          margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
-          valueFormat=" >-.2s"
-          xOuterPadding={0.5}
-          yOuterPadding={0.5}
-          axisBottom={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 90,
-              legend: 'Frequenz [Hz]',
-              legendOffset: 55,
-              legendPosition: 'middle',
-          }}
-          axisTop={null}
-          axisLeft={{
-              tickSize: 5,
-              ticksPosition: 'after',
-              tickRotation: 0,
-              legend: 'dB(A)',
-              legendPosition: 'middle',
-              legendOffset: -35
-          }}
-          axisRight={null}
-          colors={{
-              type: 'quantize',
-              scheme: 'blues',
-          }}
-          emptyColor="#555555"
-          enableLabels={false}
-          legends={[
-              {
-                  anchor: 'right',
-                  translateX: 30,
-                  translateY: 0,
-                  length: 200,
-                  thickness: 10,
-                  direction: 'column',
-                  tickPosition: 'after',
-                  tickSize: 3,
-                  tickSpacing: 4,
-                  tickOverlap: false,
-                  tickFormat: '>-.2s',
-                  title: 'Q-Score →',
-                  titleAlign: 'start',
-                  titleOffset: 4
-              }
-          ]}
-          annotations={[
+    <Container ml={0} mr={30} h={"80vh"} fluid>
+      <ResponsiveHeatMapCanvas
+        data={data}
+        margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
+        valueFormat=" >-.2s"
+        xOuterPadding={0.5}
+        yOuterPadding={0.5}
+        axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 90,
+            legend: 'Frequenz [Hz]',
+            legendOffset: 55,
+            legendPosition: 'middle',
+        }}
+        axisTop={null}
+        axisLeft={{
+            tickSize: 5,
+            ticksPosition: 'after',
+            tickRotation: 0,
+            legend: 'dB(A)',
+            legendPosition: 'middle',
+            legendOffset: -35
+        }}
+        axisRight={null}
+        colors={{
+            type: 'quantize',
+            scheme: 'blues',
+        }}
+        emptyColor="#555555"
+        enableLabels={false}
+        legends={[
             {
-                type: 'rect',
-                
-                match: {
-                    id: match
-                },
-                note: '',
-                noteX: -16,
-                noteY: 0,
-                offset: 0,
-                noteTextOffset: 0,
-                noteWidth:0,
-                borderRadius: 20
+                anchor: 'right',
+                translateX: 30,
+                translateY: 0,
+                length: 200,
+                thickness: 10,
+                direction: 'column',
+                tickPosition: 'after',
+                tickSize: 3,
+                tickSpacing: 4,
+                tickOverlap: false,
+                tickFormat: '>-.2s',
+                title: 'Q-Score →',
+                titleAlign: 'start',
+                titleOffset: 4
             }
         ]}
-        />
-      </Container>
-    </Stack>
+          annotations={[
+            {
+              type: 'rect',
+              match: {
+                id: `${"65"}.${"123.47"}` // Fix: Assign the id property with the value as a string
+              },
+              note: '',
+              noteX: -18,
+              noteY: 0,
+              offset: 0,
+              noteTextOffset: 0,
+              noteWidth:0,
+              borderRadius: 20
+            }
+          ]}
+      />
+    </Container>
   );
 }
