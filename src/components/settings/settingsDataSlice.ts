@@ -7,11 +7,11 @@ export const settingsDataSlice = createSlice({
     value:  initialSettings
   },
   reducers: {
-    initialize: (state, action) => {
+    initialize: (state) => {
       state.value = initialSettings;
     },
     updateSettings: (state, action) => {
-      state.value = {...state.value, ...action.payload};
+      state.value = {...state.value, ...action.payload.settings};
     }
   }
 })
