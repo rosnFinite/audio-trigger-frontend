@@ -19,4 +19,4 @@ export const initialSettings: Settings = {
       steps: 5
   },
   qualityScore: 50
-  };
+};
