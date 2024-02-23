@@ -30,23 +30,15 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
 };
 
 export default function NivoVoicemap() {
-  const [freqBin, setFreqBin] = useState(0);
-  const [dbaBin, setDbaBin] = useState(0);
   const settings = useAppSelector((state) => state.settings.value);
   const [data, setData] = useState(generateEmptyGrid(settings.db, settings.frequency));
-  const [match, setMatch] = useState("");
   
-
   useEffect(() => {
     setData(generateEmptyGrid(settings.db, settings.frequency));
   }, [settings.db, settings.frequency]);
 
-  useEffect(() => {
-    setMatch(`${dbaBin}.${freqBin}`);
-  }, [freqBin, dbaBin]);
-
   return (
-    <Container ml={0} mr={30} h={"80vh"} fluid>
+    <Container ml={0} mr={30} h={"50vw"} fluid>
       <ResponsiveHeatMapCanvas
         data={data}
         margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
@@ -72,7 +64,7 @@ export default function NivoVoicemap() {
         }}
         axisRight={null}
         colors={{
-            type: 'quantize',
+            type: 'diverging',
             scheme: 'blues',
         }}
         emptyColor="#555555"
@@ -99,11 +91,11 @@ export default function NivoVoicemap() {
             {
               type: 'rect',
               match: {
-                id: `${"65"}.${"123.47"}` // Fix: Assign the id property with the value as a string
+                id: `${"115"}.${"123.47"}` // Fix: Assign the id property with the value as a string
               },
-              note: '',
-              noteX: -18,
-              noteY: 0,
+              note: 'Stimme',
+              noteX: -22,
+              noteY: -20,
               offset: 0,
               noteTextOffset: 0,
               noteWidth:0,
