@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles/App.css';
 import '@mantine/core/styles.css';
 import { Routes, Route } from 'react-router-dom';
@@ -8,9 +8,28 @@ import {socket} from "./socket";
 import { AppShell, Badge, Burger, Container, Flex, Group, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
+import { useAppSelector } from './redux/hooks';
 
 export default function App() {
   const [opened, {toggle}] = useDisclosure();
+  const [recBadgeColor, setRecBadgeColor] = useState("red");
+  const status = useAppSelector((state) => state.settings.value.status)
+
+  useEffect(() => {
+    switch (status) {
+      case "offline": 
+        setRecBadgeColor("red");
+        break;
+      case "online": 
+        setRecBadgeColor("green");
+        break;
+      case "ready":
+        setRecBadgeColor("yellow");
+        break;
+      default:
+        setRecBadgeColor("red");
+    }
+  }, [status]);
 
   return (
     <AppShell header={{height:60}} navbar={{width: 150, breakpoint:"sm", collapsed: {mobile: !opened}}} padding="md">
@@ -34,10 +53,11 @@ export default function App() {
             Alpha
           </Badge>
           <Group justify='flex-end' gap="xs" ml={"auto"}>
-            <Badge 
-              size="md"
-              variant="gradient"
-              gradient={{ from: 'gray', to: 'red', deg: 270 }}
+            <Badge
+              size='md'
+              mr={30}
+              variant='gradient'
+              gradient={{ from: 'gray', to: recBadgeColor, deg: 270 }}
             >
               REC
             </Badge>

@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import Voicemap from "../components/map/Voicemap";
 import {Socket} from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { initialize } from "../components/map/voicemapDataSlice";
@@ -45,17 +44,17 @@ export default function VoiceField({socket}: VoiceFieldProps) {
       </Center>
       <Group justify="center" gap={"xs"}>
         <Tooltip label="Startet den Triggerprozess">
-          <Button variant="outline" leftSection={<TbPlayerRecord size={"1.5rem"} />}>
+          <Button variant="outline" leftSection={<TbPlayerRecord size={"25"} />}>
             Start
           </Button>
         </Tooltip>
         <Tooltip label="Stoppt den Triggerprozess">
-          <Button variant="outline" leftSection={<TbPlayerStop size={"1.5rem"} />}>
+          <Button variant="outline" leftSection={<TbPlayerStop size={"25"} />}>
             Stop
           </Button>
         </Tooltip>
         <Tooltip label="Setzt das gesamte Stimmfeld zurück">
-          <Button variant="outline" leftSection={<TbProgressX size={"1.5rem"}/>}>
+          <Button variant="outline" leftSection={<TbProgressX size={"25"}/>}>
             Reset
           </Button>
         </Tooltip>

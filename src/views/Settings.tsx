@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '@mantine/core/styles.css';
 import {Accordion, Blockquote, Button, Checkbox, Container, Divider, FileInput, Group, NativeSelect, NumberInput, Stack, Title, Text} from "@mantine/core";
-import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck, TbJson } from "react-icons/tb";
+import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck, TbJson, TbExclamationCircle } from "react-icons/tb";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { initialSettings } from '../components/settings/initialSettings';
@@ -12,7 +12,6 @@ const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 export default function Settings() {
   const [devices, setDevices] = useState(initialDevices);
   const [settings, setSettings] = useState(useAppSelector((state) => state.settings.value));
-  const settingsState = useAppSelector((state) => state.settings.value);
   const dispatch = useAppDispatch(); 
 
   // TODO: Überlegen ob es besser ist Einstellungen nur nach drücken des Knopfes und nicht
@@ -40,20 +39,6 @@ export default function Settings() {
     fetchDevices();
   }, []);
 
-  useEffect(() => {
-    console.log("Settings changed");
-    console.log(settings);
-  }, [settings]);
-
-  useEffect(() => {
-    console.log("Global Settings changed");
-    console.log(settingsState);
-  }, [settingsState]);
-
-  useEffect(() => {
-    console.log("Devices changed");
-    console.log(devices);
-  }, [devices]);
 
   return (
     <Stack
@@ -251,30 +236,56 @@ export default function Settings() {
           color='green' 
           rightSection={<TbCheck size={"20"}/>}
           onClick={() => {
-            dispatch({type: "settings/updateSettings", payload: settings});
-            notifications.show({
-              title: "Einstellungen gespeichert", 
-              message: "Die Einstellungen wurden erfolgreich gespeichert.", 
-              color: "green",
-              icon: <TbCheck size={"20"}/>,
-              autoClose: 3000,
+            axios.post(
+              'http://localhost:5001/settings', 
+              settings)
+            .then((response) => {
+              dispatch({type: "settings/updateSettings", payload: response.data});
+              notifications.show({
+                title: "Einstellungen angewendet", 
+                message: "Die Einstellungen wurden erforlgreich angewendet.", 
+                color: "green",
+                autoClose: 3000,
+                icon: <TbCheck size={"20"} />,
+              });
+            }).catch((error) => {
+              notifications.show({
+                title: "ERROR", 
+                message: "Es ist ein Fehler beim Anwenden der Einstellungen aufgetreten.", 
+                color: "red",
+                autoClose: 3000,
+                icon: <TbExclamationCircle size={"20"} />,
+              });
             });
           }}
         >
-          Aufnahme starten
+          Speichern
         </Button>
         <Button 
           color='red' 
           rightSection={<TbArrowBackUp size={"20"} />}
           onClick={() => {
             setSettings(initialSettings);
-            dispatch({type: "settings/initialize", payload: {}});
-            notifications.show({
-              title: "Einstellungen zurückgesetzt", 
-              message: "Die Einstellungen wurden auf die Standardeinstellungen zurückgesetzt.", 
-              color: "red",
-              autoClose: 3000,
-              icon: <TbArrowBackUp size={"20"} />,
+            axios.post(
+              'http://localhost:5001/settings', 
+              initialSettings)
+            .then((response) => {
+              dispatch({type: "settings/initialize"});
+              notifications.show({
+                title: "Einstellungen zurückgesetzt", 
+                message: "Die Einstellungen wurden auf die Standardeinstellungen zurückgesetzt.", 
+                color: "red",
+                autoClose: 3000,
+                icon: <TbArrowBackUp size={"20"} />,
+              });
+            }).catch((error) => {
+              notifications.show({
+                title: "ERROR", 
+                message: "Es ist ein Fehler beim Zurücksetzen der Einstellungen aufgetreten.", 
+                color: "red",
+                autoClose: 3000,
+                icon: <TbExclamationCircle size={"20"} />,
+              });
             });
           }}
         >
