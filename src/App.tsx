@@ -13,7 +13,7 @@ import { useAppSelector } from './redux/hooks';
 export default function App() {
   const [opened, {toggle}] = useDisclosure();
   const [recBadgeColor, setRecBadgeColor] = useState("red");
-  const status = useAppSelector((state) => state.settings.value.status)
+  const status = useAppSelector((state) => state.settings.values.status)
 
   useEffect(() => {
     switch (status) {

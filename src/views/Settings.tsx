@@ -11,11 +11,8 @@ const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 
 export default function Settings() {
   const [devices, setDevices] = useState(initialDevices);
-  const [settings, setSettings] = useState(useAppSelector((state) => state.settings.value));
+  const [settings, setSettings] = useState(useAppSelector((state) => state.settings.values));
   const dispatch = useAppDispatch(); 
-
-  // TODO: Überlegen ob es besser ist Einstellungen nur nach drücken des Knopfes und nicht
-  // bei jeder Änderung zu speichern
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -23,14 +20,14 @@ export default function Settings() {
         const response = await axios.get('http://localhost:5001/devices');
         const data = response.data;
         // transform data to match the format of the NativeSelect component
-        const tranformed = data.devices.map((device: any) => {
+        const transformed = data.devices.map((device: any) => {
           return {
             label: device.name,
             value: device.id
           }
         });
         // reset to initial devices state on first component render, then add the loaded devices
-        setDevices([...initialDevices, ...tranformed]);
+        setDevices([...initialDevices, ...transformed]);
       } catch (error: any) {
         console.log("Fehler beim Laden der angeschlossenen Geräte: " + error.message);
       }
@@ -240,6 +237,7 @@ export default function Settings() {
               'http://localhost:5001/settings', 
               settings)
             .then((response) => {
+              setSettings(response.data);
               dispatch({type: "settings/updateSettings", payload: response.data});
               notifications.show({
                 title: "Einstellungen angewendet", 
@@ -265,11 +263,11 @@ export default function Settings() {
           color='red' 
           rightSection={<TbArrowBackUp size={"20"} />}
           onClick={() => {
-            setSettings(initialSettings);
             axios.post(
               'http://localhost:5001/settings', 
               initialSettings)
-            .then((response) => {
+            .then(() => {
+              setSettings(initialSettings);
               dispatch({type: "settings/initialize"});
               notifications.show({
                 title: "Einstellungen zurückgesetzt", 

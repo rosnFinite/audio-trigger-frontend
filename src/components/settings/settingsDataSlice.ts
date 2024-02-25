@@ -4,14 +4,14 @@ import { initialSettings } from "./initialSettings";
 export const settingsDataSlice = createSlice({
   name: "settings",
   initialState: {
-    value:  initialSettings
+    values:  initialSettings
   },
   reducers: {
     initialize: (state) => {
-      state.value = initialSettings;
+      state.values = initialSettings;
     },
     updateSettings: (state, action) => {
-      state.value = {...state.value, ...action.payload.settings};
+      state.values = {...state.values, ...action.payload};
     }
   }
 })

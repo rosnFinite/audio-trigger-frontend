@@ -1,4 +1,4 @@
-import { Container, Slider, Stack } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
@@ -30,7 +30,7 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
 };
 
 export default function NivoVoicemap() {
-  const settings = useAppSelector((state) => state.settings.value);
+  const settings = useAppSelector((state) => state.settings.values);
   const [data, setData] = useState(generateEmptyGrid(settings.db, settings.frequency));
   
   useEffect(() => {
