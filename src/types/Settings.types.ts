@@ -1,5 +1,8 @@
 export interface Settings {
-  status: string;
+  status: {
+    recorder: string;
+    trigger: string;
+  };
   device: string;
   sampleRate: number;
   bufferSize: number;

@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import Settings from "./views/Settings";
 import VoiceField from "./views/VoiceField";
 import {socket} from "./socket";
-import { AppShell, Badge, Burger, Container, Flex, Group, NavLink, Text } from '@mantine/core';
+import { AppShell, Badge, Burger, Container, Flex, Group, Indicator, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 import { useAppSelector } from './redux/hooks';
@@ -13,21 +13,31 @@ import { useAppSelector } from './redux/hooks';
 export default function App() {
   const [opened, {toggle}] = useDisclosure();
   const [recBadgeColor, setRecBadgeColor] = useState("red");
+  const [trigBadgeColor, setTrigBadgeColor] = useState("red");
   const status = useAppSelector((state) => state.settings.values.status)
 
   useEffect(() => {
-    switch (status) {
-      case "offline": 
-        setRecBadgeColor("red");
-        break;
+    console.log("Status: ", status);
+    switch (status.recorder) {
       case "online": 
-        setRecBadgeColor("green");
+        setRecBadgeColor("lime");
         break;
       case "ready":
         setRecBadgeColor("yellow");
         break;
       default:
         setRecBadgeColor("red");
+    }
+
+    switch (status.trigger) {
+      case "online": 
+        setTrigBadgeColor("lime");
+        break;
+      case "ready":
+        setTrigBadgeColor("yellow");
+        break;
+      default:
+        setTrigBadgeColor("red");
     }
   }, [status]);
 
@@ -53,22 +63,26 @@ export default function App() {
             Alpha
           </Badge>
           <Group justify='flex-end' gap="xs" ml={"auto"}>
-            <Badge
-              size='md'
-              mr={30}
-              variant='gradient'
-              gradient={{ from: 'gray', to: recBadgeColor, deg: 270 }}
-            >
-              REC
-            </Badge>
-            <Badge 
-              size="md"
-              mr={30}
-              variant="gradient"
-              gradient={{ from: 'gray', to: 'red', deg: 270 }}
-            >
-              TRIG
-            </Badge>
+            <Indicator position='middle-start' color={recBadgeColor} processing={recBadgeColor==="red" ? false : true}>
+              <Badge
+                size='xl'
+                mr={30}
+                variant='light'
+                color={recBadgeColor}
+              >
+                REC
+              </Badge>
+            </Indicator>
+            <Indicator position='middle-start' color={trigBadgeColor} processing={trigBadgeColor==="red" ? false : true}>
+              <Badge 
+                size="xl"
+                mr={30}
+                variant="light"
+                color={trigBadgeColor}
+              >
+                TRIG
+              </Badge>
+            </Indicator>
           </Group>
         </Flex>
       </AppShell.Header>

@@ -1,7 +1,10 @@
 import { Settings } from "../../types/Settings.types";
 
 export const initialSettings: Settings = {
-  status: "offline",
+  status: {
+    recorder: "offline",
+    trigger: "offline"
+  },
   device: "-1",
   sampleRate: 44100,
   bufferSize: 0.2,
@@ -9,14 +12,14 @@ export const initialSettings: Settings = {
   mono: false,
   calibrationFile: "",
   frequency: {
-      lower: 55,
-      upper: 1600,
-      steps: 2
+    lower: 55,
+    upper: 1600,
+    steps: 2
   },
   db: {
-      lower: 35,
-      upper: 115,
-      steps: 5
+    lower: 35,
+    upper: 115,
+    steps: 5
   },
   qualityScore: 50
 };
