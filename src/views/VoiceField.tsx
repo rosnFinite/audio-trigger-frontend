@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { initialize } from "../components/map/voicemapDataSlice";
 import NivoVoicemap from "../components/map/NivoVoicemap";
 import { Blockquote, Button, Center, Divider, Stack, Title } from "@mantine/core";
-import { TbInfoCircle } from "react-icons/tb";
+import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import ControlButtonGroup from "../components/ControlButtonGroup";
 
@@ -38,7 +38,7 @@ export default function VoiceField({socket}: VoiceFieldProps) {
       </Blockquote>
       <Center>
         <Link to="/patient-view">
-          <Button>
+          <Button rightSection={<TbSwipe />}>
             Patientenansicht
           </Button>
         </Link>
