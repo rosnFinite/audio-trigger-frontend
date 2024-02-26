@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import Settings from "./views/Settings";
 import VoiceField from "./views/VoiceField";
 import {socket} from "./socket";
-import { AppShell, Badge, Burger, Container, Flex, Group, Indicator, NavLink, Text } from '@mantine/core';
+import { AppShell, Badge, Burger, Container, Flex, Group, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 import { useAppSelector } from './redux/hooks';
@@ -63,26 +63,22 @@ export default function App() {
             Alpha
           </Badge>
           <Group justify='flex-end' gap="xs" ml={"auto"}>
-            <Indicator position='middle-start' color={recBadgeColor} processing={recBadgeColor==="red" ? false : true}>
-              <Badge
-                size='xl'
-                mr={30}
-                variant='light'
-                color={recBadgeColor}
-              >
-                REC
-              </Badge>
-            </Indicator>
-            <Indicator position='middle-start' color={trigBadgeColor} processing={trigBadgeColor==="red" ? false : true}>
-              <Badge 
-                size="xl"
-                mr={30}
-                variant="light"
-                color={trigBadgeColor}
-              >
-                TRIG
-              </Badge>
-            </Indicator>
+            <Badge
+              size='lg'
+              mr={30}
+              variant='filled'
+              color={recBadgeColor}
+            >
+              Recorder
+            </Badge>
+            <Badge 
+              size="lg"
+              mr={30}
+              variant="filled"
+              color={trigBadgeColor}
+            >
+              Trigger
+            </Badge>
           </Group>
         </Flex>
       </AppShell.Header>
