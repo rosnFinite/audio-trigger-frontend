@@ -12,6 +12,10 @@ export const settingsDataSlice = createSlice({
     },
     updateSettings: (state, action) => {
       state.values = {...state.values, ...action.payload};
+    },
+    updateStatus: (state, action) => {
+      console.log("updateStatus", action.payload);
+      state.values.status = {...state.values.status, ...action.payload};
     }
   }
 })

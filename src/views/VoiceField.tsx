@@ -3,9 +3,10 @@ import {Socket} from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { initialize } from "../components/map/voicemapDataSlice";
 import NivoVoicemap from "../components/map/NivoVoicemap";
-import { Blockquote, Button, Center, Divider, Group, Stack, Title, Tooltip } from "@mantine/core";
-import { TbInfoCircle, TbPlayerRecord, TbPlayerStop, TbProgressX } from "react-icons/tb";
+import { Blockquote, Button, Center, Divider, Stack, Title } from "@mantine/core";
+import { TbInfoCircle } from "react-icons/tb";
 import { Link } from "react-router-dom";
+import ControlButtonGroup from "../components/ControlButtonGroup";
 
 interface VoiceFieldProps {
   socket: Socket
@@ -42,23 +43,7 @@ export default function VoiceField({socket}: VoiceFieldProps) {
           </Button>
         </Link>
       </Center>
-      <Group justify="center" gap={"xs"}>
-        <Tooltip label="Startet den Triggerprozess">
-          <Button variant="outline" leftSection={<TbPlayerRecord size={"25"} />}>
-            Start
-          </Button>
-        </Tooltip>
-        <Tooltip label="Stoppt den Triggerprozess">
-          <Button variant="outline" leftSection={<TbPlayerStop size={"25"} />}>
-            Stop
-          </Button>
-        </Tooltip>
-        <Tooltip label="Setzt das gesamte Stimmfeld zurück">
-          <Button variant="outline" leftSection={<TbProgressX size={"25"}/>}>
-            Reset
-          </Button>
-        </Tooltip>
-      </Group>
+      <ControlButtonGroup />
       <NivoVoicemap />
     </Stack>
   )
