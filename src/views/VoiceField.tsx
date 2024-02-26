@@ -7,6 +7,7 @@ import { Blockquote, Button, Center, Divider, Stack, Title } from "@mantine/core
 import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import ControlButtonGroup from "../components/ControlButtonGroup";
+import Layout from "../components/Layout/Layout";
 
 interface VoiceFieldProps {
   socket: Socket
@@ -29,22 +30,24 @@ export default function VoiceField({socket}: VoiceFieldProps) {
   }, []);
   
   return (
-    <Stack h={"100%"}>
-      <Title order={2}>Stimmfeld</Title>
-      <Divider my="xs"/>
-      <Blockquote color='blue' icon={<TbInfoCircle size={"25"}/>} mt="xs" pt={10} pb={10}>
-        Über die Schaltfläche 'Patientenansicht' wird ein neuer Tab geöffnet, in dem die Patientenansicht angezeigt wird.
-        Diese beinhaltet ausschließlich das Stimmfeld und keine weiteren Schaltflächen.
-      </Blockquote>
-      <Center>
-        <Link to="/patient-view">
-          <Button rightSection={<TbSwipe />}>
-            Patientenansicht
-          </Button>
-        </Link>
-      </Center>
-      <ControlButtonGroup />
-      <NivoVoicemap />
-    </Stack>
+    <Layout>
+      <Stack h={"100%"}>
+        <Title order={2}>Stimmfeld</Title>
+        <Divider my="xs"/>
+        <Blockquote color='blue' icon={<TbInfoCircle size={"25"}/>} mt="xs" pt={10} pb={10}>
+          Über die Schaltfläche 'Patientenansicht' wird ein neuer Tab geöffnet, in dem die Patientenansicht angezeigt wird.
+          Diese beinhaltet ausschließlich das Stimmfeld und keine weiteren Schaltflächen.
+        </Blockquote>
+        <Center>
+          <Link to="/stimmfeld/patientenansicht" target="_blank">
+            <Button rightSection={<TbSwipe />}>
+              Patientenansicht
+            </Button>
+          </Link>
+        </Center>
+        <ControlButtonGroup />
+        <NivoVoicemap />
+      </Stack>
+    </Layout>
   )
 }
