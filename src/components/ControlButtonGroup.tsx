@@ -13,7 +13,7 @@ export default function ControlButtonGroup() {
           <Button 
             variant={status.recorder==="ready" ? "filled" : "outline"} 
             color="green" 
-            leftSection={<TbPlayerRecord size={"25"} />}
+            leftSection={<TbPlayerRecord size={"20"} />}
             disabled={status.recorder==="online"}
             onClick={() => {dispatch({type: "settings/updateStatus", payload: {"recorder": "online", "trigger": "online"}})}}
           >
@@ -24,7 +24,7 @@ export default function ControlButtonGroup() {
           <Button 
             variant={status.trigger==="online" ? "filled" : "outline"} 
             color="red" 
-            leftSection={<TbPlayerStop size={"25"} />}
+            leftSection={<TbPlayerStop size={"20"} />}
             disabled={status.trigger==="ready"}
             onClick={() => {dispatch({type: "settings/updateStatus", payload: {"recorder": "ready", "trigger": "ready"}})}}
           >
@@ -35,7 +35,7 @@ export default function ControlButtonGroup() {
           <Button 
             variant={status.trigger==="online" ? "filled" : "outline"}
             color="red" 
-            leftSection={<TbProgressX size={"25"}/>}
+            leftSection={<TbProgressX size={"20"}/>}
             disabled={status.trigger==="ready"}
             onClick={() => {dispatch({type: "settings/updateStatus", payload: {"recorder": "ready", "trigger": "ready"}})}}
           >
