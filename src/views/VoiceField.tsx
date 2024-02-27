@@ -8,12 +8,10 @@ import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import ControlButtonGroup from "../components/ControlButtonGroup";
 import Layout from "../components/Layout/Layout";
+import { SocketProp } from "../types/SocketProp.types";
 
-interface VoiceFieldProps {
-  socket: Socket
-}
 
-export default function VoiceField({socket}: VoiceFieldProps) {
+export default function VoiceField({socket}: SocketProp) {
   const voicemapData = useAppSelector((state) => state.voicemap.value);
   const dispatch = useAppDispatch();
 
