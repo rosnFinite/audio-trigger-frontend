@@ -2,6 +2,7 @@ import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
+import { SocketProp } from "../../types/SocketProp.types";
 
 interface MapSettings {
   lower: number;
@@ -18,7 +19,7 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
     for (let j = freqSettings.lower; j <= freqSettings.upper; j *= Math.pow(2, 2/12)) {
       data.push({
         x: j.toFixed(2).toString(),
-        y: Math.floor(Math.random() * 51)
+        y: 0,
       });
     }
     result.push({
@@ -29,13 +30,19 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
   return result;
 };
 
-export default function NivoVoicemap() {
+export default function NivoVoicemap({socket}: SocketProp) {
   const settings = useAppSelector((state) => state.settings.values);
   const [data, setData] = useState(generateEmptyGrid(settings.db, settings.frequency));
   
   useEffect(() => {
     setData(generateEmptyGrid(settings.db, settings.frequency));
   }, [settings.db, settings.frequency]);
+
+  useEffect(() => {
+    socket.on("voice", (data) => {
+      console.log(data);
+    });
+  }, [socket]);
 
   return (
     <Container ml={0} mr={30} h={"50vw"} fluid>
@@ -66,6 +73,8 @@ export default function NivoVoicemap() {
         colors={{
             type: 'diverging',
             scheme: 'blues',
+            minValue: 0,
+            maxValue: 50,
         }}
         emptyColor="#555555"
         enableLabels={false}
@@ -91,7 +100,7 @@ export default function NivoVoicemap() {
             {
               type: 'rect',
               match: {
-                id: `${"115"}.${"123.47"}` // Fix: Assign the id property with the value as a string
+                id: `${"999"}.${"9999"}` // Fix: Assign the id property with the value as a string
               },
               note: 'Stimme',
               noteX: -22,

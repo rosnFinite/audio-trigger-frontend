@@ -17,7 +17,7 @@ export default function Layout(props: { children: React.ReactNode }) {
   useEffect(() => {
     console.log("Status: ", status);
     switch (status.recorder) {
-      case "online": 
+      case "running": 
         setRecBadgeColor("lime");
         break;
       case "ready":
@@ -28,7 +28,7 @@ export default function Layout(props: { children: React.ReactNode }) {
     }
 
     switch (status.trigger) {
-      case "online": 
+      case "running": 
         setTrigBadgeColor("lime");
         break;
       case "ready":

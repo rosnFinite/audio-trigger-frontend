@@ -19,7 +19,6 @@ export default function Settings({socket}: SocketProp) {
   // update internal settings state when audio client emitted a statusChanged event
   useEffect(() => {
     socket.on("settingsChanged", (data) => {
-      console.log("settings updated", data);
       dispatch({type: "settings/updateSettings", payload: data});
       setSettings(data);
     });

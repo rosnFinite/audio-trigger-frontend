@@ -43,8 +43,8 @@ export default function VoiceField({socket}: SocketProp) {
             </Button>
           </Link>
         </Center>
-        <ControlButtonGroup />
-        <NivoVoicemap />
+        <ControlButtonGroup socket={socket}/>
+        <NivoVoicemap socket={socket}/>
       </Stack>
     </Layout>
   )

@@ -11,7 +11,7 @@ export default function App() {
       <Route path="/" element={<Settings socket={socket}/>} />
       <Route path="/stimmfeld">
         <Route index element={<VoiceField socket={socket} />} />
-        <Route path="patientenansicht" element={<Patient />} />
+        <Route path="patientenansicht" element={<Patient socket={socket} />} />
       </Route>
     </Routes>
   );
