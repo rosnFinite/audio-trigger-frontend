@@ -12,42 +12,59 @@ interface MapSettings {
 
 
 function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
-  let result = [];
+  let grid = [];
   for (let i = dbSettings.upper; i >= dbSettings.lower; i -= dbSettings.steps) {
     let data = [];
 
     for (let j = freqSettings.lower; j <= freqSettings.upper; j *= Math.pow(2, 2/12)) {
       data.push({
-        x: j.toFixed(2).toString(),
+        x: j.toFixed(2).toString().replace(".", ""),
         y: 0,
       });
     }
-    result.push({
+    grid.push({
       id: i.toString(),
       data: data
     });
   }
-  return result;
+  return grid;
 };
+
+function generateLowerBounds(dbSettings: MapSettings, freqSettings: MapSettings) {
+  let lowerBounds: {freq: string[], dba: string[]} = {
+    "freq": [],
+    "dba": []
+  };
+  for (let i = freqSettings.lower; i <= freqSettings.upper; i *= Math.pow(2, 2/12)) {
+    lowerBounds.freq.push(i.toFixed(2).toString().replace(".", ""));
+  }
+  for (let i = dbSettings.lower; i <= dbSettings.upper; i += dbSettings.steps) {
+    lowerBounds.dba.push(i.toString());
+  }
+  return lowerBounds;
+}
 
 export default function NivoVoicemap({socket}: SocketProp) {
   const settings = useAppSelector((state) => state.settings.values);
-  const [data, setData] = useState(generateEmptyGrid(settings.db, settings.frequency));
+  const [gridData, setGridData] = useState(generateEmptyGrid(settings.db, settings.frequency));
+  const [lowerBounds, setLowerBounds] = useState(generateLowerBounds(settings.db, settings.frequency));
+  const [voice, setVoice] = useState("0.0");
   
   useEffect(() => {
-    setData(generateEmptyGrid(settings.db, settings.frequency));
+    setGridData(generateEmptyGrid(settings.db, settings.frequency));
+    setLowerBounds(generateLowerBounds(settings.db, settings.frequency));
   }, [settings.db, settings.frequency]);
 
   useEffect(() => {
     socket.on("voice", (data) => {
-      console.log(data);
+      setVoice(`${lowerBounds.dba[data.dba_bin]}.${lowerBounds.freq[data.freq_bin]}`);
     });
   }, [socket]);
 
   return (
     <Container ml={0} mr={30} h={"50vw"} fluid>
       <ResponsiveHeatMapCanvas
-        data={data}
+        data={gridData}
         margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
         valueFormat=" >-.2s"
         xOuterPadding={0.5}
@@ -59,6 +76,13 @@ export default function NivoVoicemap({socket}: SocketProp) {
             legend: 'Frequenz [Hz]',
             legendOffset: 55,
             legendPosition: 'middle',
+            format: (value: any) => {
+              // Konvertieren Sie den Wert in einen String
+              let strValue = value.toString();
+              // Fügen Sie einen Punkt vor den letzten beiden Ziffern ein
+              let formattedValue = strValue.slice(0, -2) + '.' + strValue.slice(-2);
+              return formattedValue;
+            }
         }}
         axisTop={null}
         axisLeft={{
@@ -100,7 +124,7 @@ export default function NivoVoicemap({socket}: SocketProp) {
             {
               type: 'rect',
               match: {
-                id: `${"999"}.${"9999"}` // Fix: Assign the id property with the value as a string
+                id: voice // Fix: Assign the id property with the value as a string
               },
               note: 'Stimme',
               noteX: -22,
