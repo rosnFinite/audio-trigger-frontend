@@ -27,7 +27,7 @@ export default function Settings({socket}: SocketProp) {
   useEffect(() => {
     const fetchDevices = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/devices');
+        const response = await axios.get('http://localhost:5001/api/audio-client/devices');
         const data = response.data;
         // transform data to match the format of the NativeSelect component
         const transformed = data.devices.map((device: any) => {
