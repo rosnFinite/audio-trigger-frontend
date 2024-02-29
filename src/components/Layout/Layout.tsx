@@ -40,7 +40,7 @@ export default function Layout(props: { children: React.ReactNode }) {
   }, [status]);
 
   return (
-    <AppShell header={{height:60}} navbar={{width: 150, breakpoint:"sm", collapsed: {mobile: !opened}}} padding="md">
+    <AppShell header={{height:60}} navbar={{width: 180, breakpoint:"sm", collapsed: {mobile: !opened}}} padding="md">
       <AppShell.Header>
         <Flex justify="flex-start" align="center">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
@@ -82,7 +82,7 @@ export default function Layout(props: { children: React.ReactNode }) {
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
-        <NavLink href="/" label="Einstellung" leftSection={<TbSettings />}/>
+        <NavLink href="/" label="Einstellungen" leftSection={<TbSettings />}/>
         <NavLink href='/stimmfeld' label="Stimmfeld" leftSection={<TbMusicSearch />} />
       </AppShell.Navbar>
       <AppShell.Main>
