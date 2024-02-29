@@ -10,6 +10,12 @@ interface MapSettings {
   steps: number;
 }
 
+/**
+To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
+To visualize the current voice, we use the annotations feature of Nivo. This needs the id of the cell to be highlighted. We use the dba and frequency bin to calculate the id. 
+Because we cannot use floating point numbers as ids, we convert the values to strings and remove the decimal point. This is later reverted in the axisBottom format function.
+The same is done for the lower frequency bounds of the grid. Which we use to map the frequency bin to the actual frequency value.
+ */
 
 function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
   let grid = [];
