@@ -13,13 +13,19 @@ import {
   REGISTER
 } from 'redux-persist';
 
-const persistConfig = {
-  key: "root",
+const persistSettingsConfig = {
+  key: "settings",
   storage
 }
 
-const persistedVoicemapReducer = persistReducer(persistConfig, voicemapDataReducer)
-const persistedSettingsReducer = persistReducer(persistConfig, settingsDataReducer)
+const persistVoicemapConfig = {
+  key: "voicemap",
+  storage
+}
+
+
+const persistedVoicemapReducer = persistReducer(persistVoicemapConfig, voicemapDataReducer)
+const persistedSettingsReducer = persistReducer(persistSettingsConfig, settingsDataReducer)
 
 export const store = configureStore({
   reducer: {

@@ -1,7 +1,7 @@
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
-import { useEffect, useState } from "react";
-import { useAppSelector } from "../../redux/hooks";
+import { useEffect, useMemo } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { SocketProp } from "../../types/SocketProp.types";
 
 interface MapSettings {
@@ -9,6 +9,12 @@ interface MapSettings {
   upper: number;
   steps: number;
 }
+
+interface LowerBounds {
+  freq: string[];
+  dba: string[];
+}
+
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -51,26 +57,39 @@ function generateLowerBounds(dbSettings: MapSettings, freqSettings: MapSettings)
 }
 
 export default function NivoVoicemap({socket}: SocketProp) {
+  // needed to create matching string for annotation
   const settings = useAppSelector((state) => state.settings.values);
-  const [gridData, setGridData] = useState(generateEmptyGrid(settings.db, settings.frequency));
-  const [lowerBounds, setLowerBounds] = useState(generateLowerBounds(settings.db, settings.frequency));
-  const [voice, setVoice] = useState("0.0");
+  const voicemap = useAppSelector((state) => state.voicemap.value);
+  const dispatch = useAppDispatch(); 
+  const lowerBounds = useMemo(() => generateLowerBounds(settings.db, settings.frequency), [settings.db, settings.frequency]);
+
   
   useEffect(() => {
-    setGridData(generateEmptyGrid(settings.db, settings.frequency));
-    setLowerBounds(generateLowerBounds(settings.db, settings.frequency));
-  }, [settings.db, settings.frequency]);
+    // check current freq and dba settings of heatmap and compare to settings !IMPORTANT! This comparison requires the order of the attributes to be the same.
+    // if the settings are different, we need to create a new empty heatmap
+    if (JSON.stringify(voicemap.dbaSettings) !== JSON.stringify(settings.db) || JSON.stringify(voicemap.freqSettings) !== JSON.stringify(settings.frequency)) {
+      dispatch({ type: "voicemap/SET_DATAMAP", payload: generateEmptyGrid(settings.db, settings.frequency)});
+      dispatch({ type: "voicemap/UPDATE_SETTINGS", payload: {dbaSettings: settings.db, freqSettings: settings.frequency}});
+    }
+    console.log("voicemap", voicemap);
+  }, []);
 
   useEffect(() => {
-    socket.on("voice", (data) => {
-      setVoice(`${lowerBounds.dba[data.dba_bin]}.${lowerBounds.freq[data.freq_bin]}`);
+    socket.on("voice", (data: any) => {
+      dispatch({ type: "voicemap/SET_VOICE", payload: `${lowerBounds.dba[data.dba_bin]}.${lowerBounds.freq[data.freq_bin]}` });
+    });
+    // TODO still some bugs with certain values
+    socket.on("trigger", (data: any) => {
+      console.log("trigger", data);
+      let numDbaBins = (settings.db.upper - settings.db.lower) / settings.db.steps;
+      dispatch({ type: "voicemap/UPDATE_DATAPOINT", payload: {dbaBin: numDbaBins - data.dba_bin, freqBin: data.freq_bin, score: data.score} });
     });
   }, [socket]);
 
   return (
     <Container ml={0} mr={30} h={"50vw"} fluid>
       <ResponsiveHeatMapCanvas
-        data={gridData}
+        data={voicemap.datamap}
         margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
         valueFormat=" >-.2s"
         xOuterPadding={0.5}
@@ -104,7 +123,7 @@ export default function NivoVoicemap({socket}: SocketProp) {
             type: 'diverging',
             scheme: 'blues',
             minValue: 0,
-            maxValue: 50,
+            maxValue: settings.qualityScore,
         }}
         emptyColor="#555555"
         enableLabels={false}
@@ -130,7 +149,7 @@ export default function NivoVoicemap({socket}: SocketProp) {
             {
               type: 'rect',
               match: {
-                id: voice // Fix: Assign the id property with the value as a string
+                id: voicemap.voice // Fix: Assign the id property with the value as a string
               },
               note: 'Stimme',
               noteX: -22,

@@ -1,7 +1,4 @@
-import { useEffect } from "react";
 import {Socket} from "socket.io-client";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { initialize } from "../components/map/voicemapDataSlice";
 import NivoVoicemap from "../components/map/NivoVoicemap";
 import { Blockquote, Button, Center, Divider, Stack, Title } from "@mantine/core";
 import { TbInfoCircle, TbSwipe } from "react-icons/tb";
@@ -12,21 +9,6 @@ import { SocketProp } from "../types/SocketProp.types";
 
 
 export default function VoiceField({socket}: SocketProp) {
-  const voicemapData = useAppSelector((state) => state.voicemap.value);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    socket.on("voice", (data) => {});
-    socket.on("trigger", (data) => {
-      if (voicemapData.length === 0) {
-        //initialize store 
-        dispatch(initialize([data]));
-      } else {
-        //update voicemapData
-      }
-    });
-  }, []);
-  
   return (
     <Layout>
       <Stack h={"100%"}>
