@@ -10,11 +10,6 @@ interface MapSettings {
   steps: number;
 }
 
-interface LowerBounds {
-  freq: string[];
-  dba: string[];
-}
-
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -75,11 +70,11 @@ export default function NivoVoicemap({socket}: SocketProp) {
   }, []);
 
   useEffect(() => {
-    socket.on("voice", (data: any) => {
+    socket.on("voice", (data) => {
       dispatch({ type: "voicemap/SET_VOICE", payload: `${lowerBounds.dba[data.dba_bin]}.${lowerBounds.freq[data.freq_bin]}` });
     });
     // TODO still some bugs with certain values
-    socket.on("trigger", (data: any) => {
+    socket.on("trigger", (data) => {
       console.log("trigger", data);
       let numDbaBins = (settings.db.upper - settings.db.lower) / settings.db.steps;
       dispatch({ type: "voicemap/UPDATE_DATAPOINT", payload: {dbaBin: numDbaBins - data.dba_bin, freqBin: data.freq_bin, score: data.score} });

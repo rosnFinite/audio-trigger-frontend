@@ -11,7 +11,7 @@ export default function ControlButtonGroup({socket}: SocketProp) {
   // update status when audio client emits changes
   useEffect(() => {
     socket.on("statusChanged", (changedStatus) => {
-      dispatch({type: "settings/updateStatus", payload: changedStatus});
+      dispatch({type: "settings/UPDATE_STATUS", payload: changedStatus});
     });
   }, [dispatch, socket]);
 

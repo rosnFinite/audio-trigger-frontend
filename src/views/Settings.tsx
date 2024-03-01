@@ -4,10 +4,10 @@ import {Accordion, Blockquote, Button, Checkbox, Container, Divider, FileInput, 
 import { TbInfoCircle, TbMicrophone2, TbFlagExclamation, TbArrowBackUp, TbCheck, TbJson } from "react-icons/tb";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { initialSettings } from '../components/settings/initialSettings';
 import { notifications } from '@mantine/notifications';
 import Layout from '../components/Layout/Layout';
 import { SocketProp } from '../types/SocketProp.types';
+import { initialSettings } from '../utils/initializer';
 
 const initialDevices = [{label:"Automatisch erkennen", value: "-1"}];
 
@@ -19,7 +19,7 @@ export default function Settings({socket}: SocketProp) {
   // update internal settings state when audio client emitted a statusChanged event
   useEffect(() => {
     socket.on("settingsChanged", (data) => {
-      dispatch({type: "settings/updateSettings", payload: data});
+      dispatch({type: "settings/UPDATE_SETTINGS", payload: data});
       setSettings(data);
     });
   }, [socket, dispatch]);

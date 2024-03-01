@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import voicemapDataReducer from "../components/map/voicemapDataSlice";
-import settingsDataReducer from "../components/settings/settingsDataSlice";
+import voicemapDataReducer from "./slices/voicemapDataSlice";
+import settingsDataReducer from "./slices/settingsDataSlice";
 import storage from 'redux-persist/lib/storage';
 import {
   persistReducer,

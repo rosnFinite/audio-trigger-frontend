@@ -1,24 +1,25 @@
 import {createSlice} from "@reduxjs/toolkit";
-import { initialSettings } from "./initialSettings";
+import {Settings} from "../../types/Settings.types"
+import {initialSettings} from "../../utils/initializer";
 
 export const settingsDataSlice = createSlice({
   name: "settings",
   initialState: {
-    values:  initialSettings
+    values:  initialSettings as Settings
   },
   reducers: {
-    initialize: (state) => {
+    INITIALIZE: (state) => {
       state.values = initialSettings;
     },
-    updateSettings: (state, action) => {
+    UPDATE_SETTINGS: (state, action) => {
       state.values = {...state.values, ...action.payload};
     },
-    updateStatus: (state, action) => {
+    UPDATE_STATUS: (state, action) => {
       console.log("updateStatus", action.payload);
       state.values.status = {...state.values.status, ...action.payload};
     }
   }
 })
 
-export const { initialize } = settingsDataSlice.actions;
+export const { INITIALIZE, UPDATE_SETTINGS, UPDATE_STATUS } = settingsDataSlice.actions;
 export default settingsDataSlice.reducer;

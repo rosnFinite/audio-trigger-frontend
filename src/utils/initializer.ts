@@ -1,4 +1,4 @@
-import { Settings } from "../../types/Settings.types";
+import { Settings } from "../types/Settings.types";
 
 export const initialSettings: Settings = {
   status: {
