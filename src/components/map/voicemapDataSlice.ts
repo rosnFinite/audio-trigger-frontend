@@ -1,5 +1,4 @@
 import {createSlice} from "@reduxjs/toolkit";
-import { stat } from "fs";
 
 // TODO: Add the correct type for the voicemap data
 interface IVoicemapData {
@@ -35,9 +34,10 @@ export const voicemapDataSlice = createSlice({
     },
     UPDATE_DATAPOINT: (state, action) => {
       console.log("UPDATE_DATAPOINT", action.payload);
-      let data = state.value.datamap;
-      data[action.payload.dbaBin].data[action.payload.freqBin].y = action.payload.score;
-      state.value.datamap = data;
+      // Deep copy of the datamap to avoid mutation of the state
+      let newDataMap = JSON.parse(JSON.stringify(state.value.datamap));
+      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y = action.payload.score;
+      state.value.datamap = newDataMap;
     },
     UPDATE_SETTINGS: (state, action) => {
       console.log("UPDATE_SETTINGS", action.payload);
