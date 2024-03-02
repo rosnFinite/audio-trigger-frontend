@@ -1,6 +1,7 @@
 import { Settings } from "../types/Settings.types";
 
 export const initialSettings: Settings = {
+  sid: "",
   status: {
     recorder: "offline",
     trigger: "offline"

@@ -1,4 +1,5 @@
 export interface Settings {
+  sid: string;
   status: {
     recorder: string;
     trigger: string;

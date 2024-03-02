@@ -17,9 +17,12 @@ export const settingsDataSlice = createSlice({
     UPDATE_STATUS: (state, action) => {
       console.log("updateStatus", action.payload);
       state.values.status = {...state.values.status, ...action.payload};
+    },
+    SET_CLIENT_SID: (state, action) => {
+      state.values.sid = action.payload.sid;
     }
   }
 })
 
-export const { INITIALIZE, UPDATE_SETTINGS, UPDATE_STATUS } = settingsDataSlice.actions;
+export const { INITIALIZE, UPDATE_SETTINGS, UPDATE_STATUS, SET_CLIENT_SID } = settingsDataSlice.actions;
 export default settingsDataSlice.reducer;
