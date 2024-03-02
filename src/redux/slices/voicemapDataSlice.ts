@@ -28,6 +28,9 @@ export const voicemapDataSlice = createSlice({
     value: {dbaSettings:{lower:35, upper:115, steps:5}, freqSettings:{lower:55, upper:1700, steps:2}, voice:"0.0", datamap: []} as IVoicemapData
   },
   reducers: {
+    INITIALIZE: (state) => {
+      state.value = {dbaSettings:{lower:35, upper:115, steps:5}, freqSettings:{lower:55, upper:1700, steps:2}, voice:"0.0", datamap: []};
+    },
     SET_DATAMAP: (state, action) => {
       console.log("SET_DATAMAP", action.payload);
       state.value.datamap = action.payload;

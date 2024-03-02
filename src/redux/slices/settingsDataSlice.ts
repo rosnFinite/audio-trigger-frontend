@@ -9,16 +9,18 @@ export const settingsDataSlice = createSlice({
   },
   reducers: {
     INITIALIZE: (state) => {
-      state.values = initialSettings;
+      state.values = {...initialSettings};
     },
     UPDATE_SETTINGS: (state, action) => {
+      action.payload.sid = state.values.sid;
       state.values = {...state.values, ...action.payload};
     },
     UPDATE_STATUS: (state, action) => {
-      console.log("updateStatus", action.payload);
       state.values.status = {...state.values.status, ...action.payload};
     },
     SET_CLIENT_SID: (state, action) => {
+      state.values = {...initialSettings}; 
+      console.log("SET_CLIENT_SID", action.payload);
       state.values.sid = action.payload.sid;
     }
   }

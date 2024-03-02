@@ -27,13 +27,15 @@ export default function App() {
           // clear persisted state if sid of connected audio client changes
           persistor.purge();
           dispatch({type: "settings/SET_CLIENT_SID", payload: {sid}});
+          dispatch({type: "voicemap/INITIALIZE"});
         }
       } else {
         // clear persisted state if audio client is disconnected or not found
         dispatch({type: "settings/SET_CLIENT_SID", payload: {sid: ""}});
+        dispatch({type: "voicemap/INITIALIZE"});
       }
     });
-  }, []);
+  }, [socket]);
 
   return(
     <Routes>
