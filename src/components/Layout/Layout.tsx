@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Layout.css';
 import '@mantine/core/styles.css';
-import { AppShell, Badge, Burger, Container, Flex, Group, NavLink, Text } from '@mantine/core';
+import { AppShell, Badge, Burger, Container, Flex, Group, LoadingOverlay, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 import { useAppSelector } from '../../redux/hooks';
@@ -12,7 +12,9 @@ export default function Layout(props: { children: React.ReactNode }) {
   const [opened, {toggle}] = useDisclosure();
   const [recBadgeColor, setRecBadgeColor] = useState("red");
   const [trigBadgeColor, setTrigBadgeColor] = useState("red");
+  const [loadingVisible, setLoadingVisible] = useState(false);
   const status = useAppSelector((state) => state.settings.values.status)
+  const audioClientSID = useAppSelector((state) => state.settings.values.sid);
 
   useEffect(() => {
     console.log("Status: ", status);
@@ -21,6 +23,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         setRecBadgeColor("lime");
         break;
       case "ready":
+      case "reset":
         setRecBadgeColor("yellow");
         break;
       default:
@@ -32,12 +35,18 @@ export default function Layout(props: { children: React.ReactNode }) {
         setTrigBadgeColor("lime");
         break;
       case "ready":
+      case "reset":
         setTrigBadgeColor("yellow");
         break;
       default:
         setTrigBadgeColor("red");
     }
   }, [status]);
+
+  useEffect(() => {
+    // Show loading overlay if no audio client is connected
+    setLoadingVisible(audioClientSID === "" ? true : false)
+  }, [audioClientSID]);
 
   return (
     <AppShell header={{height:60}} navbar={{width: 180, breakpoint:"sm", collapsed: {mobile: !opened}}} padding="md">
@@ -85,7 +94,8 @@ export default function Layout(props: { children: React.ReactNode }) {
         <NavLink href="/" label="Einstellungen" leftSection={<TbSettings />}/>
         <NavLink href='/stimmfeld' label="Stimmfeld" leftSection={<TbMusicSearch />} />
       </AppShell.Navbar>
-      <AppShell.Main>
+      <AppShell.Main pos="relative">
+        <LoadingOverlay visible={loadingVisible} loaderProps={{ children: "Kein Audioclient verbunden. Bitte stelle eine Verbindung her..."}}/>
         {props.children}
       </AppShell.Main>
     </AppShell>
