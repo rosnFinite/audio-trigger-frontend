@@ -6,7 +6,7 @@ export const initialSettings: Settings = {
     recorder: "offline",
     trigger: "offline"
   },
-  device: "-1",
+  device: -1,
   sampleRate: 44100,
   bufferSize: 0.2,
   chunkSize: 1024,

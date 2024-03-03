@@ -4,7 +4,7 @@ export interface Settings {
     recorder: string;
     trigger: string;
   };
-  device: string;
+  device: number;
   sampleRate: number;
   bufferSize: number;
   chunkSize: number;

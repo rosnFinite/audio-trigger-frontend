@@ -68,7 +68,7 @@ export default function Settings({socket}: SocketProp) {
                   description="Falls angeschlossen wird standardmäßig das EGG-Gerät (iMic) ausgewählt, sont muss hier ein Eingabegerät ausgewählt werden." 
                   data={devices}
                   onChange={(event) => {
-                    setSettings({...settings, device: event.currentTarget.value});
+                    setSettings({...settings, device: Number(event.currentTarget.value)});
                   }}
                 />
                 <Group grow>
