@@ -5,6 +5,7 @@ import { AppShell, Badge, Burger, Container, Flex, Group, LoadingOverlay, NavLin
 import { useDisclosure } from '@mantine/hooks';
 import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 import { useAppSelector } from '../../redux/hooks';
+import Settings from '../../views/Settings';
 
 
 
@@ -69,18 +70,17 @@ export default function Layout(props: { children: React.ReactNode }) {
           >
             Alpha
           </Badge>
-          <Group justify='flex-end' gap="xs" ml={"auto"}>
+          <Group justify='flex-end' gap="xs" ml={"auto"} mr={"2%"}>
+            <Text size='xs'>{audioClientSID}</Text>
             <Badge
-              size='lg'
-              mr={30}
+              size='md'
               variant='filled'
               color={recBadgeColor}
             >
               Recorder
             </Badge>
             <Badge 
-              size="lg"
-              mr={30}
+              size="md"
               variant="filled"
               color={trigBadgeColor}
             >
