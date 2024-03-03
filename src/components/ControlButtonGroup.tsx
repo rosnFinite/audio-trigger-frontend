@@ -20,7 +20,7 @@ export default function ControlButtonGroup({socket}: SocketProp) {
       <Group justify="center" gap={"xs"}>
         <Tooltip label="Startet den Triggerprozess" withArrow>
           <Button 
-            variant={status.trigger==="ready" ? "filled" : "outline"} 
+            variant={status.trigger==="ready" || status.trigger ==="reset" ? "filled" : "outline"} 
             color="green" 
             leftSection={<TbPlayerRecord size={"20"} />}
             disabled={status.trigger==="running"}
@@ -42,7 +42,7 @@ export default function ControlButtonGroup({socket}: SocketProp) {
         </Tooltip>
         <Tooltip label="Setzt das Stimmfeld zurück" withArrow>
           <Button 
-            variant={status.trigger==="ready" ? "filled" : "outline"}
+            variant={status.trigger==="ready" || status.trigger ==="reset" ? "filled" : "outline"}
             color="red" 
             leftSection={<TbProgressX size={"20"}/>}
             disabled={status.trigger==="running"}

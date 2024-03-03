@@ -81,6 +81,12 @@ export default function NivoVoicemap({socket}: SocketProp) {
     });
   }, [socket]);
 
+  useEffect(() => {
+    if (settings.status.trigger === "reset") {
+      dispatch({ type: "voicemap/SET_DATAMAP", payload: generateEmptyGrid(settings.db, settings.frequency)});
+    }
+  }, [settings.status]);
+
   return (
     <Container ml={0} mr={30} h={"50vw"} fluid>
       <ResponsiveHeatMapCanvas
