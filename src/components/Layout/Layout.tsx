@@ -3,13 +3,14 @@ import './Layout.css';
 import '@mantine/core/styles.css';
 import { AppShell, Badge, Burger, Container, Flex, Group, LoadingOverlay, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
+import { TbCameraSearch, TbAlpha, TbChartGridDots, TbMusicSearch, TbSettings } from 'react-icons/tb';
 import { useAppSelector } from '../../redux/hooks';
-import Settings from '../../views/Settings';
+import { useLocation } from 'react-router-dom';
 
 
 
 export default function Layout(props: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
   const [opened, {toggle}] = useDisclosure();
   const [recBadgeColor, setRecBadgeColor] = useState("red");
   const [trigBadgeColor, setTrigBadgeColor] = useState("red");
@@ -91,8 +92,9 @@ export default function Layout(props: { children: React.ReactNode }) {
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
-        <NavLink href="/" label="Einstellungen" leftSection={<TbSettings />}/>
-        <NavLink href='/stimmfeld' label="Stimmfeld" leftSection={<TbMusicSearch />} />
+        <NavLink href="/" label="Einstellungen" leftSection={<TbSettings />} active={pathname === "/"}/>
+        <NavLink href='/stimmfeld' label="Stimmfeld" leftSection={<TbMusicSearch />} active={pathname === "/stimmfeld"}/>
+        <NavLink href="/aufnahmen" label="Aufnahmen" leftSection={<TbCameraSearch />} active={pathname === "/aufnahmen"}/>
       </AppShell.Navbar>
       <AppShell.Main pos="relative">
         <LoadingOverlay visible={loadingVisible} loaderProps={{ children: "Kein Audioclient verbunden. Bitte stelle eine Verbindung her..."}}/>
