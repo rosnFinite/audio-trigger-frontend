@@ -53,18 +53,21 @@ function generateLowerBounds(dbSettings: MapSettings, freqSettings: MapSettings)
 
 export default function NivoVoicemap({socket}: SocketProp) {
   // needed to create matching string for annotation
-  const settings = useAppSelector((state) => state.settings.values);
+  const settingsDb: MapSettings = useAppSelector((state) => state.settings.values.db);
+  const settingsFreq: MapSettings = useAppSelector((state) => state.settings.values.frequency);
+  const settingsStatus = useAppSelector((state) => state.settings.values.status);
+  const settingsQScore = useAppSelector((state) => state.settings.values.qualityScore);
   const voicemap = useAppSelector((state) => state.voicemap.value);
   const dispatch = useAppDispatch(); 
-  const lowerBounds = useMemo(() => generateLowerBounds(settings.db, settings.frequency), [settings.db, settings.frequency]);
+  const lowerBounds = useMemo(() => generateLowerBounds(settingsDb, settingsFreq), [settingsDb, settingsFreq]);
 
   
   useEffect(() => {
     // check current freq and dba settings of heatmap and compare to settings !IMPORTANT! This comparison requires the order of the attributes to be the same.
     // if the settings are different, we need to create a new empty heatmap
-    if (JSON.stringify(voicemap.dbaSettings) !== JSON.stringify(settings.db) || JSON.stringify(voicemap.freqSettings) !== JSON.stringify(settings.frequency)) {
-      dispatch({ type: "voicemap/SET_DATAMAP", payload: generateEmptyGrid(settings.db, settings.frequency)});
-      dispatch({ type: "voicemap/UPDATE_SETTINGS", payload: {dbaSettings: settings.db, freqSettings: settings.frequency}});
+    if (JSON.stringify(voicemap.dbaSettings) !== JSON.stringify(settingsDb) || JSON.stringify(voicemap.freqSettings) !== JSON.stringify(settingsFreq)) {
+      dispatch({ type: "voicemap/SET_DATAMAP", payload: generateEmptyGrid(settingsDb, settingsFreq)});
+      dispatch({ type: "voicemap/UPDATE_SETTINGS", payload: {dbaSettings: settingsDb, freqSettings: settingsFreq}});
     }
     console.log("voicemap", voicemap);
   }, []);
@@ -76,16 +79,17 @@ export default function NivoVoicemap({socket}: SocketProp) {
     // TODO still some bugs with certain values
     socket.on("trigger", (data) => {
       console.log("trigger", data);
-      let numDbaBins = (settings.db.upper - settings.db.lower) / settings.db.steps;
+      let numDbaBins = (settingsDb.upper - settingsDb.lower) / settingsDb.steps;
       dispatch({ type: "voicemap/UPDATE_DATAPOINT", payload: {dbaBin: numDbaBins - data.dba_bin, freqBin: data.freq_bin, score: data.score} });
     });
   }, [socket]);
 
   useEffect(() => {
-    if (settings.status.trigger === "reset") {
-      dispatch({ type: "voicemap/SET_DATAMAP", payload: generateEmptyGrid(settings.db, settings.frequency)});
+    console.log("status", settingsStatus);
+    if (settingsStatus.trigger === "reset") {
+      dispatch({ type: "voicemap/SET_DATAMAP", payload: generateEmptyGrid(settingsDb, settingsFreq)});
     }
-  }, [settings.status]);
+  }, [dispatch, settingsDb, settingsFreq, settingsStatus]);
 
   return (
     <Container ml={0} mr={30} h={"50vw"} fluid>
@@ -124,7 +128,7 @@ export default function NivoVoicemap({socket}: SocketProp) {
             type: 'diverging',
             scheme: 'blues',
             minValue: 0,
-            maxValue: settings.qualityScore,
+            maxValue: settingsQScore,
         }}
         emptyColor="#555555"
         enableLabels={false}
