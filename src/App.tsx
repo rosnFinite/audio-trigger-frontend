@@ -17,6 +17,12 @@ export default function App() {
     socket.on("connect", () => {
       socket.emit("registerClient", {type: "web"});
     });
+    socket.on("connect_error", (error: Error) => {
+      console.log("connect_error", error);
+      persistor.purge();
+      dispatch({type: "settings/SET_CLIENT_SID", payload: {sid: ""}});
+      dispatch({type: "voicemap/INITIALIZE"});
+    });
     socket.on("clients", (clients: {sid: string, type: string}[]) => {
       console.log("clients event", clients);
       // find audio client in clients array
