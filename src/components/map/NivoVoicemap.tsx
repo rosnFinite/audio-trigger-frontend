@@ -3,6 +3,7 @@ import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { SocketProp } from "../../types/SocketProp.types";
+import { Socket } from "socket.io-client";
 
 interface MapSettings {
   lower: number;
@@ -51,7 +52,13 @@ function generateLowerBounds(dbSettings: MapSettings, freqSettings: MapSettings)
   return lowerBounds;
 }
 
-export default function NivoVoicemap({socket}: SocketProp) {
+interface NivoVoicemapProps {
+  socket: Socket;
+  height?: string;
+  width?: string;
+}
+
+export default function NivoVoicemap({socket, height, width}: NivoVoicemapProps) {
   // needed to create matching string for annotation
   const settingsDb: MapSettings = useAppSelector((state) => state.settings.values.db);
   const settingsFreq: MapSettings = useAppSelector((state) => state.settings.values.frequency);
@@ -92,7 +99,7 @@ export default function NivoVoicemap({socket}: SocketProp) {
   }, [dispatch, settingsDb, settingsFreq, settingsStatus]);
 
   return (
-    <Container ml={0} mr={30} h={"50vw"} fluid>
+    <Container ml={0} mr={30} h={height === undefined ? "70vh": height} w={width === undefined ? "85vw": width} fluid>
       <ResponsiveHeatMapCanvas
         data={voicemap.datamap}
         margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
