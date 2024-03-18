@@ -6,7 +6,6 @@ import { socket } from "./socket";
 import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
-import Recordings from "./views/Recordings";
 
 export default function App() {
   const settings = useAppSelector((state) => state.settings.values);
@@ -15,15 +14,15 @@ export default function App() {
   // handles registering of web client to socketio backend and sets the audio client sid
   useEffect(() => {
     socket.on("connect", () => {
-      socket.emit("registerClient", {type: "web"});
+      socket.emit("registerClient", { type: "web" });
     });
     socket.on("connect_error", (error: Error) => {
       console.log("connect_error", error);
       persistor.purge();
-      dispatch({type: "settings/SET_CLIENT_SID", payload: {sid: ""}});
-      dispatch({type: "voicemap/INITIALIZE"});
+      dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
+      dispatch({ type: "voicemap/INITIALIZE" });
     });
-    socket.on("clients", (clients: {sid: string, type: string}[]) => {
+    socket.on("clients", (clients: { sid: string; type: string }[]) => {
       console.log("clients event", clients);
       // find audio client in clients array
       const audioClient = clients.find((item) => item.type === "audio");
@@ -51,7 +50,6 @@ export default function App() {
         <Route index element={<VoiceField socket={socket} />} />
         <Route path="patientenansicht" element={<Patient socket={socket} />} />
       </Route>
-      <Route path="/aufnahmen" element={<Recordings socket={socket} />} />
     </Routes>
   );
 }
