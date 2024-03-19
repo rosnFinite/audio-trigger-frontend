@@ -7,16 +7,17 @@ import {
   Button,
   Group,
 } from "@mantine/core";
+import { TbCheck, TbTrashX } from "react-icons/tb";
 
 export default function Recording({
-  freqBereich,
-  dbBereich,
+  freq,
+  dba,
   qScore,
   saveLocation,
   timestamp,
 }: {
-  freqBereich: string;
-  dbBereich: string;
+  freq: string;
+  dba: string;
   qScore: string;
   saveLocation: string;
   timestamp: string;
@@ -36,12 +37,12 @@ export default function Recording({
         <Image src="/temp/TEST_C001H001S0002000001.jpg" h={150} w={150} />
         <Container ml={0} mt={10} h={"100%"}>
           <Group>
-            <Text fw={700}>Frequenzbereich [Hz]:</Text>
-            <Text>{freqBereich}</Text>
+            <Text fw={700}>Frequenz-Bin [Hz]:</Text>
+            <Text>{freq.slice(0, -2) + "." + freq.slice(-2)}</Text>
           </Group>
           <Group>
-            <Text fw={700}>Dezibelbereich [db(A)]:</Text>
-            <Text>{dbBereich}</Text>
+            <Text fw={700}>Dezibel-Bin [db(A)]:</Text>
+            <Text>{dba}</Text>
           </Group>
           <Group>
             <Text fw={700}>Q-Score:</Text>
@@ -56,9 +57,18 @@ export default function Recording({
             {timestamp}
           </Group>
         </Container>
-        <Button h="100%" color="red">
-          Löschen
-        </Button>
+        <Button
+          h="100%"
+          color="green"
+          rightSection={<TbCheck size={30} />}
+          pr={25}
+        />
+        <Button
+          h="100%"
+          color="red"
+          rightSection={<TbTrashX size={30} />}
+          pr={25}
+        />
       </Flex>
     </Card>
   );

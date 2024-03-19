@@ -1,4 +1,4 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 // TODO: Add the correct type for the voicemap data
 interface IVoicemapData {
@@ -6,17 +6,23 @@ interface IVoicemapData {
     lower: number;
     upper: number;
     steps: number;
-  },
+  };
   freqSettings: {
     lower: number;
     upper: number;
     steps: number;
-  },
-  voice: string,
+  };
+  voice: string;
+  data: {
+    freqBin: number;
+    dbaBin: number;
+    qScore: string;
+    timestamp: string;
+  }[];
   datamap: {
     id: string;
     data: {
-      x: string;
+      x: number;
       y: number;
     }[];
   }[];
@@ -25,34 +31,69 @@ interface IVoicemapData {
 export const voicemapDataSlice = createSlice({
   name: "voicemap",
   initialState: {
-    value: {dbaSettings:{lower:35, upper:115, steps:5}, freqSettings:{lower:55, upper:1700, steps:2}, voice:"0.0", datamap: []} as IVoicemapData
+    value: {
+      dbaSettings: { lower: 35, upper: 115, steps: 5 },
+      freqSettings: { lower: 55, upper: 1700, steps: 2 },
+      voice: "0.0",
+      data: [],
+      datamap: [],
+    } as IVoicemapData,
   },
   reducers: {
     INITIALIZE: (state) => {
-      state.value = {dbaSettings:{lower:35, upper:115, steps:5}, freqSettings:{lower:55, upper:1700, steps:2}, voice:"0.0", datamap: []};
+      state.value = {
+        dbaSettings: { lower: 35, upper: 115, steps: 5 },
+        freqSettings: { lower: 55, upper: 1700, steps: 2 },
+        voice: "0.0",
+        data: [],
+        datamap: [],
+      };
     },
     SET_DATAMAP: (state, action) => {
-      console.log("SET_DATAMAP", action.payload);
+      state.value.data = [];
       state.value.datamap = action.payload;
     },
     UPDATE_DATAPOINT: (state, action) => {
-      console.log("UPDATE_DATAPOINT", action.payload);
+      // may throw an error if no data is present
+      let data = state.value.data;
+      let updateIndex = data.findIndex(
+        (item) =>
+          item.dbaBin === action.payload.dbaBin &&
+          item.freqBin === action.payload.freqBin
+      );
+      if (updateIndex === -1) {
+        data.push({
+          freqBin: action.payload.freqBin,
+          dbaBin: action.payload.dbaBin,
+          qScore: action.payload.score,
+          timestamp: new Date().toLocaleString(),
+        });
+        state.value.data = data;
+      } else {
+        data[updateIndex] = {
+          freqBin: action.payload.freqBin,
+          dbaBin: action.payload.dbaBin,
+          qScore: action.payload.score,
+          timestamp: new Date().toLocaleString(),
+        };
+        state.value.data = data;
+      }
       // Deep copy of the datamap to avoid mutation of the state
       let newDataMap = JSON.parse(JSON.stringify(state.value.datamap));
-      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y = action.payload.score;
+      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y =
+        action.payload.score;
       state.value.datamap = newDataMap;
     },
     UPDATE_SETTINGS: (state, action) => {
-      console.log("UPDATE_SETTINGS", action.payload);
       state.value.dbaSettings = action.payload.dbaSettings;
       state.value.freqSettings = action.payload.freqSettings;
     },
     SET_VOICE: (state, action) => {
-      console.log("SET_VOICE", action.payload);
       state.value.voice = action.payload;
-    }
-  }
-})
+    },
+  },
+});
 
-export const { SET_DATAMAP, UPDATE_DATAPOINT, UPDATE_SETTINGS, SET_VOICE } = voicemapDataSlice.actions;
+export const { SET_DATAMAP, UPDATE_DATAPOINT, UPDATE_SETTINGS, SET_VOICE } =
+  voicemapDataSlice.actions;
 export default voicemapDataSlice.reducer;
