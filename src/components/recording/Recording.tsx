@@ -119,6 +119,10 @@ export default function Recording({
             <Button
               color="red"
               onClick={() => {
+                socket.emit("removeRecording", {
+                  freqBin: freqBin,
+                  dbaBin: lowerBounds.dba.length - dbaBin - 1,
+                });
                 dispatch({
                   type: "voicemap/REMOVE_RECORDING",
                   payload: { freqBin: freqBin, dbaBin: dbaBin },
