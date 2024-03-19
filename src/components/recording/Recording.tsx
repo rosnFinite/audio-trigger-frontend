@@ -6,12 +6,15 @@ import {
   Text,
   Button,
   Group,
+  Modal,
+  Alert,
 } from "@mantine/core";
 import { useMemo } from "react";
-import { TbCheck, TbTrashX } from "react-icons/tb";
+import { TbCheck, TbInfoCircle, TbTrashX } from "react-icons/tb";
 import { generateLowerBounds } from "../../utils/voicemapUtils";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Socket } from "socket.io-client";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function Recording({
   socket,
@@ -41,6 +44,7 @@ export default function Recording({
     bounds.dba = bounds.dba.reverse();
     return bounds;
   }, [settingsDb, settingsFreq]);
+  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <Card
@@ -87,6 +91,7 @@ export default function Recording({
             color="green"
             rightSection={<TbCheck size={30} />}
             pr={25}
+            radius={0}
             onClick={() => {
               dispatch({
                 type: "voicemap/ACCEPT_RECORDING",
@@ -97,17 +102,41 @@ export default function Recording({
         ) : (
           <></>
         )}
+        <Modal opened={opened} onClose={close} centered title="Löschen">
+          <Alert
+            variant="light"
+            color="red"
+            title="Soll die Aufnahme wirklisch gelöscht werden?"
+            icon={<TbInfoCircle size={"25"} />}
+          >
+            Diese Aktion wird die ausgewählte Aufnahme dauerhaft entfernen und
+            das Stimmfeld aktualisieren.
+          </Alert>
+          <Group mt={15} grow>
+            <Button variant="light" onClick={close}>
+              Abbrechen
+            </Button>
+            <Button
+              color="red"
+              onClick={() => {
+                dispatch({
+                  type: "voicemap/REMOVE_RECORDING",
+                  payload: { freqBin: freqBin, dbaBin: dbaBin },
+                });
+                close();
+              }}
+            >
+              Löschen
+            </Button>
+          </Group>
+        </Modal>
         <Button
           h="100%"
           color="red"
           rightSection={<TbTrashX size={30} />}
           pr={25}
-          onClick={() => {
-            dispatch({
-              type: "voicemap/REMOVE_RECORDING",
-              payload: { freqBin: freqBin, dbaBin: dbaBin },
-            });
-          }}
+          radius={0}
+          onClick={open}
         />
       </Flex>
     </Card>
