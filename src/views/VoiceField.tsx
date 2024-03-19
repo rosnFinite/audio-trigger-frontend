@@ -9,6 +9,9 @@ import {
   ScrollArea,
   Stack,
   Title,
+  Text,
+  Tooltip,
+  SegmentedControl,
 } from "@mantine/core";
 import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
@@ -17,21 +20,19 @@ import Layout from "../components/Layout/Layout";
 import { SocketProp } from "../types/SocketProp.types";
 import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { generateLowerBounds } from "../utils/voicemapUtils";
 
 export default function VoiceField({ socket }: SocketProp) {
   const data = useAppSelector((state) => state.voicemap.value.data);
-  const settingsDb = useAppSelector((state) => state.settings.values.db);
-  const settingsFreq = useAppSelector(
-    (state) => state.settings.values.frequency
-  );
-  const lowerBounds = useMemo(() => {
-    const bounds = generateLowerBounds(settingsDb, settingsFreq);
-    // we need to reverse the arrays to match the order of the heatmap (generateLowerBounds is a helper function for the heatmap)
-    bounds.dba = bounds.dba.reverse();
-    return bounds;
-  }, [settingsDb, settingsFreq]);
+  const [activeRecordingTab, setActiveRecordingTab] = useState("new");
+  const [newRecordings, setNewRecordings] = useState(data);
+  const [acceptedRecordings, setAcceptedRecordings] = useState(data);
+
+  useEffect(() => {
+    setNewRecordings(data.filter((item) => !item.accepted));
+    setAcceptedRecordings(data.filter((item) => item.accepted));
+  }, [data]);
 
   //TODO: update badge to count accepted and pending recordings
   return (
@@ -59,12 +60,16 @@ export default function VoiceField({ socket }: SocketProp) {
         <NivoVoicemap socket={socket} />
         <Group gap="xs">
           <Title order={2}>Aufnahmen</Title>
-          <Badge circle size="xl">
-            {data.length}
-          </Badge>
-          <Badge circle size="xl" color="green">
-            {data.length}
-          </Badge>
+          <Tooltip label="Anzahl ausstehender Aufnahmen">
+            <Badge circle size="xl">
+              {newRecordings.length}
+            </Badge>
+          </Tooltip>
+          <Tooltip label="Anzahl akzeptierter Aufnahmen">
+            <Badge circle size="xl" color="green">
+              {acceptedRecordings.length}
+            </Badge>
+          </Tooltip>
         </Group>
         <Blockquote
           color="blue"
@@ -79,6 +84,13 @@ export default function VoiceField({ socket }: SocketProp) {
           zu entfernen und eine erneute Aufnahme dieser zu starten.
         </Blockquote>
         <Divider my="xs" />
+        <SegmentedControl
+          data={[
+            { label: "Neu", value: "new" },
+            { label: "Akzeptiert", value: "accepted" },
+          ]}
+          onChange={(value) => setActiveRecordingTab(value)}
+        />
         <ScrollArea
           h={450}
           type="auto"
@@ -86,16 +98,37 @@ export default function VoiceField({ socket }: SocketProp) {
           scrollbarSize={8}
           scrollHideDelay={1500}
         >
-          {data.map((item, index) => (
-            <Recording
-              key={index}
-              freq={lowerBounds.freq[item.freqBin]}
-              dba={lowerBounds.dba[item.dbaBin]}
-              qScore={item.qScore}
-              saveLocation="C:/user/images/fksdjhfsd.jpg"
-              timestamp={item.timestamp}
-            />
-          ))}
+          {data.length === 0 ? (
+            <Center>
+              <Text fw={700}>Noch keine Aufnahmen vorhanden.</Text>
+            </Center>
+          ) : activeRecordingTab === "new" ? (
+            newRecordings.map((item, index) => (
+              <Recording
+                key={index}
+                socket={socket}
+                freqBin={item.freqBin}
+                dbaBin={item.dbaBin}
+                qScore={item.qScore}
+                saveLocation="C:/user/images/fksdjhfsd.jpg"
+                timestamp={item.timestamp}
+                acceptable
+              />
+            ))
+          ) : (
+            acceptedRecordings.map((item, index) => (
+              <Recording
+                key={index}
+                socket={socket}
+                freqBin={item.freqBin}
+                dbaBin={item.dbaBin}
+                qScore={item.qScore}
+                saveLocation="C:/user/images/fksdjhfsd.jpg"
+                timestamp={item.timestamp}
+                acceptable={false}
+              />
+            ))
+          )}
         </ScrollArea>
       </Stack>
     </Layout>

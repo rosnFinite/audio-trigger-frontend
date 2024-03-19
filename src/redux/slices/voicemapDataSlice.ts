@@ -18,6 +18,7 @@ interface IVoicemapData {
     dbaBin: number;
     qScore: string;
     timestamp: string;
+    accepted: boolean;
   }[];
   datamap: {
     id: string;
@@ -67,6 +68,7 @@ export const voicemapDataSlice = createSlice({
           dbaBin: action.payload.dbaBin,
           qScore: action.payload.score,
           timestamp: new Date().toLocaleString(),
+          accepted: false,
         });
         state.value.data = data;
       } else {
@@ -75,6 +77,7 @@ export const voicemapDataSlice = createSlice({
           dbaBin: action.payload.dbaBin,
           qScore: action.payload.score,
           timestamp: new Date().toLocaleString(),
+          accepted: false,
         };
         state.value.data = data;
       }
@@ -87,6 +90,33 @@ export const voicemapDataSlice = createSlice({
     UPDATE_SETTINGS: (state, action) => {
       state.value.dbaSettings = action.payload.dbaSettings;
       state.value.freqSettings = action.payload.freqSettings;
+    },
+    REMOVE_RECORDING: (state, action) => {
+      // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to remove
+      // remove the recording from the data array
+      let data = state.value.data;
+      let removeIndex = data.findIndex(
+        (item) =>
+          item.dbaBin === action.payload.dbaBin &&
+          item.freqBin === action.payload.freqBin
+      );
+      data.splice(removeIndex, 1);
+      state.value.data = data;
+      // remove the recording from the datamap
+      let newDataMap = JSON.parse(JSON.stringify(state.value.datamap));
+      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y = 0;
+      state.value.datamap = newDataMap;
+    },
+    ACCEPT_RECORDING: (state, action) => {
+      // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to accept
+      let data = state.value.data;
+      let acceptIndex = data.findIndex(
+        (item) =>
+          item.dbaBin === action.payload.dbaBin &&
+          item.freqBin === action.payload.freqBin
+      );
+      data[acceptIndex].accepted = true;
+      state.value.data = data;
     },
     SET_VOICE: (state, action) => {
       state.value.voice = action.payload;
