@@ -8,8 +8,9 @@ import {
   Group,
   Modal,
   Alert,
+  ActionIcon,
 } from "@mantine/core";
-import { TbCheck, TbInfoCircle, TbTrashX } from "react-icons/tb";
+import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Socket } from "socket.io-client";
 import { useDisclosure } from "@mantine/hooks";
@@ -49,6 +50,7 @@ export default function Recording({
       pr={0}
     >
       <Flex
+        align="center"
         onClick={() => {
           dispatch({
             type: "voicemap/SET_ANNOTATION",
@@ -86,6 +88,15 @@ export default function Recording({
             {timestamp}
           </Group>
         </Container>
+        <ActionIcon
+          mr={15}
+          variant="light"
+          size="xl"
+          radius="lg"
+          aria-label="detail-modal"
+        >
+          <TbSwipe size={30} />
+        </ActionIcon>
         {acceptable ? (
           <Button
             h="100%"
