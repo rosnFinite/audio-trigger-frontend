@@ -1,3 +1,5 @@
+![Output sample](https://github.com/rosnFinite/audio-trigger-frontend/raw/main/settings_demo.gif)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
