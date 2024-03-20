@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { generateVoicemapBinNames } from "../../utils/voicemapUtils";
 
 // TODO: Add the correct type for the voicemap data
 interface IVoicemapData {
@@ -12,7 +13,14 @@ interface IVoicemapData {
     upper: number;
     steps: number;
   };
-  voice: string;
+  datamapBinNames: {
+    freq: string[];
+    dba: string[];
+  };
+  annotation: {
+    id: string;
+    text: string;
+  };
   data: {
     freqBin: number;
     dbaBin: number;
@@ -35,7 +43,11 @@ export const voicemapDataSlice = createSlice({
     value: {
       dbaSettings: { lower: 35, upper: 115, steps: 5 },
       freqSettings: { lower: 55, upper: 1700, steps: 2 },
-      voice: "0.0",
+      datamapBinNames: generateVoicemapBinNames(
+        { lower: 35, upper: 115, steps: 5 },
+        { lower: 55, upper: 1700, steps: 2 }
+      ),
+      annotation: { id: "", text: "" },
       data: [],
       datamap: [],
     } as IVoicemapData,
@@ -45,7 +57,11 @@ export const voicemapDataSlice = createSlice({
       state.value = {
         dbaSettings: { lower: 35, upper: 115, steps: 5 },
         freqSettings: { lower: 55, upper: 1700, steps: 2 },
-        voice: "0.0",
+        datamapBinNames: generateVoicemapBinNames(
+          { lower: 35, upper: 115, steps: 5 },
+          { lower: 55, upper: 1700, steps: 2 }
+        ),
+        annotation: { id: "", text: "" },
         data: [],
         datamap: [],
       };
@@ -90,6 +106,10 @@ export const voicemapDataSlice = createSlice({
     UPDATE_SETTINGS: (state, action) => {
       state.value.dbaSettings = action.payload.dbaSettings;
       state.value.freqSettings = action.payload.freqSettings;
+      state.value.datamapBinNames = generateVoicemapBinNames(
+        action.payload.dbaSettings,
+        action.payload.freqSettings
+      );
     },
     REMOVE_RECORDING: (state, action) => {
       // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to remove
@@ -118,12 +138,17 @@ export const voicemapDataSlice = createSlice({
       data[acceptIndex].accepted = true;
       state.value.data = data;
     },
-    SET_VOICE: (state, action) => {
-      state.value.voice = action.payload;
+    SET_ANNOTATION: (state, action) => {
+      console.log("SET_ANNOTATION", action.payload);
+      state.value.annotation = action.payload;
     },
   },
 });
 
-export const { SET_DATAMAP, UPDATE_DATAPOINT, UPDATE_SETTINGS, SET_VOICE } =
-  voicemapDataSlice.actions;
+export const {
+  SET_DATAMAP,
+  UPDATE_DATAPOINT,
+  UPDATE_SETTINGS,
+  SET_ANNOTATION,
+} = voicemapDataSlice.actions;
 export default voicemapDataSlice.reducer;

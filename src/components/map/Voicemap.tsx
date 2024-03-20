@@ -1,12 +1,9 @@
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Socket } from "socket.io-client";
-import {
-  generateEmptyGrid,
-  generateLowerBounds,
-} from "../../utils/voicemapUtils";
+import { generateEmptyGrid } from "../../utils/voicemapUtils";
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -14,17 +11,13 @@ To visualize the current voice, we use the annotations feature of Nivo. This nee
 Because we cannot use floating point numbers as ids, we convert the values to strings and remove the decimal point. This is later reverted in the axisBottom format function.
 The same is done for the lower frequency bounds of the grid. Which we use to map the frequency bin to the actual frequency value.
  */
-interface NivoVoicemapProps {
+interface VoicemapProps {
   socket: Socket;
   height?: string;
   width?: string;
 }
 
-export default function NivoVoicemap({
-  socket,
-  height,
-  width,
-}: NivoVoicemapProps) {
+export default function Voicemap({ socket, height, width }: VoicemapProps) {
   // needed to create matching string for annotation
   const settingsDb = useAppSelector((state) => state.settings.values.db);
   const settingsFreq = useAppSelector(
@@ -37,11 +30,10 @@ export default function NivoVoicemap({
     (state) => state.settings.values.qualityScore
   );
   const voicemap = useAppSelector((state) => state.voicemap.value);
-  const dispatch = useAppDispatch();
-  const lowerBounds = useMemo(
-    () => generateLowerBounds(settingsDb, settingsFreq),
-    [settingsDb, settingsFreq]
+  const datamapBinNames = useAppSelector(
+    (state) => state.voicemap.value.datamapBinNames
   );
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     // check current freq and dba settings of heatmap and compare to settings !IMPORTANT! This comparison requires the order of the attributes to be the same.
@@ -65,10 +57,14 @@ export default function NivoVoicemap({
   useEffect(() => {
     socket.on("voice", (data) => {
       dispatch({
-        type: "voicemap/SET_VOICE",
-        payload: `${lowerBounds.dba[data.dba_bin]}.${
-          lowerBounds.freq[data.freq_bin]
-        }`,
+        type: "voicemap/SET_ANNOTATION",
+        // Heatmap naturally reverses dbaBin order (y-axis, from top to bottom, high -> low), therefore we need to maniupulate incoming dbaBin (low -> high to high -> low)
+        payload: {
+          id: `${
+            datamapBinNames.dba[datamapBinNames.dba.length - data.dba_bin - 1]
+          }.${datamapBinNames.freq[data.freq_bin]}`,
+          text: "Stimme",
+        },
       });
     });
     socket.on("trigger", (data) => {
@@ -165,9 +161,9 @@ export default function NivoVoicemap({
           {
             type: "rect",
             match: {
-              id: voicemap.voice, // Fix: Assign the id property with the value as a string
+              id: voicemap.annotation.id, // Fix: Assign the id property with the value as a string
             },
-            note: "Stimme",
+            note: voicemap.annotation.text,
             noteX: -22,
             noteY: -20,
             offset: 0,

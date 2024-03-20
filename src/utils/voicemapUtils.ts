@@ -27,8 +27,8 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
   return grid;
 }
 
-function generateLowerBounds(
-  dbSettings: MapSettings,
+function generateVoicemapBinNames(
+  dbaSettings: MapSettings,
   freqSettings: MapSettings
 ) {
   let lowerBounds: { freq: string[]; dba: string[] } = {
@@ -42,10 +42,14 @@ function generateLowerBounds(
   ) {
     lowerBounds.freq.push(i.toFixed(2).toString().replace(".", ""));
   }
-  for (let i = dbSettings.lower; i <= dbSettings.upper; i += dbSettings.steps) {
+  for (
+    let i = dbaSettings.upper;
+    i >= dbaSettings.lower;
+    i -= dbaSettings.steps
+  ) {
     lowerBounds.dba.push(i.toString());
   }
   return lowerBounds;
 }
 
-export { generateEmptyGrid, generateLowerBounds };
+export { generateEmptyGrid, generateVoicemapBinNames };

@@ -1,4 +1,4 @@
-import NivoVoicemap from "../components/map/NivoVoicemap";
+import Voicemap from "../components/map/Voicemap";
 import {
   Badge,
   Blockquote,
@@ -12,6 +12,7 @@ import {
   Text,
   Tooltip,
   SegmentedControl,
+  LoadingOverlay,
 } from "@mantine/core";
 import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
@@ -21,10 +22,12 @@ import { SocketProp } from "../types/SocketProp.types";
 import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useMemo, useState } from "react";
-import { generateLowerBounds } from "../utils/voicemapUtils";
 
 export default function VoiceField({ socket }: SocketProp) {
   const data = useAppSelector((state) => state.voicemap.value.data);
+  const settingsStatus = useAppSelector(
+    (state) => state.settings.values.status
+  );
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [newRecordings, setNewRecordings] = useState(data);
   const [acceptedRecordings, setAcceptedRecordings] = useState(data);
@@ -57,7 +60,7 @@ export default function VoiceField({ socket }: SocketProp) {
           </Link>
         </Center>
         <ControlButtonGroup socket={socket} />
-        <NivoVoicemap socket={socket} />
+        <Voicemap socket={socket} />
         <Group gap="xs">
           <Title order={2}>Aufnahmen</Title>
           <Tooltip label="Anzahl ausstehender Aufnahmen">

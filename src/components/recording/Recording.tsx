@@ -9,9 +9,7 @@ import {
   Modal,
   Alert,
 } from "@mantine/core";
-import { useMemo } from "react";
 import { TbCheck, TbInfoCircle, TbTrashX } from "react-icons/tb";
-import { generateLowerBounds } from "../../utils/voicemapUtils";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Socket } from "socket.io-client";
 import { useDisclosure } from "@mantine/hooks";
@@ -33,17 +31,10 @@ export default function Recording({
   timestamp: string;
   acceptable: boolean;
 }) {
-  const settingsDb = useAppSelector((state) => state.settings.values.db);
-  const settingsFreq = useAppSelector(
-    (state) => state.settings.values.frequency
+  const datamapBinNames = useAppSelector(
+    (state) => state.voicemap.value.datamapBinNames
   );
   const dispatch = useAppDispatch();
-  const lowerBounds = useMemo(() => {
-    const bounds = generateLowerBounds(settingsDb, settingsFreq);
-    // we need to reverse the arrays to match the order of the heatmap (generateLowerBounds is a helper function for the heatmap)
-    bounds.dba = bounds.dba.reverse();
-    return bounds;
-  }, [settingsDb, settingsFreq]);
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -57,20 +48,30 @@ export default function Recording({
       pl={0}
       pr={0}
     >
-      <Flex>
+      <Flex
+        onClick={() => {
+          dispatch({
+            type: "voicemap/SET_ANNOTATION",
+            payload: {
+              id: `${datamapBinNames.dba[dbaBin]}.${datamapBinNames.freq[freqBin]}`,
+              text: "Auswahl",
+            },
+          });
+        }}
+      >
         <Image src="/temp/TEST_C001H001S0002000001.jpg" h={150} w={150} />
         <Container ml={0} mt={10} h={"100%"}>
           <Group>
             <Text fw={700}>Frequenz-Bin [Hz]:</Text>
             <Text>
-              {lowerBounds.freq[freqBin].slice(0, -2) +
+              {datamapBinNames.freq[freqBin].slice(0, -2) +
                 "." +
-                lowerBounds.freq[freqBin].slice(-2)}
+                datamapBinNames.freq[freqBin].slice(-2)}
             </Text>
           </Group>
           <Group>
             <Text fw={700}>Dezibel-Bin [db(A)]:</Text>
-            <Text>{lowerBounds.dba[dbaBin]}</Text>
+            <Text>{datamapBinNames.dba[dbaBin]}</Text>
           </Group>
           <Group>
             <Text fw={700}>Q-Score:</Text>
@@ -107,7 +108,7 @@ export default function Recording({
             variant="light"
             color="red"
             title="Soll die Aufnahme wirklisch gelöscht werden?"
-            icon={<TbInfoCircle size={"25"} />}
+            icon={<TbInfoCircle size={25} />}
           >
             Diese Aktion wird die ausgewählte Aufnahme dauerhaft entfernen und
             das Stimmfeld aktualisieren.
@@ -121,7 +122,7 @@ export default function Recording({
               onClick={() => {
                 socket.emit("removeRecording", {
                   freqBin: freqBin,
-                  dbaBin: lowerBounds.dba.length - dbaBin - 1,
+                  dbaBin: datamapBinNames.dba.length - dbaBin - 1,
                 });
                 dispatch({
                   type: "voicemap/REMOVE_RECORDING",
