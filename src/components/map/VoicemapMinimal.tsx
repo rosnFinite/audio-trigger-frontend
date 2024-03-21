@@ -3,22 +3,28 @@ import { useAppSelector } from "../../redux/hooks";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useEffect } from "react";
 
-export default function VoicemapMinimal() {
-  const voicemap = useAppSelector((state) => state.voicemap.value.datamap);
-  const status = useAppSelector((state) => state.settings.values.status);
-  const annotation = useAppSelector((state) => state.voicemap.value.annotation);
-  const settingsQScore = useAppSelector(
-    (state) => state.settings.values.qualityScore
-  );
-
-  useEffect(() => {
-    console.log(status);
-  }, [status]);
-
+export default function VoicemapMinimal({
+  datamap,
+  annotation,
+  maxScore,
+}: {
+  datamap: {
+    id: string;
+    data: {
+      x: number;
+      y: number;
+    }[];
+  }[];
+  annotation: {
+    id: string;
+    text: string;
+  };
+  maxScore: number;
+}) {
   return (
     <Container fluid h="99vh" w="100vw">
       <ResponsiveHeatMapCanvas
-        data={voicemap}
+        data={datamap}
         margin={{ top: 10, right: 5, bottom: 70, left: 45 }}
         valueFormat=" >-.2s"
         xOuterPadding={0}
@@ -53,7 +59,7 @@ export default function VoicemapMinimal() {
           type: "diverging",
           scheme: "blues",
           minValue: 0,
-          maxValue: settingsQScore,
+          maxValue: maxScore,
         }}
         emptyColor="#555555"
         enableLabels={false}
