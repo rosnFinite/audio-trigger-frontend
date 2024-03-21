@@ -55,6 +55,7 @@ export const voicemapDataSlice = createSlice({
   reducers: {
     INITIALIZE: (state) => {
       state.value = {
+        ...state.value,
         dbaSettings: { lower: 35, upper: 115, steps: 5 },
         freqSettings: { lower: 55, upper: 1700, steps: 2 },
         datamapBinNames: generateVoicemapBinNames(
@@ -67,12 +68,15 @@ export const voicemapDataSlice = createSlice({
       };
     },
     SET_DATAMAP: (state, action) => {
-      state.value.data = [];
-      state.value.datamap = action.payload;
+      state.value = {
+        ...state.value,
+        data: [],
+        datamap: action.payload,
+      };
     },
     UPDATE_DATAPOINT: (state, action) => {
       // may throw an error if no data is present
-      let data = state.value.data;
+      let data = [...state.value.data];
       let updateIndex = data.findIndex(
         (item) =>
           item.dbaBin === action.payload.dbaBin &&
@@ -86,7 +90,6 @@ export const voicemapDataSlice = createSlice({
           timestamp: new Date().toLocaleString(),
           accepted: false,
         });
-        state.value.data = data;
       } else {
         data[updateIndex] = {
           freqBin: action.payload.freqBin,
@@ -95,52 +98,83 @@ export const voicemapDataSlice = createSlice({
           timestamp: new Date().toLocaleString(),
           accepted: false,
         };
-        state.value.data = data;
       }
       // Deep copy of the datamap to avoid mutation of the state
       let newDataMap = JSON.parse(JSON.stringify(state.value.datamap));
       newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y =
         action.payload.score;
-      state.value.datamap = newDataMap;
+      state.value = {
+        ...state.value,
+        datamap: newDataMap,
+        data: data,
+      };
     },
     UPDATE_SETTINGS: (state, action) => {
-      state.value.dbaSettings = action.payload.dbaSettings;
-      state.value.freqSettings = action.payload.freqSettings;
-      state.value.datamapBinNames = generateVoicemapBinNames(
-        action.payload.dbaSettings,
-        action.payload.freqSettings
-      );
+      state.value = {
+        ...state.value,
+        dbaSettings: action.payload.dbaSettings,
+        freqSettings: action.payload.freqSettings,
+        datamapBinNames: generateVoicemapBinNames(
+          action.payload.dbaSettings,
+          action.payload.freqSettings
+        ),
+      };
     },
     REMOVE_RECORDING: (state, action) => {
       // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to remove
       // remove the recording from the data array
-      let data = state.value.data;
-      let removeIndex = data.findIndex(
-        (item) =>
-          item.dbaBin === action.payload.dbaBin &&
-          item.freqBin === action.payload.freqBin
-      );
-      data.splice(removeIndex, 1);
-      state.value.data = data;
-      // remove the recording from the datamap
-      let newDataMap = JSON.parse(JSON.stringify(state.value.datamap));
-      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y = 0;
-      state.value.datamap = newDataMap;
+      const newData = {
+        ...state.value,
+        data: state.value.data.filter(
+          (item) =>
+            item.dbaBin !== action.payload.dbaBin ||
+            item.freqBin !== action.payload.freqBin
+        ),
+        datamap: state.value.datamap.map((bin) => {
+          if (bin.id === action.payload.dbaBin) {
+            return {
+              ...bin,
+              data: bin.data.map((point) => {
+                if (point.x === action.payload.freqBin) {
+                  return {
+                    ...point,
+                    y: 0,
+                  };
+                }
+                return point;
+              }),
+            };
+          }
+          return bin;
+        }),
+      };
+      state.value = newData;
     },
     ACCEPT_RECORDING: (state, action) => {
       // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to accept
-      let data = state.value.data;
-      let acceptIndex = data.findIndex(
-        (item) =>
-          item.dbaBin === action.payload.dbaBin &&
-          item.freqBin === action.payload.freqBin
-      );
-      data[acceptIndex].accepted = true;
-      state.value.data = data;
+      const newData = {
+        ...state.value,
+        data: state.value.data.map((item) => {
+          if (
+            item.dbaBin === action.payload.dbaBin &&
+            item.freqBin === action.payload.freqBin
+          ) {
+            return {
+              ...item,
+              accepted: true,
+            };
+          }
+          return item;
+        }),
+      };
+      state.value = newData;
     },
     SET_ANNOTATION: (state, action) => {
-      console.log("SET_ANNOTATION", action.payload);
-      state.value.annotation = action.payload;
+      state.value = {
+        ...state.value,
+        annotation: action.payload,
+      };
+      console.log();
     },
   },
 });
