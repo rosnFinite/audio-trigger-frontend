@@ -1,8 +1,13 @@
 {
   "name": "trigger-frontend",
   "version": "0.1.0",
+  "author": "Fabio Rose",
+  "description": "Web app to control the trigger system and accumulate voice data",
+  "homepage": "./",
+  "main": "public/electron-main.js",
   "private": true,
   "proxy": "http://localhost:5001/",
+  "type": "module",
   "dependencies": {
     "@mantine/core": "^7.4.1",
     "@mantine/hooks": "^7.4.1",
@@ -17,6 +22,7 @@
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "axios": "^1.6.7",
+    "electron-is-dev": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
@@ -33,7 +39,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-pack": "electron-builder -c.extraMetadata.main=build/electron-main.js",
+    "preelectron-pack": "react-scripts build",
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -45,6 +55,7 @@
     "production": [
       ">0.2%",
       "not dead",
+      "not ie <= 11",
       "not op_mini all"
     ],
     "development": [
@@ -54,6 +65,11 @@
     ]
   },
   "devDependencies": {
-    "@types/css-modules": "^1.0.5"
+    "@types/css-modules": "^1.0.5",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3",
+    "wait-on": "^7.2.0"
   }
 }
