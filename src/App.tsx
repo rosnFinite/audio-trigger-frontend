@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Settings from "./views/Settings";
 import VoiceField from "./views/VoiceField";
-import { socket } from "./socket";
 import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
+import { socket } from "./socket";
 
 export default function App() {
   const settings = useAppSelector((state) => state.settings.values);
@@ -13,7 +13,9 @@ export default function App() {
 
   // handles registering of web client to socketio backend and sets the audio client sid
   useEffect(() => {
+    console.log("useEffect");
     socket.on("connect", () => {
+      console.log("connected to socketio server");
       socket.emit("registerClient", { type: "web" });
     });
     socket.on("connect_error", (error: Error) => {
@@ -43,13 +45,12 @@ export default function App() {
     });
   }, []);
 
+  // Careful  when using HashRouter: Different behaviour between NavLink in Layout and Link from react-router-dom. href in NavLink needs /#/pathname whereas Link works without prepending /# to /pathname
   return (
     <Routes>
       <Route path="/" element={<Settings socket={socket} />} />
-      <Route path="/stimmfeld">
-        <Route index element={<VoiceField socket={socket} />} />
-        <Route path="patientenansicht" element={<Patient socket={socket} />} />
-      </Route>
+      <Route path="/stimmfeld" element={<VoiceField socket={socket} />} />
+      <Route path="/patientenansicht" element={<Patient socket={socket} />} />
     </Routes>
   );
 }

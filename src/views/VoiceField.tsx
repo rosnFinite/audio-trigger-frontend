@@ -55,7 +55,7 @@ export default function VoiceField({ socket }: SocketProp) {
         </Blockquote>
         <Divider my="xs" />
         <Center>
-          <Link to="/stimmfeld/patientenansicht" target="_blank">
+          <Link to="/patientenansicht" target="_blank">
             <Button rightSection={<TbSwipe />}>Patientenansicht</Button>
           </Link>
         </Center>

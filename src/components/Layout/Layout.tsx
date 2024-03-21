@@ -5,23 +5,22 @@ import {
   AppShell,
   Badge,
   Burger,
+  Button,
   Container,
   Flex,
   Group,
   LoadingOverlay,
-  NavLink,
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  TbCameraSearch,
   TbAlpha,
   TbChartGridDots,
   TbMusicSearch,
   TbSettings,
 } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Layout(props: { children: React.ReactNode }) {
   const { pathname } = useLocation();
@@ -101,19 +100,29 @@ export default function Layout(props: { children: React.ReactNode }) {
         </Flex>
       </AppShell.Header>
 
-      <AppShell.Navbar p="sm">
-        <NavLink
-          href="/"
-          label="Einstellungen"
-          leftSection={<TbSettings />}
-          active={pathname === "/"}
-        />
-        <NavLink
-          href="/stimmfeld"
-          label="Stimmfeld"
-          leftSection={<TbMusicSearch />}
-          active={pathname === "/stimmfeld"}
-        />
+      <AppShell.Navbar p={0}>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button
+            radius="xs"
+            justify="space-between"
+            fullWidth
+            rightSection={<TbSettings />}
+            variant={pathname === "/" ? "light" : "transparent"}
+          >
+            Einstellungen
+          </Button>
+        </Link>
+        <Link to="/stimmfeld" style={{ textDecoration: "none" }}>
+          <Button
+            radius="xs"
+            justify="space-between"
+            fullWidth
+            rightSection={<TbMusicSearch />}
+            variant={pathname === "/stimmfeld" ? "light" : "transparent"}
+          >
+            Stimmfeld
+          </Button>
+        </Link>
       </AppShell.Navbar>
       <AppShell.Main pos="relative">
         <LoadingOverlay
