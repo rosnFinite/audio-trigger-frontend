@@ -123,31 +123,14 @@ export const voicemapDataSlice = createSlice({
     REMOVE_RECORDING: (state, action) => {
       // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to remove
       // remove the recording from the data array
-      const newData = {
-        ...state.value,
-        data: state.value.data.filter(
-          (item) =>
-            item.dbaBin !== action.payload.dbaBin ||
-            item.freqBin !== action.payload.freqBin
-        ),
-        datamap: state.value.datamap.map((bin) => {
-          if (bin.id === action.payload.dbaBin) {
-            return {
-              ...bin,
-              data: bin.data.map((point) => {
-                if (point.x === action.payload.freqBin) {
-                  return {
-                    ...point,
-                    y: 0,
-                  };
-                }
-                return point;
-              }),
-            };
-          }
-          return bin;
-        }),
-      };
+      console.log("Removing recording", action.payload);
+      const newData = { ...state.value };
+      newData.data = newData.data.filter(
+        (item) =>
+          item.dbaBin !== action.payload.dbaBin ||
+          item.freqBin !== action.payload.freqBin
+      );
+      newData.datamap[action.payload.dbaBin].data[action.payload.freqBin].y = 0;
       state.value = newData;
     },
     ACCEPT_RECORDING: (state, action) => {
