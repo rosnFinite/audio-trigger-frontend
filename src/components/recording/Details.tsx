@@ -14,10 +14,6 @@ export default function Details({
   imagesPath,
   ...rest
 }: CustomModalProps) {
-  useEffect(() => {
-    console.log("Details component mounted");
-  }, []);
-
   return (
     <Modal
       {...rest}
