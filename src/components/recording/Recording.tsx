@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Socket } from "socket.io-client";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+import Details from "./Details";
 
 export default function Recording({
   socket,
@@ -38,16 +39,17 @@ export default function Recording({
     (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
-  const [imagePath, setImagePath] = useState("");
-  const [opened, { open, close }] = useDisclosure(false);
+  const [imagesPath, setImagesPath] = useState("");
+  const [detailsOpened, setDetailsOpened] = useState(false);
+  const [confirmOpened, setConfirmOpened] = useState(false);
 
   useEffect(() => {
     // settingsSaveLocation contains complete path to local folder, for the api request we only need the last part
     const splittedLocation = settingsSaveLocation.split("\\");
     const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
       datamapBinNames.dba.length - dbaBin - 1
-    }_${freqBin}/spectrogram_intensity.png`;
-    setImagePath(path);
+    }_${freqBin}`;
+    setImagesPath(path);
   }, []);
 
   return (
@@ -73,10 +75,14 @@ export default function Recording({
           });
         }}
       >
-        <Image src={imagePath} h={150} w={150} />
+        <Image
+          src={`${imagesPath}\\spectrogram_intensity.png`}
+          h={150}
+          w={150}
+        />
         <Container ml={0} mt={10} h={"100%"}>
           <Group>
-            <Text fw={700}>Frequenz-Bin [Hz]:</Text>
+            <Text fw={700}>Frequenz [Hz]:</Text>
             <Text>
               {datamapBinNames.freq[freqBin].slice(0, -2) +
                 "." +
@@ -84,7 +90,7 @@ export default function Recording({
             </Text>
           </Group>
           <Group>
-            <Text fw={700}>Dezibel-Bin [db(A)]:</Text>
+            <Text fw={700}>Dezibel [db(A)]:</Text>
             <Text>{datamapBinNames.dba[dbaBin]}</Text>
           </Group>
           <Group>
@@ -108,9 +114,22 @@ export default function Recording({
           size="xl"
           radius="lg"
           aria-label="detail-modal"
+          onClick={() => {
+            setDetailsOpened(true);
+          }}
         >
           <TbSwipe size={30} />
         </ActionIcon>
+        <Details
+          title={`Aufnahmedetails zu ${datamapBinNames.dba[dbaBin]} db(A) / ${
+            datamapBinNames.freq[freqBin].slice(0, -2) +
+            "." +
+            datamapBinNames.freq[freqBin].slice(-2)
+          } Hz`}
+          opened={detailsOpened}
+          onClose={() => setDetailsOpened(false)}
+          imagesPath={imagesPath}
+        />
         {acceptable ? (
           <Button
             h="100%"
@@ -128,7 +147,12 @@ export default function Recording({
         ) : (
           <></>
         )}
-        <Modal opened={opened} onClose={close} centered title="Löschen">
+        <Modal
+          opened={confirmOpened}
+          onClose={() => setConfirmOpened(false)}
+          centered
+          title="Löschen"
+        >
           <Alert
             variant="light"
             color="red"
@@ -139,7 +163,7 @@ export default function Recording({
             das Stimmfeld aktualisieren.
           </Alert>
           <Group mt={15} grow>
-            <Button variant="light" onClick={close}>
+            <Button variant="light" onClick={() => setConfirmOpened(false)}>
               Abbrechen
             </Button>
             <Button
@@ -153,7 +177,7 @@ export default function Recording({
                   type: "voicemap/REMOVE_RECORDING",
                   payload: { freqBin: freqBin, dbaBin: dbaBin },
                 });
-                close();
+                setConfirmOpened(false);
               }}
             >
               Löschen
@@ -166,7 +190,7 @@ export default function Recording({
           rightSection={<TbTrashX size={30} />}
           pr={25}
           radius={0}
-          onClick={open}
+          onClick={() => setConfirmOpened(true)}
         />
       </Flex>
     </Card>
