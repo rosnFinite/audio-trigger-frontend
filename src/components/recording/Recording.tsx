@@ -14,13 +14,13 @@ import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Socket } from "socket.io-client";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect, useState } from "react";
 
 export default function Recording({
   socket,
   freqBin,
   dbaBin,
   qScore,
-  saveLocation,
   timestamp,
   acceptable = true,
 }: {
@@ -28,15 +28,26 @@ export default function Recording({
   freqBin: number;
   dbaBin: number;
   qScore: string;
-  saveLocation: string;
   timestamp: string;
   acceptable: boolean;
 }) {
   const datamapBinNames = useAppSelector(
     (state) => state.voicemap.value.datamapBinNames
   );
+  const settingsSaveLocation = useAppSelector(
+    (state) => state.settings.values.save_location
+  );
   const dispatch = useAppDispatch();
+  const [imagePath, setImagePath] = useState("");
   const [opened, { open, close }] = useDisclosure(false);
+
+  useEffect(() => {
+    const splittedLocation = settingsSaveLocation.split("\\");
+    const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
+      datamapBinNames.dba[dbaBin]
+    }_${datamapBinNames.freq[freqBin].slice(0, -2)}/waveform.png`;
+    setImagePath(path);
+  }, []);
 
   return (
     <Card
@@ -61,7 +72,7 @@ export default function Recording({
           });
         }}
       >
-        <Image src="/temp/TEST_C001H001S0002000001.jpg" h={150} w={150} />
+        <Image src={imagePath} h={150} w={150} />
         <Container ml={0} mt={10} h={"100%"}>
           <Group>
             <Text fw={700}>Frequenz-Bin [Hz]:</Text>
@@ -81,7 +92,9 @@ export default function Recording({
           </Group>
           <Group>
             <Text fw={700}>Speicherort:</Text>
-            <Text>{saveLocation}</Text>
+            <Text>{`${settingsSaveLocation}\\${
+              datamapBinNames.dba[dbaBin]
+            }_${datamapBinNames.freq[freqBin].slice(0, -2)}`}</Text>
           </Group>
           <Group>
             <Text fw={700}>Zeitstempel:</Text>

@@ -12,7 +12,6 @@ import {
   Text,
   Tooltip,
   SegmentedControl,
-  LoadingOverlay,
 } from "@mantine/core";
 import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
@@ -25,9 +24,6 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function VoiceField({ socket }: SocketProp) {
   const data = useAppSelector((state) => state.voicemap.value.data);
-  const settingsStatus = useAppSelector(
-    (state) => state.settings.values.status
-  );
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [newRecordings, setNewRecordings] = useState(data);
   const [acceptedRecordings, setAcceptedRecordings] = useState(data);
@@ -113,7 +109,6 @@ export default function VoiceField({ socket }: SocketProp) {
                 freqBin={item.freqBin}
                 dbaBin={item.dbaBin}
                 qScore={item.qScore}
-                saveLocation="C:/user/images/fksdjhfsd.jpg"
                 timestamp={item.timestamp}
                 acceptable
               />
@@ -126,7 +121,6 @@ export default function VoiceField({ socket }: SocketProp) {
                 freqBin={item.freqBin}
                 dbaBin={item.dbaBin}
                 qScore={item.qScore}
-                saveLocation="C:/user/images/fksdjhfsd.jpg"
                 timestamp={item.timestamp}
                 acceptable={false}
               />
