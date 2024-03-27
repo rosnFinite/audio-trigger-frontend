@@ -12,6 +12,7 @@ import {
   Text,
   Tooltip,
   SegmentedControl,
+  NativeSelect,
 } from "@mantine/core";
 import { TbInfoCircle, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
@@ -27,6 +28,7 @@ export default function VoiceField({ socket }: SocketProp) {
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [newRecordings, setNewRecordings] = useState(data);
   const [acceptedRecordings, setAcceptedRecordings] = useState(data);
+  const [sortedBy, setSortedBy] = useState("timestamp");
 
   useEffect(() => {
     setNewRecordings(data.filter((item) => !item.accepted));
@@ -90,6 +92,19 @@ export default function VoiceField({ socket }: SocketProp) {
           ]}
           onChange={(value) => setActiveRecordingTab(value)}
         />
+        <Group>
+          <Text>Sortieren nach:</Text>
+          <NativeSelect
+            value={sortedBy}
+            onChange={(event) => setSortedBy(event.currentTarget.value)}
+            data={[
+              { label: "Zeitstempel", value: "timestamp" },
+              { label: "Frequenz", value: "freqBin" },
+              { label: "Dezibel", value: "dbaBin" },
+              { label: "Q-Score", value: "qScore" },
+            ]}
+          />
+        </Group>
         <ScrollArea
           h={450}
           type="auto"
@@ -102,29 +117,57 @@ export default function VoiceField({ socket }: SocketProp) {
               <Text fw={700}>Noch keine Aufnahmen vorhanden.</Text>
             </Center>
           ) : activeRecordingTab === "new" ? (
-            newRecordings.map((item, index) => (
-              <Recording
-                key={index}
-                socket={socket}
-                freqBin={item.freqBin}
-                dbaBin={item.dbaBin}
-                qScore={item.qScore}
-                timestamp={item.timestamp}
-                acceptable
-              />
-            ))
+            newRecordings
+              .sort((a, b) => {
+                if (
+                  a[sortedBy as keyof typeof a] < b[sortedBy as keyof typeof b]
+                ) {
+                  return -1;
+                }
+                if (
+                  a[sortedBy as keyof typeof a] > b[sortedBy as keyof typeof b]
+                ) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((item, index) => (
+                <Recording
+                  key={index}
+                  socket={socket}
+                  freqBin={item.freqBin}
+                  dbaBin={item.dbaBin}
+                  qScore={item.qScore}
+                  timestamp={item.timestamp}
+                  acceptable
+                />
+              ))
           ) : (
-            acceptedRecordings.map((item, index) => (
-              <Recording
-                key={index}
-                socket={socket}
-                freqBin={item.freqBin}
-                dbaBin={item.dbaBin}
-                qScore={item.qScore}
-                timestamp={item.timestamp}
-                acceptable={false}
-              />
-            ))
+            acceptedRecordings
+              .sort((a, b) => {
+                if (
+                  a[sortedBy as keyof typeof a] < b[sortedBy as keyof typeof b]
+                ) {
+                  return -1;
+                }
+                if (
+                  a[sortedBy as keyof typeof a] > b[sortedBy as keyof typeof b]
+                ) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((item, index) => (
+                <Recording
+                  key={index}
+                  socket={socket}
+                  freqBin={item.freqBin}
+                  dbaBin={item.dbaBin}
+                  qScore={item.qScore}
+                  timestamp={item.timestamp}
+                  acceptable={false}
+                />
+              ))
           )}
         </ScrollArea>
       </Stack>
