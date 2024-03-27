@@ -40,7 +40,7 @@ function generateVoicemapBinNames(
     i <= freqSettings.upper;
     i *= Math.pow(2, 2 / 12)
   ) {
-    lowerBounds.freq.push(i.toFixed(2).toString().replace(".", ""));
+    lowerBounds.freq.push(i.toFixed(2).replace(".", ""));
   }
   for (
     let i = dbaSettings.upper;
