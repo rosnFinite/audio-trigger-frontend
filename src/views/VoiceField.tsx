@@ -13,15 +13,16 @@ import {
   Tooltip,
   SegmentedControl,
   NativeSelect,
+  ActionIcon,
 } from "@mantine/core";
-import { TbInfoCircle, TbSwipe } from "react-icons/tb";
+import { TbInfoCircle, TbRefresh, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import ControlButtonGroup from "../components/ControlButtonGroup";
 import Layout from "../components/Layout/Layout";
 import { SocketProp } from "../types/SocketProp.types";
 import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface RecordingData {
   id: number;
@@ -35,6 +36,7 @@ interface RecordingData {
 export default function VoiceField({ socket }: SocketProp) {
   const data = useAppSelector((state) => state.voicemap.value.data);
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
+  const [reloadableSeed, setReloadableSeed] = useState(1);
   const [newRecordings, setNewRecordings] = useState<RecordingData[]>([]);
   const [acceptedRecordings, setAcceptedRecordings] = useState<RecordingData[]>(
     []
@@ -119,8 +121,17 @@ export default function VoiceField({ socket }: SocketProp) {
               { label: "Q-Score", value: "qScore" },
             ]}
           />
+          <Tooltip label="Aktualisiert die dargestellten Aufnahmen, falls Visualisierung/Daten fehlen sollten.">
+            <ActionIcon
+              onClick={() => setReloadableSeed(reloadableSeed + 1)}
+              aria-label="refresh-button"
+            >
+              <TbRefresh />
+            </ActionIcon>
+          </Tooltip>
         </Group>
         <ScrollArea
+          key={reloadableSeed}
           h={450}
           type="auto"
           offsetScrollbars
