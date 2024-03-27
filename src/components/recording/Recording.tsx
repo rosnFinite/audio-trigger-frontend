@@ -42,10 +42,11 @@ export default function Recording({
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
+    // settingsSaveLocation contains complete path to local folder, for the api request we only need the last part
     const splittedLocation = settingsSaveLocation.split("\\");
     const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
-      datamapBinNames.dba[dbaBin]
-    }_${datamapBinNames.freq[freqBin].slice(0, -2)}/waveform.png`;
+      datamapBinNames.dba.length - dbaBin - 1
+    }_${freqBin}/waveform.png`;
     setImagePath(path);
   }, []);
 
@@ -93,8 +94,8 @@ export default function Recording({
           <Group>
             <Text fw={700}>Speicherort:</Text>
             <Text>{`${settingsSaveLocation}\\${
-              datamapBinNames.dba[dbaBin]
-            }_${datamapBinNames.freq[freqBin].slice(0, -2)}`}</Text>
+              datamapBinNames.dba.length - dbaBin - 1
+            }_${freqBin}`}</Text>
           </Group>
           <Group>
             <Text fw={700}>Zeitstempel:</Text>
