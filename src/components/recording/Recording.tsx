@@ -46,7 +46,7 @@ export default function Recording({
     const splittedLocation = settingsSaveLocation.split("\\");
     const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
       datamapBinNames.dba.length - dbaBin - 1
-    }_${freqBin}/waveform.png`;
+    }_${freqBin}/spectrogram_intensity.png`;
     setImagePath(path);
   }, []);
 

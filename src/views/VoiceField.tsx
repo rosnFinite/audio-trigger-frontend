@@ -23,16 +23,31 @@ import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useMemo, useState } from "react";
 
+interface RecordingData {
+  id: number;
+  freqBin: number;
+  dbaBin: number;
+  qScore: string;
+  timestamp: string;
+  accepted: boolean;
+}
+
 export default function VoiceField({ socket }: SocketProp) {
   const data = useAppSelector((state) => state.voicemap.value.data);
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
-  const [newRecordings, setNewRecordings] = useState(data);
-  const [acceptedRecordings, setAcceptedRecordings] = useState(data);
+  const [newRecordings, setNewRecordings] = useState<RecordingData[]>([]);
+  const [acceptedRecordings, setAcceptedRecordings] = useState<RecordingData[]>(
+    []
+  );
   const [sortedBy, setSortedBy] = useState("timestamp");
 
   useEffect(() => {
-    setNewRecordings(data.filter((item) => !item.accepted));
-    setAcceptedRecordings(data.filter((item) => item.accepted));
+    // addind random id to each item to avoid key conflicts in dynamic rendering of Recording components
+    const tmp_data = data.map((item) => {
+      return { ...item, id: Math.random() };
+    });
+    setNewRecordings(tmp_data.filter((item) => !item.accepted));
+    setAcceptedRecordings(tmp_data.filter((item) => item.accepted));
   }, [data]);
 
   //TODO: update badge to count accepted and pending recordings
@@ -131,9 +146,9 @@ export default function VoiceField({ socket }: SocketProp) {
                 }
                 return 0;
               })
-              .map((item, index) => (
+              .map((item) => (
                 <Recording
-                  key={index}
+                  key={item.id}
                   socket={socket}
                   freqBin={item.freqBin}
                   dbaBin={item.dbaBin}
@@ -157,9 +172,9 @@ export default function VoiceField({ socket }: SocketProp) {
                 }
                 return 0;
               })
-              .map((item, index) => (
+              .map((item) => (
                 <Recording
-                  key={index}
+                  key={item.id}
                   socket={socket}
                   freqBin={item.freqBin}
                   dbaBin={item.dbaBin}
