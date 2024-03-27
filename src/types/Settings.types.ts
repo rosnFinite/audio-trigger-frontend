@@ -1,5 +1,6 @@
 export interface Settings {
   sid: string;
+  save_location: string;
   status: {
     recorder: string;
     trigger: string;
