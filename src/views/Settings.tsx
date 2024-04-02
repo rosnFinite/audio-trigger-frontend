@@ -91,7 +91,7 @@ export default function Settings({ socket }: SocketProp) {
               <Stack>
                 <NativeSelect
                   label="Aufnahmegerät"
-                  description="Falls angeschlossen wird standardmäßig das EGG-Gerät (iMic) ausgewählt, sont muss hier ein Eingabegerät ausgewählt werden."
+                  description="Auswahl des zu verwendenden Aufnahmegerätes. Bei 'Automatisch erkennen' wird standardmäßig das iMic-Microfon verwendet. Falls nicht verfügbar, wird das erste gefundene Gerät verwendet."
                   data={devices}
                   onChange={(event) => {
                     setSettings({
@@ -194,7 +194,7 @@ export default function Settings({ socket }: SocketProp) {
             </Accordion.Control>
             <Accordion.Panel>
               <Stack>
-                <Text fw={700}>Stimmfeld</Text>
+                <Text fw={700}>Definition des Stimmfeldes</Text>
                 <Divider />
                 <Blockquote
                   color="blue"
@@ -308,15 +308,17 @@ export default function Settings({ socket }: SocketProp) {
                     }}
                   />
                 </Group>
-                <Text fw={700}>Triggerschwelle</Text>
+                <Text fw={700}>Einstellung des Triggerverhaltens</Text>
                 <Divider />
                 <Group ml={0} pl={0} justify="space-between" grow>
                   <NumberInput
-                    label="Mindest-Qualitäts-Score"
-                    description="Zu erreichender Qualitäts-Score für die Triggerung eines Events. Wertebereich: 0.0 - 1.0. "
+                    label="Mindest-Score"
+                    description="Zu erreichender Score für das Erfassen eines Events. Wertebereich: 0.0 - 1.0. "
                     defaultValue={0.7}
                     value={settings.minScore}
                     placeholder="0.7"
+                    min={0}
+                    max={1}
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -327,12 +329,13 @@ export default function Settings({ socket }: SocketProp) {
                   />
                   <NumberInput
                     label="Retrigger Scoreverbesserung [%]"
-                    description="Prozentuale Verbesserung eine bereits hinterlegten Q-Scores, um ein erneutes Triggern zu ermöglichen."
+                    description="Prozentuale Verbesserung eines bereits hinterlegten Scores, um ein erneutes Triggern zu ermöglichen."
                     defaultValue={10}
                     placeholder="10"
                     suffix="%"
                     min={10}
                     max={90}
+                    hideControls
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
