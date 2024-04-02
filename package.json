@@ -4,9 +4,10 @@
   "private": true,
   "proxy": "http://localhost:5001/",
   "dependencies": {
-    "@mantine/core": "^7.4.1",
-    "@mantine/hooks": "^7.4.1",
-    "@mantine/notifications": "^7.5.3",
+    "@mantine/core": "^7.7.1",
+    "@mantine/dropzone": "^7.7.1",
+    "@mantine/hooks": "^7.7.1",
+    "@mantine/notifications": "^7.7.1",
     "@nivo/heatmap": "^0.84.0",
     "@reduxjs/toolkit": "^2.1.0",
     "@testing-library/jest-dom": "^5.17.0",
