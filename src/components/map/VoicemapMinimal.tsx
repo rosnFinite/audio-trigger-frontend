@@ -5,6 +5,7 @@ export default function VoicemapMinimal({
   datamap,
   annotation,
   maxScore,
+  minScore,
 }: {
   datamap: {
     id: string;
@@ -18,6 +19,7 @@ export default function VoicemapMinimal({
     text: string;
   };
   maxScore: number;
+  minScore: number;
 }) {
   return (
     <Container fluid h="99vh" w="100vw">
@@ -56,7 +58,7 @@ export default function VoicemapMinimal({
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: 0,
+          minValue: minScore,
           maxValue: maxScore,
         }}
         emptyColor="#555555"
