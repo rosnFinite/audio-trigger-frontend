@@ -23,5 +23,5 @@ export const initialSettings: Settings = {
     upper: 115,
     steps: 5,
   },
-  qualityScore: 50,
+  minScore: 0.7,
 };

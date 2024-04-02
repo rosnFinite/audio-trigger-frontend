@@ -26,9 +26,7 @@ export default function Voicemap({ socket, height, width }: VoicemapProps) {
   const settingsStatus = useAppSelector(
     (state) => state.settings.values.status
   );
-  const settingsQScore = useAppSelector(
-    (state) => state.settings.values.qualityScore
-  );
+  const minScore = useAppSelector((state) => state.settings.values.minScore);
   const voicemap = useAppSelector((state) => state.voicemap.value);
   const datamapBinNames = useAppSelector(
     (state) => state.voicemap.value.datamapBinNames
@@ -134,8 +132,8 @@ export default function Voicemap({ socket, height, width }: VoicemapProps) {
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: 0,
-          maxValue: settingsQScore,
+          minValue: minScore,
+          maxValue: 1,
         }}
         emptyColor="#555555"
         enableLabels={false}

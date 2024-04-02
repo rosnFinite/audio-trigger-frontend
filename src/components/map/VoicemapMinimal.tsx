@@ -1,7 +1,5 @@
 import { Container } from "@mantine/core";
-import { useAppSelector } from "../../redux/hooks";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
-import { useEffect } from "react";
 
 export default function VoicemapMinimal({
   datamap,

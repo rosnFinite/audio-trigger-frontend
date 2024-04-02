@@ -31,7 +31,7 @@ export default function Patient({ socket }: SocketProp) {
     <VoicemapMinimal
       datamap={voicemap.datamap}
       annotation={voicemap.annotation}
-      maxScore={50}
+      maxScore={1}
     />
   );
 }

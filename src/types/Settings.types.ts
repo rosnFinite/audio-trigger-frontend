@@ -21,5 +21,5 @@ export interface Settings {
     upper: number;
     steps: number;
   };
-  qualityScore: number;
+  minScore: number;
 }

@@ -314,17 +314,17 @@ export default function Settings({ socket }: SocketProp) {
                 <Divider />
                 <Container ml={0} pl={0}>
                   <NumberInput
-                    label="Oberer Quality Score"
-                    description="ZU unterschreitender Quality Score, um einen Trigger auszulösen"
-                    defaultValue={50}
-                    value={settings.qualityScore}
-                    placeholder="50"
+                    label="Mindest-Qualitäts-Score"
+                    description="Zu erreichender Qualitäts-Score für die Triggerung eines Events. Wertebereich: 0.0 - 1.0. "
+                    defaultValue={0.7}
+                    value={settings.minScore}
+                    placeholder="0.7"
                     withAsterisk
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
-                        qualityScore: Number(event.value),
+                        minScore: Number(event.value),
                       });
                     }}
                   />
