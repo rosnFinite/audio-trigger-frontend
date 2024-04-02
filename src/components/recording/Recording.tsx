@@ -39,7 +39,7 @@ export default function Recording({
     (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
-  const [imagesPath, setImagesPath] = useState("");
+  const [path, setPath] = useState("");
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
 
@@ -49,7 +49,7 @@ export default function Recording({
     const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
       datamapBinNames.dba.length - dbaBin - 1
     }_${freqBin}`;
-    setImagesPath(path);
+    setPath(path);
   }, []);
 
   return (
@@ -75,11 +75,7 @@ export default function Recording({
           });
         }}
       >
-        <Image
-          src={`${imagesPath}\\spectrogram_intensity.png`}
-          h={150}
-          w={150}
-        />
+        <Image src={`${path}\\spectrogram_intensity.png`} h={150} w={150} />
         <Container ml={0} mt={10} h={"100%"}>
           <Group>
             <Text fw={700}>Frequenz [Hz]:</Text>
@@ -125,10 +121,10 @@ export default function Recording({
             datamapBinNames.freq[freqBin].slice(0, -2) +
             "." +
             datamapBinNames.freq[freqBin].slice(-2)
-          } Hz`}
+          } Hz / ${qScore}`}
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
-          imagesPath={imagesPath}
+          path={path}
         />
         {acceptable ? (
           <Button
