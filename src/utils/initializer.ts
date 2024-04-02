@@ -8,7 +8,7 @@ export const initialSettings: Settings = {
     trigger: "offline",
   },
   device: -1,
-  sampleRate: 44100,
+  sampleRate: 16000,
   bufferSize: 0.2,
   chunkSize: 1024,
   mono: false,
@@ -24,4 +24,5 @@ export const initialSettings: Settings = {
     steps: 5,
   },
   minScore: 0.7,
+  retriggerPercentageImprovement: 0.5,
 };

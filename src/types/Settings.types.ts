@@ -22,4 +22,5 @@ export interface Settings {
     steps: number;
   };
   minScore: number;
+  retriggerPercentageImprovement: number;
 }

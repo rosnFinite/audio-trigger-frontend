@@ -102,11 +102,11 @@ export default function Settings({ socket }: SocketProp) {
                 />
                 <Group grow>
                   <NumberInput
-                    label="Sampling rate [Hz]"
-                    defaultValue={44100}
+                    label="Abtastrate"
+                    defaultValue={16000}
                     value={settings.sampleRate}
-                    placeholder="44100"
-                    withAsterisk
+                    placeholder="16000"
+                    suffix=" Hz"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -116,11 +116,11 @@ export default function Settings({ socket }: SocketProp) {
                     }}
                   />
                   <NumberInput
-                    label="Buffergröße [Sek.]"
+                    label="Buffergröße"
                     defaultValue={0.2}
                     value={settings.bufferSize}
                     placeholder="0.2"
-                    withAsterisk
+                    suffix=" Sek."
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -134,7 +134,6 @@ export default function Settings({ socket }: SocketProp) {
                     defaultValue={1024}
                     value={settings.chunkSize}
                     placeholder="1024"
-                    withAsterisk
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -209,12 +208,12 @@ export default function Settings({ socket }: SocketProp) {
                 </Blockquote>
                 <Group grow>
                   <NumberInput
-                    label="Frequenz Hz [untere Grenze]"
+                    label="Untere Frequenzgrenze"
                     description="Untere Grenze des relevanten Frequenzbereichs"
                     defaultValue={55}
                     value={settings.frequency.lower}
                     placeholder="55"
-                    withAsterisk
+                    suffix=" Hz"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -227,12 +226,12 @@ export default function Settings({ socket }: SocketProp) {
                     }}
                   />
                   <NumberInput
-                    label="Frequenz Hz [obere Grenze]"
+                    label="Obere Frequenzgrenze"
                     description="Obere Grenze des relevanten Frequenzbereichs"
                     defaultValue={1600}
                     value={settings.frequency.upper}
                     placeholder="1600"
-                    withAsterisk
+                    suffix=" Hz"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -250,7 +249,6 @@ export default function Settings({ socket }: SocketProp) {
                     defaultValue={2}
                     value={settings.frequency.steps}
                     placeholder="2"
-                    withAsterisk
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -265,12 +263,12 @@ export default function Settings({ socket }: SocketProp) {
                 </Group>
                 <Group grow>
                   <NumberInput
-                    label="dB(A) [untere Grenze]"
+                    label="Untere Dezibelgrenze"
                     description="Untere Grenze des relevanten Schalldruckpegels"
                     defaultValue={35}
                     value={settings.db.lower}
                     placeholder="35"
-                    withAsterisk
+                    suffix=" dB"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -280,12 +278,12 @@ export default function Settings({ socket }: SocketProp) {
                     }}
                   />
                   <NumberInput
-                    label="dB(A) [obere Grenze]"
+                    label="Obere Dezibelgrenze"
                     description="Obere Grenze des relevanten Schalldruckpegels"
                     defaultValue={115}
                     value={settings.db.upper}
                     placeholder="115"
-                    withAsterisk
+                    suffix=" dB"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -295,12 +293,12 @@ export default function Settings({ socket }: SocketProp) {
                     }}
                   />
                   <NumberInput
-                    label="dB(A)-Schritte"
+                    label="Dezibelschritte"
                     description="Größe der zusammengefassten Schalldruckpegelbereiche"
                     defaultValue={5}
                     value={settings.db.steps}
                     placeholder="5"
-                    withAsterisk
+                    suffix=" dB"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -312,14 +310,13 @@ export default function Settings({ socket }: SocketProp) {
                 </Group>
                 <Text fw={700}>Triggerschwelle</Text>
                 <Divider />
-                <Container ml={0} pl={0}>
+                <Group ml={0} pl={0} justify="space-between" grow>
                   <NumberInput
                     label="Mindest-Qualitäts-Score"
                     description="Zu erreichender Qualitäts-Score für die Triggerung eines Events. Wertebereich: 0.0 - 1.0. "
                     defaultValue={0.7}
                     value={settings.minScore}
                     placeholder="0.7"
-                    withAsterisk
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
@@ -328,7 +325,23 @@ export default function Settings({ socket }: SocketProp) {
                       });
                     }}
                   />
-                </Container>
+                  <NumberInput
+                    label="Retrigger Scoreverbesserung [%]"
+                    description="Prozentuale Verbesserung eine bereits hinterlegten Q-Scores, um ein erneutes Triggern zu ermöglichen."
+                    defaultValue={10}
+                    placeholder="10"
+                    suffix="%"
+                    min={10}
+                    max={90}
+                    onValueChange={(event) => {
+                      setSettings({
+                        ...settings,
+                        retriggerPercentageImprovement:
+                          Number(event.value) / 100,
+                      });
+                    }}
+                  />
+                </Group>
               </Stack>
             </Accordion.Panel>
           </Accordion.Item>
