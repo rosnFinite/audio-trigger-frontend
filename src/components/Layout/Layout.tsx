@@ -90,7 +90,18 @@ export default function Layout(props: { children: React.ReactNode }) {
             Alpha
           </Badge>
           <Group justify="flex-end" gap="xs" ml={"auto"} mr={"2%"}>
-            <Text size="xs">{audioClientSID}</Text>
+            <Text size="xs">
+              ClientID:&nbsp;&nbsp;
+              {audioClientSID === "" ? (
+                <Text span c="red" inherit>
+                  Nicht verbunden
+                </Text>
+              ) : (
+                <Text span c="blue" inherit>
+                  {audioClientSID}
+                </Text>
+              )}
+            </Text>
             <Badge size="md" variant="filled" color={recBadgeColor}>
               Recorder
             </Badge>
