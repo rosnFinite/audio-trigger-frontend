@@ -77,7 +77,7 @@ export default function Settings({ socket }: SocketProp) {
     <Layout>
       <Stack h="100%">
         <Title order={2}>Einstellungen</Title>
-        <Divider my="md" />
+        <Divider />
         <Accordion
           multiple
           defaultValue={["Audioaufnahme"]}

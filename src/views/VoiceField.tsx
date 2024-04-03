@@ -68,7 +68,7 @@ export default function VoiceField({ socket }: SocketProp) {
           in dem die Patientenansicht angezeigt wird. Diese beinhaltet
           ausschließlich das Stimmfeld und keine weiteren Schaltflächen.
         </Blockquote>
-        <Divider my="xs" />
+        <Divider />
         <Center>
           <Link to="/stimmfeld/patientenansicht" target="_blank">
             <Button rightSection={<TbSwipe />}>Patientenansicht</Button>
