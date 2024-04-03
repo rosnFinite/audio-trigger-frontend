@@ -9,6 +9,7 @@ import {
   Modal,
   Alert,
   ActionIcon,
+  Stack,
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -76,39 +77,50 @@ export default function Recording({
         }}
       >
         <Image src={`${path}\\spectrogram_intensity.png`} h={150} w={150} />
-        <Container ml={0} mt={10} h={"100%"}>
+        <Stack ml={10} align="stretch" justify="center" gap={1}>
           <Group>
-            <Text fw={700}>Frequenz [Hz]:</Text>
-            <Text>
+            <Text size="xs" fw={700}>
+              Frequenz [Hz]:
+            </Text>
+            <Text size="xs">
               {datamapBinNames.freq[freqBin].slice(0, -2) +
                 "." +
                 datamapBinNames.freq[freqBin].slice(-2)}
             </Text>
           </Group>
           <Group>
-            <Text fw={700}>Dezibel [db(A)]:</Text>
-            <Text>{datamapBinNames.dba[dbaBin]}</Text>
+            <Text size="xs" fw={700}>
+              Dezibel [db(A)]:
+            </Text>
+            <Text size="xs">{datamapBinNames.dba[dbaBin]}</Text>
           </Group>
           <Group>
-            <Text fw={700}>Q-Score:</Text>
-            <Text>{qScore}</Text>
+            <Text size="xs" fw={700}>
+              Q-Score:
+            </Text>
+            <Text size="xs">{qScore}</Text>
           </Group>
-          <Group>
-            <Text fw={700}>Speicherort:</Text>
-            <Text>{`${settingsSaveLocation}\\${
+          <Group visibleFrom="md">
+            <Text size="xs" fw={700}>
+              Speicherort:
+            </Text>
+            <Text size="xs">{`${settingsSaveLocation}\\${
               datamapBinNames.dba.length - dbaBin - 1
             }_${freqBin}`}</Text>
           </Group>
           <Group>
-            <Text fw={700}>Zeitstempel:</Text>
-            {timestamp}
+            <Text size="xs" fw={700}>
+              Zeitstempel:
+            </Text>
+            <Text size="xs">{timestamp}</Text>
           </Group>
-        </Container>
+        </Stack>
         <ActionIcon
           mr={15}
           variant="light"
           size="xl"
           radius="lg"
+          ml={"auto"}
           aria-label="detail-modal"
           onClick={() => {
             setDetailsOpened(true);
