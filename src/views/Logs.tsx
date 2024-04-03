@@ -9,7 +9,6 @@ import {
 } from "@mantine/core";
 import Layout from "../components/Layout/Layout";
 import { useEffect, useState } from "react";
-import { TbRefresh } from "react-icons/tb";
 import axios from "axios";
 
 export default function Logs() {
@@ -31,7 +30,7 @@ export default function Logs() {
 
     // setup interval to fetch logs
     const intervalTimer = setInterval(fetchLogs, 1000);
-    setReloadableSeed(reloadableSeed + 1); // trigger re-render to update ScrollArea content (key change
+    setReloadableSeed(reloadableSeed + 1); // trigger re-render to update ScrollArea content (key changed)
 
     // function to clean up effect when component unmounts
     return () => clearInterval(intervalTimer);
@@ -39,7 +38,7 @@ export default function Logs() {
 
   return (
     <Layout>
-      <Stack h={"100%"}>
+      <Stack h={"88vh"}>
         <Title order={2}>Logs</Title>
         <Divider />
         <Group align="flex-end">
@@ -53,7 +52,7 @@ export default function Logs() {
         </Group>
         <ScrollArea
           key={reloadableSeed}
-          h={450}
+          h="100%"
           type="auto"
           offsetScrollbars
           scrollbarSize={8}
