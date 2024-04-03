@@ -19,6 +19,7 @@ import {
   TbChartGridDots,
   TbMusicSearch,
   TbSettings,
+  TbNotes,
 } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
 import { useLocation } from "react-router-dom";
@@ -124,6 +125,12 @@ export default function Layout(props: { children: React.ReactNode }) {
           label="Stimmfeld"
           leftSection={<TbMusicSearch />}
           active={pathname === "/stimmfeld"}
+        />
+        <NavLink
+          href="/logs"
+          label="Logs"
+          leftSection={<TbNotes />}
+          active={pathname === "/logs"}
         />
       </AppShell.Navbar>
       <AppShell.Main pos="relative">

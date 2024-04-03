@@ -6,6 +6,7 @@ import { socket } from "./socket";
 import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
+import Logs from "./views/Logs";
 
 export default function App() {
   const settings = useAppSelector((state) => state.settings.values);
@@ -50,6 +51,7 @@ export default function App() {
         <Route index element={<VoiceField socket={socket} />} />
         <Route path="patientenansicht" element={<Patient socket={socket} />} />
       </Route>
+      <Route path="/logs" element={<Logs />} />
     </Routes>
   );
 }
