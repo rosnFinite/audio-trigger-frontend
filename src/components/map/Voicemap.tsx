@@ -1,9 +1,9 @@
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { Socket } from "socket.io-client";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
+import SocketContext from "../../contexts/SocketContext";
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -12,12 +12,13 @@ Because we cannot use floating point numbers as ids, we convert the values to st
 The same is done for the lower frequency bounds of the grid. Which we use to map the frequency bin to the actual frequency value.
  */
 interface VoicemapProps {
-  socket: Socket;
   height?: string;
   width?: string;
 }
 
-export default function Voicemap({ socket, height, width }: VoicemapProps) {
+export default function Voicemap({ height, width }: VoicemapProps) {
+  const socket = useContext(SocketContext);
+
   // needed to create matching string for annotation
   const settingsDb = useAppSelector((state) => state.settings.values.db);
   const settingsFreq = useAppSelector(
@@ -53,6 +54,10 @@ export default function Voicemap({ socket, height, width }: VoicemapProps) {
   }, []);
 
   useEffect(() => {
+    if (!socket) {
+      console.error("Socket is not initialized");
+      return;
+    }
     socket.on("voice", (data) => {
       dispatch({
         type: "voicemap/SET_ANNOTATION",

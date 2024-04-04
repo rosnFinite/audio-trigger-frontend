@@ -19,7 +19,6 @@ import { TbInfoCircle, TbRefresh, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import ControlButtonGroup from "../components/ControlButtonGroup";
 import Layout from "../components/Layout/Layout";
-import { SocketProp } from "../types/SocketProp.types";
 import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
@@ -33,7 +32,7 @@ interface RecordingData {
   accepted: boolean;
 }
 
-export default function VoiceField({ socket }: SocketProp) {
+export default function VoiceField() {
   const data = useAppSelector((state) => state.voicemap.value.data);
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [reloadableSeed, setReloadableSeed] = useState(1);
@@ -74,8 +73,8 @@ export default function VoiceField({ socket }: SocketProp) {
             <Button rightSection={<TbSwipe />}>Patientenansicht</Button>
           </Link>
         </Center>
-        <ControlButtonGroup socket={socket} />
-        <Voicemap socket={socket} />
+        <ControlButtonGroup />
+        <Voicemap />
         <Group gap="xs">
           <Title order={2}>Aufnahmen</Title>
           <Tooltip label="Anzahl ausstehender Aufnahmen">
@@ -160,7 +159,6 @@ export default function VoiceField({ socket }: SocketProp) {
               .map((item) => (
                 <Recording
                   key={item.id}
-                  socket={socket}
                   freqBin={item.freqBin}
                   dbaBin={item.dbaBin}
                   qScore={item.qScore}
@@ -186,7 +184,6 @@ export default function VoiceField({ socket }: SocketProp) {
               .map((item) => (
                 <Recording
                   key={item.id}
-                  socket={socket}
                   freqBin={item.freqBin}
                   dbaBin={item.dbaBin}
                   qScore={item.qScore}

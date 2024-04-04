@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { SocketProp } from "../types/SocketProp.types";
 import VoicemapMinimal from "../components/map/VoicemapMinimal";
 
-export default function Patient({ socket }: SocketProp) {
+export default function Patient() {
   // UGLY solution to listen to state changes from another tab!!
   // useAppSelector does not work in this component, although localStorage changes are synced to other tabs
   const [voicemap, setVoicemap] = useState(

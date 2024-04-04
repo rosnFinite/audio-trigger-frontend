@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "@mantine/core/styles.css";
 import {
   Accordion,
@@ -27,12 +27,13 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
-import { SocketProp } from "../types/SocketProp.types";
 import { initialSettings } from "../utils/initializer";
+import SocketContext from "../contexts/SocketContext";
 
 const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 
-export default function Settings({ socket }: SocketProp) {
+export default function Settings() {
+  const socket = useContext(SocketContext);
   const [devices, setDevices] = useState(initialDevices);
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
@@ -41,6 +42,10 @@ export default function Settings({ socket }: SocketProp) {
 
   // update internal settings state when audio client emitted a statusChanged event
   useEffect(() => {
+    if (!socket) {
+      console.error("Socket is not initialized");
+      return;
+    }
     socket.on("settingsChanged", (data) => {
       dispatch({ type: "settings/UPDATE_SETTINGS", payload: data });
       setSettings(data);
@@ -354,6 +359,10 @@ export default function Settings({ socket }: SocketProp) {
             color="green"
             rightSection={<TbCheck size={"20"} />}
             onClick={() => {
+              if (!socket) {
+                console.error("Socket is not initialized");
+                return;
+              }
               socket.emit("changeSettings", settings);
               notifications.show({
                 title: "Einstellungen angewendet",
@@ -370,7 +379,11 @@ export default function Settings({ socket }: SocketProp) {
             color="red"
             rightSection={<TbArrowBackUp size={"20"} />}
             onClick={() => {
-              socket.emit("changeSettings", initialSettings);
+              if (!socket) {
+                console.error("Socket is not initialized");
+                return;
+              }
+              socket?.emit("changeSettings", initialSettings);
               notifications.show({
                 title: "Einstellungen zurückgesetzt",
                 message:

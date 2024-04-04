@@ -13,26 +13,25 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { Socket } from "socket.io-client";
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Details from "./Details";
+import SocketContext from "../../contexts/SocketContext";
 
 export default function Recording({
-  socket,
   freqBin,
   dbaBin,
   qScore,
   timestamp,
   acceptable = true,
 }: {
-  socket: Socket;
   freqBin: number;
   dbaBin: number;
   qScore: string;
   timestamp: string;
   acceptable: boolean;
 }) {
+  const socket = useContext(SocketContext);
+
   const datamapBinNames = useAppSelector(
     (state) => state.voicemap.value.datamapBinNames
   );
@@ -177,6 +176,10 @@ export default function Recording({
             <Button
               color="red"
               onClick={() => {
+                if (!socket) {
+                  console.error("Socket is not initialized");
+                  return;
+                }
                 socket.emit("removeRecording", {
                   freqBin: freqBin,
                   dbaBin: datamapBinNames.dba.length - dbaBin - 1,

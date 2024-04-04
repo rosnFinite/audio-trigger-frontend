@@ -1,19 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Settings from "./views/Settings";
 import VoiceField from "./views/VoiceField";
-import { socket } from "./socket";
 import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
 import Logs from "./views/Logs";
+import SocketContext from "./contexts/SocketContext";
 
 export default function App() {
+  const socket = useContext(SocketContext);
   const settings = useAppSelector((state) => state.settings.values);
   const dispatch = useAppDispatch();
 
   // handles registering of web client to socketio backend and sets the audio client sid
   useEffect(() => {
+    if (!socket) {
+      console.error("Socket is not initialized");
+      return;
+    }
     socket.on("connect", () => {
       socket.emit("registerClient", { type: "web" });
     });
@@ -42,14 +47,14 @@ export default function App() {
         dispatch({ type: "voicemap/INITIALIZE" });
       }
     });
-  }, []);
+  }, [socket]);
 
   return (
     <Routes>
-      <Route path="/" element={<Settings socket={socket} />} />
+      <Route path="/" element={<Settings />} />
       <Route path="/stimmfeld">
-        <Route index element={<VoiceField socket={socket} />} />
-        <Route path="patientenansicht" element={<Patient socket={socket} />} />
+        <Route index element={<VoiceField />} />
+        <Route path="patientenansicht" element={<Patient />} />
       </Route>
       <Route path="/logs" element={<Logs />} />
     </Routes>
