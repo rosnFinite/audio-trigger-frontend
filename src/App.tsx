@@ -6,7 +6,7 @@ import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
 import Logs from "./views/Logs";
-import SocketContext from "./contexts/SocketContext";
+import SocketContext from "./context/SocketContext";
 
 export default function App() {
   const socket = useContext(SocketContext);

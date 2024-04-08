@@ -9,7 +9,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { BrowserRouter } from "react-router-dom";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import SocketContext, { socket } from "./contexts/SocketContext";
+import SocketContext, { socket } from "./context/SocketContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

@@ -14,7 +14,7 @@ import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useContext, useEffect, useState } from "react";
 import Details from "./Details";
-import SocketContext from "../../contexts/SocketContext";
+import SocketContext from "../../context/SocketContext";
 
 export default function Recording({
   freqBin,

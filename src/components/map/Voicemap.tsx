@@ -3,7 +3,7 @@ import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
-import SocketContext from "../../contexts/SocketContext";
+import SocketContext from "../../context/SocketContext";
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 

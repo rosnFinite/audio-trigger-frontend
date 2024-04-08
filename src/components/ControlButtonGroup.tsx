@@ -2,7 +2,7 @@ import { Button, Group, Tooltip } from "@mantine/core";
 import { TbPlayerRecord, TbPlayerStop, TbProgressX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useContext, useEffect } from "react";
-import SocketContext from "../contexts/SocketContext";
+import SocketContext from "../context/SocketContext";
 
 export default function ControlButtonGroup() {
   const socket = useContext(SocketContext);

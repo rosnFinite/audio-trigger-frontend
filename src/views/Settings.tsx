@@ -28,7 +28,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
 import { initialSettings } from "../utils/initializer";
-import SocketContext from "../contexts/SocketContext";
+import SocketContext from "../context/SocketContext";
 
 const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 
