@@ -1,6 +1,5 @@
 import {
   Card,
-  Container,
   Image,
   Flex,
   Text,
