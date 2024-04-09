@@ -27,7 +27,7 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
-import { initialSettings } from "../utils/initializer";
+import { initialSettingsState } from "../utils/initialStates";
 import SocketContext from "../context/SocketContext";
 
 const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
@@ -383,7 +383,7 @@ export default function Settings() {
                 console.error("Socket is not initialized");
                 return;
               }
-              socket?.emit("changeSettings", initialSettings);
+              socket?.emit("changeSettings", initialSettingsState);
               notifications.show({
                 title: "Einstellungen zurückgesetzt",
                 message:

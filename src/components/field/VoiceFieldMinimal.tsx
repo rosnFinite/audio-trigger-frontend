@@ -2,18 +2,12 @@ import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 
 export default function VoicemapMinimal({
-  datamap,
+  field,
   annotation,
   maxScore,
   minScore,
 }: {
-  datamap: {
-    id: string;
-    data: {
-      x: number;
-      y: number;
-    }[];
-  }[];
+  field: VoiceField[];
   annotation: {
     id: string;
     text: string;
@@ -24,7 +18,13 @@ export default function VoicemapMinimal({
   return (
     <Container fluid h="99vh" w="100vw">
       <ResponsiveHeatMapCanvas
-        data={datamap}
+        data={field.map((item) => ({
+          id: item.id,
+          data: item.data.map((d: { x: number; y: VoiceStats }) => ({
+            x: d.x,
+            y: d.y["score" as keyof VoiceStats] as number,
+          })),
+        }))}
         margin={{ top: 10, right: 5, bottom: 70, left: 45 }}
         valueFormat=" >-.2s"
         xOuterPadding={0}

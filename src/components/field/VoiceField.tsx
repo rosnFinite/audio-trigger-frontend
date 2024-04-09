@@ -11,12 +11,14 @@ To visualize the current voice, we use the annotations feature of Nivo. This nee
 Because we cannot use floating point numbers as ids, we convert the values to strings and remove the decimal point. This is later reverted in the axisBottom format function.
 The same is done for the lower frequency bounds of the grid. Which we use to map the frequency bin to the actual frequency value.
  */
-interface VoicemapProps {
+
+export default function VoiceField({
+  height,
+  width,
+}: {
   height?: string;
   width?: string;
-}
-
-export default function Voicemap({ height, width }: VoicemapProps) {
+}) {
   const socket = useContext(SocketContext);
   const [selectValue, setSelectValue] = useState<string>("score");
 
@@ -29,9 +31,9 @@ export default function Voicemap({ height, width }: VoicemapProps) {
     (state) => state.settings.values.status
   );
   const minScore = useAppSelector((state) => state.settings.values.minScore);
-  const voicemap = useAppSelector((state) => state.voicemap.value);
+  const voicemap = useAppSelector((state) => state.voicemap.values);
   const datamapBinNames = useAppSelector(
-    (state) => state.voicemap.value.datamapBinNames
+    (state) => state.voicemap.values.fieldBinNames
   );
   const dispatch = useAppDispatch();
 
@@ -132,14 +134,12 @@ export default function Voicemap({ height, width }: VoicemapProps) {
         />
       </Flex>
       <ResponsiveHeatMapCanvas
-        data={voicemap.datamap.map((item) => ({
+        data={voicemap.field.map((item) => ({
           id: item.id,
-          data: item.data.map(
-            (d: { x: number; y: { [key: string]: number } }) => ({
-              x: d.x,
-              y: d.y[selectValue],
-            })
-          ),
+          data: item.data.map((d: { x: number; y: VoiceStats }) => ({
+            x: d.x,
+            y: d.y[selectValue as keyof VoiceStats] as number,
+          })),
         }))}
         valueFormat="0>-.4f"
         margin={{ top: 0, right: 60, bottom: 130, left: 80 }}

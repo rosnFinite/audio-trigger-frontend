@@ -1,6 +1,4 @@
-import { Settings } from "../types/Settings.types";
-
-export const initialSettings: Settings = {
+export const initialSettingsState: SettingsState = {
   sid: "",
   save_location: "",
   status: {

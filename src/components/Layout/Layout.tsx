@@ -14,7 +14,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  TbCameraSearch,
   TbAlpha,
   TbChartGridDots,
   TbMusicSearch,
@@ -121,10 +120,10 @@ export default function Layout(props: { children: React.ReactNode }) {
           active={pathname === "/"}
         />
         <NavLink
-          href="/stimmfeld"
-          label="Stimmfeld"
+          href="/dashboard"
+          label="Dashboard"
           leftSection={<TbMusicSearch />}
-          active={pathname === "/stimmfeld"}
+          active={pathname === "/dashboard"}
         />
         <NavLink
           href="/logs"

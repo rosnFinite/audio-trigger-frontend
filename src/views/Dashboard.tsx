@@ -1,4 +1,4 @@
-import Voicemap from "../components/map/Voicemap";
+import Voicemap from "../components/field/VoiceField";
 import {
   Badge,
   Blockquote,
@@ -23,33 +23,32 @@ import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
 
-interface RecordingData {
+interface ReloadableRecordingStats extends RecordingStats {
   id: number;
-  freqBin: number;
-  dbaBin: number;
-  qScore: string;
-  timestamp: string;
-  accepted: boolean;
 }
 
-export default function VoiceField() {
-  const data = useAppSelector((state) => state.voicemap.value.data);
+export default function Dashboard() {
+  const recordings = useAppSelector(
+    (state) => state.voicemap.values.recordings
+  );
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [reloadableSeed, setReloadableSeed] = useState(1);
-  const [newRecordings, setNewRecordings] = useState<RecordingData[]>([]);
-  const [acceptedRecordings, setAcceptedRecordings] = useState<RecordingData[]>(
-    []
-  );
+  const [newRecordings, setNewRecordings] = useState<
+    ReloadableRecordingStats[]
+  >([]);
+  const [acceptedRecordings, setAcceptedRecordings] = useState<
+    ReloadableRecordingStats[]
+  >([]);
   const [sortedBy, setSortedBy] = useState("timestamp");
 
   useEffect(() => {
     // addind random id to each item to avoid key conflicts in dynamic rendering of Recording components
-    const tmp_data = data.map((item) => {
+    const tmp_data = recordings.map((item) => {
       return { ...item, id: Math.random() };
     });
     setNewRecordings(tmp_data.filter((item) => !item.accepted));
     setAcceptedRecordings(tmp_data.filter((item) => item.accepted));
-  }, [data]);
+  }, [recordings]);
 
   //TODO: update badge to count accepted and pending recordings
   return (
@@ -69,7 +68,7 @@ export default function VoiceField() {
         </Blockquote>
         <Divider />
         <Center>
-          <Link to="/stimmfeld/patientenansicht" target="_blank">
+          <Link to="/dashboard/patient" target="_blank">
             <Button rightSection={<TbSwipe />}>Patientenansicht</Button>
           </Link>
         </Center>
@@ -137,7 +136,7 @@ export default function VoiceField() {
           scrollbarSize={8}
           scrollHideDelay={1500}
         >
-          {data.length === 0 ? (
+          {recordings.length === 0 ? (
             <Center>
               <Text fw={700}>Noch keine Aufnahmen vorhanden.</Text>
             </Center>

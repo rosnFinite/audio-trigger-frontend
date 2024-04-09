@@ -1,12 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Settings from "./views/Settings";
-import VoiceField from "./views/VoiceField";
+import VoiceField from "./views/Dashboard";
 import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
 import Logs from "./views/Logs";
 import SocketContext from "./context/SocketContext";
+import Dashboard from "./views/Dashboard";
 
 export default function App() {
   const socket = useContext(SocketContext);
@@ -52,9 +53,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Settings />} />
-      <Route path="/stimmfeld">
-        <Route index element={<VoiceField />} />
-        <Route path="patientenansicht" element={<Patient />} />
+      <Route path="/dashboard">
+        <Route index element={<Dashboard />} />
+        <Route path="patient" element={<Patient />} />
       </Route>
       <Route path="/logs" element={<Logs />} />
     </Routes>

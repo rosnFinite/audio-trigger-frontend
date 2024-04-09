@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import VoicemapMinimal from "../components/map/VoicemapMinimal";
+import VoicemapMinimal from "../components/field/VoiceFieldMinimal";
 
 export default function Patient() {
   // UGLY solution to listen to state changes from another tab!!
@@ -38,20 +38,7 @@ export default function Patient() {
 
   return (
     <VoicemapMinimal
-      datamap={voicemap.datamap.map(
-        (item: {
-          id: string;
-          data: { x: number; y: { [key: string]: number } }[];
-        }) => ({
-          id: item.id,
-          data: item.data.map(
-            (d: { x: number; y: { [key: string]: number } }) => ({
-              x: d.x,
-              y: d.y["score"],
-            })
-          ),
-        })
-      )}
+      field={voicemap.field}
       annotation={voicemap.annotation}
       maxScore={1}
       minScore={settings.minScore}

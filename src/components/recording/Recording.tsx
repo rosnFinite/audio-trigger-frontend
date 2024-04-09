@@ -32,8 +32,18 @@ export default function Recording({
   const socket = useContext(SocketContext);
 
   const datamapBinNames = useAppSelector(
-    (state) => state.voicemap.value.datamapBinNames
+    (state) => state.voicemap.values.fieldBinNames
   );
+  const recordings = useAppSelector(
+    (state) => state.voicemap.values.recordings
+  );
+  // find the recording data for the current dbaBin and freqBin
+  const recordingData: RecordingStats =
+    recordings[
+      recordings.findIndex(
+        (item) => item.dbaBin === dbaBin && item.freqBin === freqBin
+      )
+    ];
   const settingsSaveLocation = useAppSelector(
     (state) => state.settings.values.save_location
   );
@@ -135,6 +145,7 @@ export default function Recording({
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
           path={path}
+          recordingData={recordingData}
         />
         {acceptable ? (
           <Button
@@ -144,6 +155,7 @@ export default function Recording({
             pr={25}
             radius={0}
             onClick={() => {
+              console.log("Accepting recording");
               dispatch({
                 type: "voicemap/ACCEPT_RECORDING",
                 payload: { freqBin: freqBin, dbaBin: dbaBin },

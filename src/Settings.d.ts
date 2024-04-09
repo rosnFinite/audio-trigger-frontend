@@ -1,4 +1,10 @@
-export interface Settings {
+interface BinSettings {
+  lower: number;
+  upper: number;
+  steps: number;
+}
+
+interface SettingsState {
   sid: string;
   save_location: string;
   status: {
@@ -11,16 +17,8 @@ export interface Settings {
   chunkSize: number;
   mono: boolean;
   calibrationFile: string;
-  frequency: {
-    lower: number;
-    upper: number;
-    steps: number;
-  };
-  db: {
-    lower: number;
-    upper: number;
-    steps: number;
-  };
+  frequency: BinSettings;
+  db: BinSettings;
   minScore: number;
   retriggerPercentageImprovement: number;
 }
