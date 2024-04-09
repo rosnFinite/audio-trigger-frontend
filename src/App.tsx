@@ -1,13 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import Settings from "./views/Settings";
-import VoiceField from "./views/Dashboard";
-import Patient from "./views/Patient";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
-import Logs from "./views/Logs";
 import SocketContext from "./context/SocketContext";
-import Dashboard from "./views/Dashboard";
+import Logs from "./pages/Logs";
+import Settings from "./pages/Settings";
+import Patient from "./pages/Patient";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   const socket = useContext(SocketContext);
