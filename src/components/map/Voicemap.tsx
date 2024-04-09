@@ -141,7 +141,7 @@ export default function Voicemap({ height, width }: VoicemapProps) {
             })
           ),
         }))}
-        valueFormat="0>-.2f"
+        valueFormat="0>-.4f"
         margin={{ top: 0, right: 60, bottom: 130, left: 80 }}
         xOuterPadding={0.5}
         yOuterPadding={0.5}

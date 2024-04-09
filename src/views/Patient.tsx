@@ -38,7 +38,20 @@ export default function Patient() {
 
   return (
     <VoicemapMinimal
-      datamap={voicemap.datamap}
+      datamap={voicemap.datamap.map(
+        (item: {
+          id: string;
+          data: { x: number; y: { [key: string]: number } }[];
+        }) => ({
+          id: item.id,
+          data: item.data.map(
+            (d: { x: number; y: { [key: string]: number } }) => ({
+              x: d.x,
+              y: d.y["score"],
+            })
+          ),
+        })
+      )}
       annotation={voicemap.annotation}
       maxScore={1}
       minScore={settings.minScore}
