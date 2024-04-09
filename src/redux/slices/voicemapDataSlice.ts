@@ -27,12 +27,42 @@ interface IVoicemapData {
     qScore: string;
     timestamp: string;
     accepted: boolean;
+    meanF: number;
+    stdevF: number;
+    hnr: number;
+    localJitter: number;
+    localAbsoluteJitter: number;
+    rapJitter: number;
+    ppq5Jitter: number;
+    ddpJitter: number;
+    localShimmer: number;
+    localdbShimmer: number;
+    apq3Shimmer: number;
+    aqpq5Shimmer: number;
+    apq11Shimmer: number;
+    ddaShimmer: number;
   }[];
   datamap: {
     id: string;
     data: {
       x: number;
-      y: number;
+      y: {
+        score: number;
+        meanF: number;
+        stdevF: number;
+        hnr: number;
+        localJitter: number;
+        localAbsoluteJitter: number;
+        rapJitter: number;
+        ppq5Jitter: number;
+        ddpJitter: number;
+        localShimmer: number;
+        localdbShimmer: number;
+        apq3Shimmer: number;
+        aqpq5Shimmer: number;
+        apq11Shimmer: number;
+        ddaShimmer: number;
+      };
     }[];
   }[];
 }
@@ -89,6 +119,20 @@ export const voicemapDataSlice = createSlice({
           qScore: action.payload.score,
           timestamp: new Date().toLocaleString(),
           accepted: false,
+          meanF: action.payload.stats.meanF,
+          stdevF: action.payload.stats.stdevF,
+          hnr: action.payload.stats.hnr,
+          localJitter: action.payload.stats.localJitter,
+          localAbsoluteJitter: action.payload.stats.localAbsoluteJitter,
+          rapJitter: action.payload.stats.rapJitter,
+          ppq5Jitter: action.payload.stats.ppq5Jitter,
+          ddpJitter: action.payload.stats.ddpJitter,
+          localShimmer: action.payload.stats.localShimmer,
+          localdbShimmer: action.payload.stats.localdbShimmer,
+          apq3Shimmer: action.payload.stats.apq3Shimmer,
+          aqpq5Shimmer: action.payload.stats.aqpq5Shimmer,
+          apq11Shimmer: action.payload.stats.apq11Shimmer,
+          ddaShimmer: action.payload.stats.ddaShimmer,
         });
       } else {
         data[updateIndex] = {
@@ -97,12 +141,41 @@ export const voicemapDataSlice = createSlice({
           qScore: action.payload.score,
           timestamp: new Date().toLocaleString(),
           accepted: false,
+          meanF: action.payload.stats.meanF,
+          stdevF: action.payload.stats.stdevF,
+          hnr: action.payload.stats.hnr,
+          localJitter: action.payload.stats.localJitter,
+          localAbsoluteJitter: action.payload.stats.localAbsoluteJitter,
+          rapJitter: action.payload.stats.rapJitter,
+          ppq5Jitter: action.payload.stats.ppq5Jitter,
+          ddpJitter: action.payload.stats.ddpJitter,
+          localShimmer: action.payload.stats.localShimmer,
+          localdbShimmer: action.payload.stats.localdbShimmer,
+          apq3Shimmer: action.payload.stats.apq3Shimmer,
+          aqpq5Shimmer: action.payload.stats.aqpq5Shimmer,
+          apq11Shimmer: action.payload.stats.apq11Shimmer,
+          ddaShimmer: action.payload.stats.ddaShimmer,
         };
       }
       // Deep copy of the datamap to avoid mutation of the state
       let newDataMap = JSON.parse(JSON.stringify(state.value.datamap));
-      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y =
-        action.payload.score;
+      newDataMap[action.payload.dbaBin].data[action.payload.freqBin].y = {
+        score: action.payload.score,
+        meanF: action.payload.stats.meanF,
+        stdevF: action.payload.stats.stdevF,
+        hnr: action.payload.stats.hnr,
+        localJitter: action.payload.stats.localJitter,
+        localAbsoluteJitter: action.payload.stats.localAbsoluteJitter,
+        rapJitter: action.payload.stats.rapJitter,
+        ppq5Jitter: action.payload.stats.ppq5Jitter,
+        ddpJitter: action.payload.stats.ddpJitter,
+        localShimmer: action.payload.stats.localShimmer,
+        localdbShimmer: action.payload.stats.localdbShimmer,
+        apq3Shimmer: action.payload.stats.apq3Shimmer,
+        aqpq5Shimmer: action.payload.stats.aqpq5Shimmer,
+        apq11Shimmer: action.payload.stats.apq11Shimmer,
+        ddaShimmer: action.payload.stats.ddaShimmer,
+      };
       state.value = {
         ...state.value,
         datamap: newDataMap,
@@ -130,7 +203,23 @@ export const voicemapDataSlice = createSlice({
           item.dbaBin !== action.payload.dbaBin ||
           item.freqBin !== action.payload.freqBin
       );
-      newData.datamap[action.payload.dbaBin].data[action.payload.freqBin].y = 0;
+      newData.datamap[action.payload.dbaBin].data[action.payload.freqBin].y = {
+        score: 0,
+        meanF: 0,
+        stdevF: 0,
+        hnr: 0,
+        localJitter: 0,
+        localAbsoluteJitter: 0,
+        rapJitter: 0,
+        ppq5Jitter: 0,
+        ddpJitter: 0,
+        localShimmer: 0,
+        localdbShimmer: 0,
+        apq3Shimmer: 0,
+        aqpq5Shimmer: 0,
+        apq11Shimmer: 0,
+        ddaShimmer: 0,
+      };
       state.value = newData;
     },
     ACCEPT_RECORDING: (state, action) => {

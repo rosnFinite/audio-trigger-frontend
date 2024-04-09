@@ -16,7 +16,23 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
     ) {
       data.push({
         x: j.toFixed(2).toString().replace(".", ""),
-        y: 0,
+        y: {
+          score: 0,
+          meanF: 0,
+          stdevF: 0,
+          hnr: 0,
+          localJitter: 0,
+          localAbsoluteJitter: 0,
+          rapJitter: 0,
+          ppq5Jitter: 0,
+          ddpJitter: 0,
+          localShimmer: 0,
+          localdbShimmer: 0,
+          apq3Shimmer: 0,
+          aqpq5Shimmer: 0,
+          apq11Shimmer: 0,
+          ddaShimmer: 0,
+        },
       });
     }
     grid.push({

@@ -1,6 +1,6 @@
-import { Container } from "@mantine/core";
+import { Container, Flex, NativeSelect } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
 import SocketContext from "../../context/SocketContext";
@@ -18,6 +18,7 @@ interface VoicemapProps {
 
 export default function Voicemap({ height, width }: VoicemapProps) {
   const socket = useContext(SocketContext);
+  const [selectValue, setSelectValue] = useState<string>("score");
 
   // needed to create matching string for annotation
   const settingsDb = useAppSelector((state) => state.settings.values.db);
@@ -79,6 +80,7 @@ export default function Voicemap({ height, width }: VoicemapProps) {
           dbaBin: numDbaBins - data.dba_bin,
           freqBin: data.freq_bin,
           score: data.score,
+          stats: data.stats,
         },
       });
     });
@@ -98,14 +100,49 @@ export default function Voicemap({ height, width }: VoicemapProps) {
     <Container
       ml={0}
       mr={30}
+      mb={5}
       h={height === undefined ? "70vh" : height}
       w={width === undefined ? "85vw" : width}
       fluid
     >
+      <Flex ml={100}>
+        <NativeSelect
+          variant="filled"
+          label="Statistik"
+          description="Wählen Sie die Statistik, die Sie visualisieren möchten."
+          value={selectValue}
+          onChange={(event) => setSelectValue(event.currentTarget.value)}
+          data={[
+            "score",
+            "meanF",
+            "stdevF",
+            "hnr",
+            "localJitter",
+            "localAbsoluteJitter",
+            "rapJitter",
+            "ppq5Jitter",
+            "ddpJitter",
+            "localShimmer",
+            "localdbShimmer",
+            "apq3Shimmer",
+            "aqpq5Shimmer",
+            "apq11Shimmer",
+            "ddaShimmer",
+          ]}
+        />
+      </Flex>
       <ResponsiveHeatMapCanvas
-        data={voicemap.datamap}
-        margin={{ top: 70, right: 60, bottom: 70, left: 80 }}
-        valueFormat=" >-.2s"
+        data={voicemap.datamap.map((item) => ({
+          id: item.id,
+          data: item.data.map(
+            (d: { x: number; y: { [key: string]: number } }) => ({
+              x: d.x,
+              y: d.y[selectValue],
+            })
+          ),
+        }))}
+        valueFormat="0>-.2f"
+        margin={{ top: 0, right: 60, bottom: 130, left: 80 }}
         xOuterPadding={0.5}
         yOuterPadding={0.5}
         axisBottom={{
@@ -137,8 +174,8 @@ export default function Voicemap({ height, width }: VoicemapProps) {
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: minScore,
-          maxValue: 1,
+          minValue: selectValue === "score" ? minScore : 0,
+          maxValue: selectValue === "score" ? 1 : undefined,
         }}
         emptyColor="#555555"
         enableLabels={false}
@@ -155,7 +192,7 @@ export default function Voicemap({ height, width }: VoicemapProps) {
             tickSpacing: 4,
             tickOverlap: false,
             tickFormat: ">-.2s",
-            title: "Q-Score →",
+            title: `${selectValue} →`,
             titleAlign: "start",
             titleOffset: 4,
           },
