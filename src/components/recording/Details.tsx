@@ -32,23 +32,72 @@ export default function Details({
   }, []);
 
   return (
-    <Modal {...rest} opened={opened} onClose={onClose} title={title} size="70%">
-      <Accordion>
+    <Modal {...rest} opened={opened} onClose={onClose} title={title} size="90%">
+      <Accordion variant="separated">
         <Accordion.Item id="overview" value="Overview">
           <Accordion.Control>Überblick</Accordion.Control>
           <Accordion.Panel>
             <Text>
-              <strong>Speicherort:</strong> {path}
+              <strong>MeanF:</strong> {recordingData.meanF.toFixed(9)}
             </Text>
             <Text>
-              <strong>Zeitstempel:</strong> {title}
+              <strong>StdevF:</strong> {recordingData.stdevF.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>HNR:</strong> {recordingData.hnr.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>local Jitter:</strong>{" "}
+              {recordingData.localJitter.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>local Absolute Jitter:</strong>{" "}
+              {recordingData.localAbsoluteJitter.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>Relative Average Perturbation:</strong>{" "}
+              {recordingData.rapJitter.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>Five-point Period Perturbation Quotient:</strong>{" "}
+              {recordingData.ppq5Jitter.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>Difference of Differences of Periods:</strong>{" "}
+              {recordingData.ddpJitter.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>local Shimmer:</strong>{" "}
+              {recordingData.localShimmer.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>local DB Shimmer:</strong>{" "}
+              {recordingData.localdbShimmer.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>Three-point Amplitude Perturbation Quotient:</strong>{" "}
+              {recordingData.apq3Shimmer.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>Five-point Amplitude Perturbation Quotient:</strong>{" "}
+              {recordingData.aqpq5Shimmer.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>11-point Amplitude Perturbation Quotient:</strong>{" "}
+              {recordingData.apq11Shimmer.toFixed(9)}
+            </Text>
+            <Text>
+              <strong>DDA Shimmer:</strong>{" "}
+              {recordingData.ddaShimmer.toFixed(9)}
             </Text>
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item id="praat-objects" value="PRAAT-Objects">
           <Accordion.Control>PRAAT-Objects</Accordion.Control>
           <Accordion.Panel>
-            <Text style={{ whiteSpace: "pre-wrap" }}>{parselStats}</Text>
+            <Text size="xs" style={{ whiteSpace: "pre-wrap" }}>
+              {parselStats}
+            </Text>
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item id="spectrogram" value="Spectrogram">
