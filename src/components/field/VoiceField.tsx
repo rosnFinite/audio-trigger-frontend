@@ -104,10 +104,10 @@ export default function VoiceField({
       mr={30}
       mb={5}
       h={height === undefined ? "70vh" : height}
-      w={width === undefined ? "85vw" : width}
+      w={width === undefined ? "100%" : width}
       fluid
     >
-      <Flex ml={100}>
+      <Flex>
         <NativeSelect
           variant="filled"
           label="Statistik"
@@ -142,7 +142,7 @@ export default function VoiceField({
           })),
         }))}
         valueFormat="0>-.4f"
-        margin={{ top: 0, right: 60, bottom: 130, left: 80 }}
+        margin={{ top: 0, right: 60, bottom: 130, left: 40 }}
         xOuterPadding={0.5}
         yOuterPadding={0.5}
         axisBottom={{

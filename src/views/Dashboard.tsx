@@ -1,4 +1,3 @@
-import Voicemap from "../components/field/VoiceField";
 import {
   Badge,
   Blockquote,
@@ -22,6 +21,7 @@ import Layout from "../components/Layout/Layout";
 import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
+import VoiceField from "../components/field/VoiceField";
 
 interface ReloadableRecordingStats extends RecordingStats {
   id: number;
@@ -73,7 +73,7 @@ export default function Dashboard() {
           </Link>
         </Center>
         <ControlButtonGroup />
-        <Voicemap />
+        <VoiceField />
         <Group gap="xs">
           <Title order={2}>Aufnahmen</Title>
           <Tooltip label="Anzahl ausstehender Aufnahmen">

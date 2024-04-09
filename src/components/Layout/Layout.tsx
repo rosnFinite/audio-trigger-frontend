@@ -76,7 +76,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           <Container w={70} ml={-5} mr={-10} mt={10}>
             <TbChartGridDots size={"100%"} color="#1C7ED6" />
           </Container>
-          <Text fw={500} size="xl">
+          <Text fw={500} size="xl" visibleFrom="sm">
             Stimmfeldanalyse
           </Text>
           <Badge
@@ -86,11 +86,12 @@ export default function Layout(props: { children: React.ReactNode }) {
             gradient={{ from: "blue", to: "green", deg: 90 }}
             ml={10}
             mt={5}
+            visibleFrom="sm"
           >
             Alpha
           </Badge>
           <Group justify="flex-end" gap="xs" ml={"auto"} mr={"2%"}>
-            <Text size="xs">
+            <Text size="xs" visibleFrom="sm">
               ClientID:&nbsp;&nbsp;
               {audioClientSID === "" ? (
                 <Text span c="red" inherit>
