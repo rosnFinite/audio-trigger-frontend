@@ -53,7 +53,8 @@ export default function Recording({
 
   // get the basic api endpoint url for recording related informations
   const getPath = () => {
-    const splittedLocation = settingsSaveLocation.split("\\");
+    console.log(settingsSaveLocation);
+    const splittedLocation = settingsSaveLocation.split("/");
     const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
       datamapBinNames.dba.length - dbaBin - 1
     }_${freqBin}`;
