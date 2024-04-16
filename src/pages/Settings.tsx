@@ -14,6 +14,7 @@ import {
   Stack,
   Title,
   Text,
+  TextInput,
 } from "@mantine/core";
 import {
   TbInfoCircle,
@@ -35,10 +36,29 @@ const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 export default function Settings() {
   const socket = useContext(SocketContext);
   const [devices, setDevices] = useState(initialDevices);
+  const [patient, setPatient] = useState("");
+  const [patientError, setPatientError] = useState("");
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
   );
   const dispatch = useAppDispatch();
+
+  const handlePatientChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    // Update the patient state with the input value
+    setPatient(event.currentTarget.value);
+    // Check if the input value contains only alphanumeric characters, including umlauts and the sharp s
+    const isValid = /^[a-zA-Z0-9äöüÄÖÜß]*$/.test(value);
+    // Update the settings state and error message based on input validity
+    if (isValid) {
+      setSettings({ ...settings, patient: value });
+      setPatientError("");
+    } else {
+      setPatientError(
+        "Der Patientenname darf nur Buchstaben und Zahlen enthalten."
+      );
+    }
+  };
 
   // update internal settings state when audio client emitted a statusChanged event
   useEffect(() => {
@@ -83,6 +103,14 @@ export default function Settings() {
       <Stack h="100%">
         <Title order={2}>Einstellungen</Title>
         <Divider />
+        <TextInput
+          label="Patient"
+          description="Messungen werden gespeichert unter <patientenname>_<date>_<time>"
+          placeholder="Patientenname"
+          value={patient}
+          onChange={handlePatientChange}
+          error={patientError}
+        />
         <Accordion
           multiple
           defaultValue={["Audioaufnahme"]}

@@ -1,5 +1,6 @@
 export const initialSettingsState: SettingsState = {
   sid: "",
+  patient: "",
   save_location: "",
   status: {
     recorder: "offline",

@@ -6,6 +6,7 @@ interface BinSettings {
 
 interface SettingsState {
   sid: string;
+  patient: string;
   save_location: string;
   status: {
     recorder: string;
