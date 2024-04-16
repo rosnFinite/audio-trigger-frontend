@@ -77,7 +77,7 @@ export default function Layout(props: { children: React.ReactNode }) {
             <TbChartGridDots size={"100%"} color="#1C7ED6" />
           </Container>
           <Text fw={500} size="xl" visibleFrom="sm">
-            Stimmfeldanalyse
+            Laryngeal Voice Range Field (LVRF)
           </Text>
           <Badge
             rightSection={<TbAlpha />}
