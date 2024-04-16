@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 interface CustomModalProps extends Omit<ModalProps, "opened" | "onClose"> {
   opened: boolean;
   onClose: () => void;
-  path: string;
+  api_endpoint: string;
   recordingData: RecordingStats;
 }
 
@@ -13,16 +13,16 @@ export default function Details({
   title,
   opened,
   onClose,
-  path,
+  api_endpoint,
   recordingData,
   ...rest
 }: CustomModalProps) {
   const [parselStats, setParselStats] = useState<string>("");
 
   useEffect(() => {
-    console.log("path", path);
+    console.log("path", api_endpoint);
     axios
-      .get(`${path}\\parsel`)
+      .get(`${api_endpoint}\\parsel`)
       .then((res) => {
         setParselStats(res.data.text_content);
       })
@@ -103,13 +103,13 @@ export default function Details({
         <Accordion.Item id="spectrogram" value="Spectrogram">
           <Accordion.Control>Spectrogram</Accordion.Control>
           <Accordion.Panel>
-            <Image src={`${path}\\spectrogram_intensity.png`} />
+            <Image src={`${api_endpoint}\\spectrogram_intensity.png`} />
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item id="waveform" value="Waveform">
           <Accordion.Control>Waveform</Accordion.Control>
           <Accordion.Panel>
-            <Image src={`${path}\\waveform.png`} />
+            <Image src={`${api_endpoint}\\waveform.png`} />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>

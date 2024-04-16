@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Details from "./Details";
 import SocketContext from "../../context/SocketContext";
 
@@ -52,15 +52,13 @@ export default function Recording({
   const [confirmOpened, setConfirmOpened] = useState(false);
 
   // get the basic api endpoint url for recording related informations
-  const getPath = () => {
-    console.log(settingsSaveLocation);
-    const splittedLocation = settingsSaveLocation.split("/");
-    const path = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${
-      datamapBinNames.dba.length - dbaBin - 1
-    }_${freqBin}`;
-    return path;
+  const get_endpoint_url = () => {
+    const splittedLocation = settingsSaveLocation.split("\\");
+    const filename = `${datamapBinNames.dba.length - dbaBin - 1}_${freqBin}`;
+    const endpoint = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${filename}`;
+    return endpoint;
   };
-  const path = getPath();
+  const api_endpoint = get_endpoint_url();
 
   return (
     <Card
@@ -85,7 +83,11 @@ export default function Recording({
           });
         }}
       >
-        <Image src={`${path}\\spectrogram_intensity.png`} h={150} w={150} />
+        <Image
+          src={`${api_endpoint}\\spectrogram_intensity.png`}
+          h={150}
+          w={150}
+        />
         <Stack ml={10} align="stretch" justify="center" gap={1}>
           <Group>
             <Text size="xs" fw={700}>
@@ -145,7 +147,7 @@ export default function Recording({
           } Hz / ${qScore}`}
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
-          path={path}
+          api_endpoint={api_endpoint}
           recordingData={recordingData}
         />
         {acceptable ? (
