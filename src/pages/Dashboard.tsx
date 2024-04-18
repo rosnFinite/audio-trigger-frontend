@@ -31,6 +31,7 @@ export default function Dashboard() {
   const recordings = useAppSelector(
     (state) => state.voicemap.values.recordings
   );
+  const patient = useAppSelector((state) => state.settings.values.patient);
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [reloadableSeed, setReloadableSeed] = useState(1);
   const [newRecordings, setNewRecordings] = useState<
@@ -55,6 +56,12 @@ export default function Dashboard() {
     <Layout>
       <Stack h={"100%"}>
         <Title order={2}>Stimmfeld</Title>
+        <Text size="xl">
+          Patient:{" "}
+          <Text span c="blue" inherit>
+            {patient}
+          </Text>
+        </Text>
         <Blockquote
           color="blue"
           icon={<TbInfoCircle size={"25"} />}
