@@ -26,7 +26,6 @@ import { useLocation } from "react-router-dom";
 export default function Layout(props: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const [opened, { toggle }] = useDisclosure();
-  const [recBadgeColor, setRecBadgeColor] = useState("red");
   const [trigBadgeColor, setTrigBadgeColor] = useState("red");
   const [loadingVisible, setLoadingVisible] = useState(false);
   const status = useAppSelector((state) => state.settings.values.status);
@@ -34,19 +33,7 @@ export default function Layout(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     console.log("Status: ", status);
-    switch (status.recorder) {
-      case "running":
-        setRecBadgeColor("lime");
-        break;
-      case "ready":
-      case "reset":
-        setRecBadgeColor("yellow");
-        break;
-      default:
-        setRecBadgeColor("red");
-    }
-
-    switch (status.trigger) {
+    switch (status) {
       case "running":
         setTrigBadgeColor("lime");
         break;
@@ -103,9 +90,6 @@ export default function Layout(props: { children: React.ReactNode }) {
                 </Text>
               )}
             </Text>
-            <Badge size="md" variant="filled" color={recBadgeColor}>
-              Recorder
-            </Badge>
             <Badge size="md" variant="filled" color={trigBadgeColor}>
               Trigger
             </Badge>

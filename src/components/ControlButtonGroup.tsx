@@ -32,13 +32,11 @@ export default function ControlButtonGroup() {
         <Tooltip label="Startet den Triggerprozess" withArrow>
           <Button
             variant={
-              status.trigger === "ready" || status.trigger === "reset"
-                ? "filled"
-                : "outline"
+              status === "ready" || status === "reset" ? "filled" : "outline"
             }
             color="green"
             leftSection={<TbPlayerRecord size={"20"} />}
-            disabled={status.trigger === "running"}
+            disabled={status === "running"}
             onClick={() => {
               socket?.emit("changeStatus", { trigger: "start" });
             }}
@@ -48,10 +46,10 @@ export default function ControlButtonGroup() {
         </Tooltip>
         <Tooltip label="Stoppt den Triggerprozess" withArrow>
           <Button
-            variant={status.trigger === "running" ? "filled" : "outline"}
+            variant={status === "running" ? "filled" : "outline"}
             color="red"
             leftSection={<TbPlayerStop size={"20"} />}
-            disabled={status.trigger === "ready"}
+            disabled={status === "ready"}
             onClick={() => {
               socket?.emit("changeStatus", { trigger: "stop" });
             }}
@@ -62,13 +60,11 @@ export default function ControlButtonGroup() {
         <Tooltip label="Setzt das Stimmfeld zurück" withArrow>
           <Button
             variant={
-              status.trigger === "ready" || status.trigger === "reset"
-                ? "filled"
-                : "outline"
+              status === "ready" || status === "reset" ? "filled" : "outline"
             }
             color="red"
             leftSection={<TbProgressX size={"20"} />}
-            disabled={status.trigger === "running"}
+            disabled={status === "running"}
             onClick={() => {
               socket?.emit("changeStatus", { trigger: "reset" });
             }}

@@ -137,41 +137,41 @@ export default function Settings() {
                   <NumberInput
                     label="Abtastrate"
                     defaultValue={16000}
-                    value={settings.sampleRate}
+                    value={settings.sampling_rate}
                     placeholder="16000"
                     suffix=" Hz"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
-                        sampleRate: Number(event.value),
+                        sampling_rate: Number(event.value),
                       });
                     }}
                   />
                   <NumberInput
                     label="Buffergröße"
                     defaultValue={0.2}
-                    value={settings.bufferSize}
+                    value={settings.buffer_size}
                     placeholder="0.2"
                     suffix=" Sek."
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
-                        bufferSize: Number(event.value),
+                        buffer_size: Number(event.value),
                       });
                     }}
                   />
                   <NumberInput
                     label="Chunksize"
                     defaultValue={1024}
-                    value={settings.chunkSize}
+                    value={settings.chunk_size}
                     placeholder="1024"
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
-                        chunkSize: Number(event.value),
+                        chunk_size: Number(event.value),
                       });
                     }}
                   />
@@ -348,7 +348,7 @@ export default function Settings() {
                     label="Mindest-Score"
                     description="Zu erreichender Score für das Erfassen eines Events. Wertebereich: 0.0 - 1.0. "
                     defaultValue={0.7}
-                    value={settings.minScore}
+                    value={settings.min_score}
                     placeholder="0.7"
                     min={0}
                     max={1}
@@ -356,7 +356,7 @@ export default function Settings() {
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
-                        minScore: Number(event.value),
+                        min_score: Number(event.value),
                       });
                     }}
                   />
@@ -366,13 +366,13 @@ export default function Settings() {
                     defaultValue={10}
                     placeholder="10"
                     suffix="%"
-                    min={10}
+                    min={1}
                     max={90}
                     hideControls
                     onValueChange={(event) => {
                       setSettings({
                         ...settings,
-                        retriggerPercentageImprovement:
+                        retrigger_percentage_improvement:
                           Number(event.value) / 100,
                       });
                     }}

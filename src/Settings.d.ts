@@ -8,18 +8,15 @@ interface SettingsState {
   sid: string;
   patient: string;
   save_location: string;
-  status: {
-    recorder: string;
-    trigger: string;
-  };
+  status: string;
   device: number;
-  sampleRate: number;
-  bufferSize: number;
-  chunkSize: number;
+  sampling_rate: number;
+  buffer_size: number;
+  chunk_size: number;
   mono: boolean;
-  calibrationFile: string;
+  calibration_file: string;
   frequency: BinSettings;
   db: BinSettings;
-  minScore: number;
-  retriggerPercentageImprovement: number;
+  min_score: number;
+  retrigger_percentage_improvement: number;
 }

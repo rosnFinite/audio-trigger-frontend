@@ -30,7 +30,7 @@ export default function VoiceField({
   const settingsStatus = useAppSelector(
     (state) => state.settings.values.status
   );
-  const minScore = useAppSelector((state) => state.settings.values.minScore);
+  const minScore = useAppSelector((state) => state.settings.values.min_score);
   const voicemap = useAppSelector((state) => state.voicemap.values);
   const datamapBinNames = useAppSelector(
     (state) => state.voicemap.values.fieldBinNames
@@ -90,7 +90,7 @@ export default function VoiceField({
 
   useEffect(() => {
     console.log("status", settingsStatus);
-    if (settingsStatus.trigger === "reset") {
+    if (settingsStatus === "reset") {
       dispatch({
         type: "voicemap/SET_DATAMAP",
         payload: generateEmptyGrid(settingsDb, settingsFreq),

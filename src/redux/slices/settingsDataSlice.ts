@@ -15,7 +15,11 @@ export const settingsDataSlice = createSlice({
       state.values = { ...state.values, ...action.payload };
     },
     UPDATE_STATUS: (state, action) => {
-      state.values.status = { ...state.values.status, ...action.payload };
+      state.values = {
+        ...state.values,
+        status: action.payload.status,
+        save_location: action.payload.save_location,
+      };
     },
     SET_CLIENT_SID: (state, action) => {
       state.values = { ...initialSettingsState };
