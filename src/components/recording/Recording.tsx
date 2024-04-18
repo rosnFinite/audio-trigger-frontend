@@ -194,7 +194,7 @@ export default function Recording({
                   console.error("Socket is not initialized");
                   return;
                 }
-                socket.emit("removeRecording", {
+                socket.emit("remove_recording_request", {
                   freqBin: freqBin,
                   dbaBin: datamapBinNames.dba.length - dbaBin - 1,
                 });

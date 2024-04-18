@@ -16,7 +16,7 @@ export default function ControlButtonGroup() {
       console.error("Socket is not initialized");
       return;
     }
-    socket.on("statusChanged", (changedStatus) => {
+    socket.on("status_update_complete", (changedStatus) => {
       dispatch({ type: "settings/UPDATE_STATUS", payload: changedStatus });
       // when trigger status changes, reset annotation to be invisible (this will allows the correct annotation to be visible when the trigger starts again)
       dispatch({
@@ -38,7 +38,7 @@ export default function ControlButtonGroup() {
             leftSection={<TbPlayerRecord size={"20"} />}
             disabled={status === "running"}
             onClick={() => {
-              socket?.emit("changeStatus", { trigger: "start" });
+              socket?.emit("status_update_request", { trigger: "start" });
             }}
           >
             Start
@@ -51,7 +51,7 @@ export default function ControlButtonGroup() {
             leftSection={<TbPlayerStop size={"20"} />}
             disabled={status === "ready"}
             onClick={() => {
-              socket?.emit("changeStatus", { trigger: "stop" });
+              socket?.emit("status_update_request", { trigger: "stop" });
             }}
           >
             Stop
@@ -66,7 +66,7 @@ export default function ControlButtonGroup() {
             leftSection={<TbProgressX size={"20"} />}
             disabled={status === "running"}
             onClick={() => {
-              socket?.emit("changeStatus", { trigger: "reset" });
+              socket?.emit("status_update_request", { trigger: "reset" });
             }}
           >
             Reset

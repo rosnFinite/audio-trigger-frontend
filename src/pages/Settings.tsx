@@ -66,7 +66,7 @@ export default function Settings() {
       console.error("Socket is not initialized");
       return;
     }
-    socket.on("settingsChanged", (data) => {
+    socket.on("settings_update_complete", (data) => {
       dispatch({ type: "settings/UPDATE_SETTINGS", payload: data });
       setSettings(data);
       setPatient(data.patient);
@@ -392,7 +392,7 @@ export default function Settings() {
                 console.error("Socket is not initialized");
                 return;
               }
-              socket.emit("changeSettings", settings);
+              socket.emit("settings_update_request", settings);
               notifications.show({
                 title: "Einstellungen angewendet",
                 message: "Die Einstellungen wurden erforlgreich angewendet.",
@@ -412,7 +412,7 @@ export default function Settings() {
                 console.error("Socket is not initialized");
                 return;
               }
-              socket?.emit("changeSettings", initialSettingsState);
+              socket?.emit("settings_update_request", initialSettingsState);
               notifications.show({
                 title: "Einstellungen zurückgesetzt",
                 message:
