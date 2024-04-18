@@ -20,7 +20,7 @@ export default function App() {
       return;
     }
     socket.on("connect", () => {
-      socket.emit("registerClient", { type: "web" });
+      socket.emit("register", { type: "web" });
     });
     socket.on("connect_error", (error: Error) => {
       console.log("connect_error", error);
