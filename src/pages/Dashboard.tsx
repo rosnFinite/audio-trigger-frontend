@@ -60,9 +60,15 @@ export default function Dashboard() {
         <Title order={2}>Stimmfeld</Title>
         <Text size="xl">
           Patient:{" "}
-          <Text span c="blue" inherit>
-            {patient}
-          </Text>
+          {patient !== "" ? (
+            <Text span c="blue" inherit>
+              {patient}
+            </Text>
+          ) : (
+            <Text span c="red" inherit>
+              Kein Name angegeben
+            </Text>
+          )}
         </Text>
         <Text>
           Aufnahmename:{" "}
