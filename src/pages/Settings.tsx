@@ -40,8 +40,8 @@ export default function Settings() {
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
   );
-  const dispatch = useAppDispatch();
   const [patient, setPatient] = useState(settings.patient);
+  const dispatch = useAppDispatch();
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
@@ -69,6 +69,7 @@ export default function Settings() {
     socket.on("settingsChanged", (data) => {
       dispatch({ type: "settings/UPDATE_SETTINGS", payload: data });
       setSettings(data);
+      setPatient(data.patient);
     });
   }, [socket, dispatch]);
 
