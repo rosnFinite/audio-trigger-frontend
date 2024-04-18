@@ -118,7 +118,7 @@ export default function Dashboard() {
           Hier können die vom Trigger aufgezeichneten Audio, sowie Bildaufnahmen
           analysiert und selektiert werden. Sollten Aufnahmen nicht einer
           vordefinierten Qualität entsprechen besteht hier die Möglichkeit diese
-          zu entfernen und eine erneute Aufnahme dieser zu starten.
+          zu entfernen und für eine neue Aufnahme freizugeben.
         </Blockquote>
         <Divider my="xs" />
         <SegmentedControl
