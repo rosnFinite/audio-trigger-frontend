@@ -11,6 +11,7 @@ import {
   LoadingOverlay,
   NavLink,
   Text,
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -90,9 +91,20 @@ export default function Layout(props: { children: React.ReactNode }) {
                 </Text>
               )}
             </Text>
-            <Badge size="md" variant="filled" color={trigBadgeColor}>
-              Trigger
-            </Badge>
+            <Tooltip
+              label={`Triggerprozess ist ${
+                status === "running"
+                  ? "aktiv"
+                  : status === "ready" || status === "reset"
+                  ? "bereit"
+                  : "inaktiv"
+              }`}
+              color={trigBadgeColor}
+            >
+              <Badge size="md" variant="filled" color={trigBadgeColor}>
+                Trigger
+              </Badge>
+            </Tooltip>
           </Group>
         </Flex>
       </AppShell.Header>
