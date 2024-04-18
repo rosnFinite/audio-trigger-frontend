@@ -54,7 +54,6 @@ export default function Dashboard() {
     setAcceptedRecordings(tmp_data.filter((item) => item.accepted));
   }, [recordings]);
 
-  //TODO: update badge to count accepted and pending recordings
   return (
     <Layout>
       <Stack h={"100%"} gap="xs">
