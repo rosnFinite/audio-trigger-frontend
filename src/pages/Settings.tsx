@@ -36,12 +36,12 @@ const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 export default function Settings() {
   const socket = useContext(SocketContext);
   const [devices, setDevices] = useState(initialDevices);
-  const [patient, setPatient] = useState("");
   const [patientError, setPatientError] = useState("");
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
   );
   const dispatch = useAppDispatch();
+  const [patient, setPatient] = useState(settings.patient);
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
