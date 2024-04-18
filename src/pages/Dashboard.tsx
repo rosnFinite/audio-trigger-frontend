@@ -32,6 +32,9 @@ export default function Dashboard() {
     (state) => state.voicemap.values.recordings
   );
   const patient = useAppSelector((state) => state.settings.values.patient);
+  const saveLocation = useAppSelector(
+    (state) => state.settings.values.save_location
+  );
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [reloadableSeed, setReloadableSeed] = useState(1);
   const [newRecordings, setNewRecordings] = useState<
@@ -54,12 +57,18 @@ export default function Dashboard() {
   //TODO: update badge to count accepted and pending recordings
   return (
     <Layout>
-      <Stack h={"100%"}>
+      <Stack h={"100%"} gap="xs">
         <Title order={2}>Stimmfeld</Title>
         <Text size="xl">
           Patient:{" "}
           <Text span c="blue" inherit>
             {patient}
+          </Text>
+        </Text>
+        <Text>
+          Aufnahmename:{" "}
+          <Text span c="blue" inherit>
+            {saveLocation.split("\\").pop()}
           </Text>
         </Text>
         <Blockquote
