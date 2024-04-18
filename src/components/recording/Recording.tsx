@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Details from "./Details";
 import SocketContext from "../../context/SocketContext";
 
@@ -37,17 +37,17 @@ export default function Recording({
   const recordings = useAppSelector(
     (state) => state.voicemap.values.recordings
   );
-  // find the recording data for the current dbaBin and freqBin
-  const recordingData: RecordingStats =
-    recordings[
-      recordings.findIndex(
-        (item) => item.dbaBin === dbaBin && item.freqBin === freqBin
-      )
-    ];
   const settingsSaveLocation = useAppSelector(
     (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
+  const [recording, setRecording] = useState<RecordingStats>(
+    recordings[
+      recordings.findIndex(
+        (item) => item.dbaBin === dbaBin && item.freqBin === freqBin
+      )
+    ]
+  );
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
 
@@ -59,6 +59,16 @@ export default function Recording({
     return endpoint;
   };
   const api_endpoint = get_endpoint_url();
+
+  useEffect(() => {
+    setRecording(
+      recordings[
+        recordings.findIndex(
+          (item) => item.dbaBin === dbaBin && item.freqBin === freqBin
+        )
+      ]
+    );
+  }, [recordings]);
 
   return (
     <Card
@@ -148,7 +158,7 @@ export default function Recording({
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
           api_endpoint={api_endpoint}
-          recordingData={recordingData}
+          recordingData={recording}
         />
         {acceptable ? (
           <Button

@@ -20,7 +20,6 @@ export default function Details({
   const [parselStats, setParselStats] = useState<string>("");
 
   useEffect(() => {
-    console.log("path", api_endpoint);
     axios
       .get(`${api_endpoint}\\parsel`)
       .then((res) => {

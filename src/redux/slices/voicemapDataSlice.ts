@@ -130,7 +130,6 @@ export const voicemapDataSlice = createSlice({
     REMOVE_RECORDING: (state, action) => {
       // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to remove
       // remove the recording from the data array
-      console.log("Removing recording", action.payload);
       const newData = { ...state.values };
       newData.recordings = newData.recordings.filter(
         (item) =>
