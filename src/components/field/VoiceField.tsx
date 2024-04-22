@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
 import SocketContext from "../../context/SocketContext";
+import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -107,32 +108,7 @@ export default function VoiceField({
       w={width === undefined ? "100%" : width}
       fluid
     >
-      <Flex>
-        <NativeSelect
-          variant="filled"
-          label="Statistik"
-          description="Wählen Sie die Statistik, die Sie visualisieren möchten."
-          value={selectValue}
-          onChange={(event) => setSelectValue(event.currentTarget.value)}
-          data={[
-            "score",
-            "meanF",
-            "stdevF",
-            "hnr",
-            "localJitter",
-            "localAbsoluteJitter",
-            "rapJitter",
-            "ppq5Jitter",
-            "ddpJitter",
-            "localShimmer",
-            "localdbShimmer",
-            "apq3Shimmer",
-            "aqpq5Shimmer",
-            "apq11Shimmer",
-            "ddaShimmer",
-          ]}
-        />
-      </Flex>
+      <VoiceFieldControlGroup />
       <ResponsiveHeatMapCanvas
         data={voicemap.field.map((item) => ({
           id: item.id,

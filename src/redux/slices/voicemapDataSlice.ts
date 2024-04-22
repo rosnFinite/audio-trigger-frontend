@@ -1,35 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { generateVoicemapBinNames } from "../../utils/voicemapUtils";
+import { initialVoiceState } from "../../utils/initialStates";
 
 export const voicemapDataSlice = createSlice({
   name: "voicemap",
   initialState: {
-    values: {
-      dbaSettings: { lower: 35, upper: 115, steps: 5 },
-      freqSettings: { lower: 55, upper: 1700, steps: 2 },
-      fieldBinNames: generateVoicemapBinNames(
-        { lower: 35, upper: 115, steps: 5 },
-        { lower: 55, upper: 1700, steps: 2 }
-      ),
-      annotation: { id: "", text: "" },
-      recordings: [],
-      field: [],
-    } as VoiceState,
+    values: initialVoiceState,
   },
   reducers: {
     INITIALIZE: (state) => {
-      state.values = {
-        ...state.values,
-        dbaSettings: { lower: 35, upper: 115, steps: 5 },
-        freqSettings: { lower: 55, upper: 1700, steps: 2 },
-        fieldBinNames: generateVoicemapBinNames(
-          { lower: 35, upper: 115, steps: 5 },
-          { lower: 55, upper: 1700, steps: 2 }
-        ),
-        annotation: { id: "", text: "" },
-        recordings: [],
-        field: [],
-      };
+      state.values = { ...initialVoiceState };
     },
     SET_DATAMAP: (state, action) => {
       state.values = {
@@ -179,7 +159,11 @@ export const voicemapDataSlice = createSlice({
         ...state.values,
         annotation: action.payload,
       };
-      console.log();
+    },
+    SET_COLOR: (state, action) => {
+      const values = { ...state.values };
+      values.color[action.payload.stat] = action.payload.color;
+      state.values = values;
     },
   },
 });
