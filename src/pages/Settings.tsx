@@ -30,6 +30,7 @@ import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
 import { initialSettingsState } from "../utils/initialStates";
 import SocketContext from "../context/SocketContext";
+import { generateEmptyGrid } from "../utils/voicemapUtils";
 
 const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 
@@ -68,6 +69,12 @@ export default function Settings() {
     }
     socket.on("settings_update_complete", (data) => {
       dispatch({ type: "settings/UPDATE_SETTINGS", payload: data });
+      // generate a new empty grid based on the updated settings
+      dispatch({
+        type: "voicemap/SET_DATAMAP",
+        payload: generateEmptyGrid({lower: data["db"]["lower"], upper: data["db"]["upper"], steps: data["db"]["steps"]}, {lower: data["frequency"]["lower"], upper: data["frequency"]["upper"], steps: data["frequency"]["steps"]}),
+      });
+      // update the color settings for 'score' based on the new min_score
       dispatch({ type: "voicemap/SET_COLOR", payload: {stat: "score", color: {min: data["min_score"], max: 1, type: "diverging", scheme: "blues"}}});
       setSettings(data);
       setPatient(data.patient);
