@@ -4,16 +4,17 @@ import {
   Group,
   NativeSelect,
   NumberInput,
-  Popover,
   Switch,
   Divider,
   Container,
   Grid,
+  Modal,
   Center,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { TbColorPicker } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useDisclosure } from "@mantine/hooks";
 
 interface VoiceFieldControlGroupProps {
   onStatChange: (selectedStat: string) => void;
@@ -28,12 +29,13 @@ function getMinMaxScore(
 
   for (const field of voicefield) {
     for (const data of field.data) {
-      if (data.y[stat] !== 0) {
-        if (data.y[stat] < min) {
-          min = data.y[stat];
+      const value = data.y[stat];
+      if (value != null) {
+        if (value < min) {
+          min = value;
         }
-        if (data.y[stat] > max) {
-          max = data.y[stat];
+        if (value > max) {
+          max = value;
         }
       }
     }
@@ -60,33 +62,35 @@ const colorSchemes = [
 ];
 
 export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControlGroupProps) {
-  const [selectedStat, setSelectedStat] = useState<string>("score");
-  const [selectedSchemeType, setSelectedSchemeType] =
-    useState<string>("divergent");
-  const [selectedScheme, setSelectedScheme] = useState<string>("blues");
-  const [colorMin, setColorMin] = useState<number>(-1);
-  const [colorMax, setColorMax] = useState<number>(-1);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [stat, setStat] = useState<string>("score");
+  const minScore = useAppSelector((state) => state.settings.values.min_score);
+  const [schemeType, setSchemeType] =
+    useState<string>("diverging");
+  const [scheme, setScheme] = useState<string>("blues");
+  const [manualMinMax, setManualMinMax] = useState<{min: number; max: number}>({min: -1, max: -1});
+  const [dataMinMax, setDataMinMax] = useState<{min: number; max: number}>({min: 0, max: 0});
   const [colorDiverge, setColorDiverge] = useState<number>(-1);
-  const [disabled, setDisabled] = useState<boolean>(true);
+  const [autoMinMax, setAutoMinMax] = useState<boolean>(true);
 
-  const voicefield = useAppSelector((state) => state.voicemap.values.field);
+  const field = useAppSelector((state) => state.voicemap.values.field);
+  const color = useAppSelector((state) => state.voicemap.values.color[stat as keyof StatColorSettings]);
   const dispatch = useAppDispatch();
 
   const handleStatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedStat: string = event.currentTarget.value;
-    setSelectedStat(selectedStat);
-    onStatChange(selectedStat);
+    const stat: string = event.currentTarget.value;
+    setStat(stat);
+    onStatChange(stat);
   }
 
   useEffect(() => {
     const { min, max } = getMinMaxScore(
-      voicefield,
-      selectedStat as keyof VoiceStats
+      field,
+      stat as keyof VoiceStats
     );
-    console.log(min, max);
-    setColorMin(min);
-    setColorMax(max);
-  }, [selectedStat, voicefield]);
+    setManualMinMax({min: color.min, max: color.max});
+    setDataMinMax({min: min, max: max});
+  }, [stat, field, color.min, color.max]);
 
   return (
     <Group align="flex-end">
@@ -94,7 +98,7 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
         variant="filled"
         label="Statistik"
         description="Wählen Sie die Statistik, die Sie visualisieren möchten."
-        value={selectedStat}
+        value={stat}
         onChange={handleStatChange}
         data={[
           "score",
@@ -115,106 +119,111 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
         ]}
       />
       <Group>
-        <Popover width={300} trapFocus position="bottom" withArrow shadow="md">
-          <Popover.Target>
-            <Button leftSection={<TbColorPicker />}>Farbskalierung</Button>
-          </Popover.Target>
-          <Popover.Dropdown>
+        <Modal opened={opened} onClose={close} title="Farbskalierung">
+          <Group>
             <NativeSelect
-              mb={5}
               label="Typ"
-              value={selectedSchemeType}
+              value={schemeType}
               onChange={(event) =>
-                setSelectedSchemeType(event.currentTarget.value)
+                setSchemeType(event.currentTarget.value)
               }
               data={[
-                { label: "Divergent", value: "divergent" },
+                { label: "Diverging", value: "diverging" },
                 { label: "Sequential", value: "sequential" },
                 { label: "Quantize", value: "quantize" },
               ]}
             />
             <NativeSelect
-              mb={10}
               label="Schema"
-              value={selectedScheme}
-              onChange={(event) => setSelectedScheme(event.currentTarget.value)}
+              value={scheme}
+              onChange={(event) => setScheme(event.currentTarget.value)}
               data={colorSchemes}
             />
-            <Divider my="sm" />
-            <Text mb={5}>Auswahl des Wertebereichs</Text>
+          </Group>
+          <Divider my="sm" />
+          <Center>
             <Switch
               defaultChecked
-              label="Automatisch"
-              onChange={(event) => setDisabled(event.currentTarget.checked)}
-              mb={10}
+              label="Automatisch Auswahl des Wertebereichs"
+              onChange={(event) => setAutoMinMax(event.currentTarget.checked)}
             />
-            <Divider />
-            <Container pl={0} pr={0}>
-              <Grid>
-                <Grid.Col span={6}>
-                  <Text td="underline" fw={500}>
-                    Datenbestand
-                  </Text>
-                  <Text size="xs">Min: 0</Text>
-                  <Text size="xs">Max: 100</Text>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                  <Text td="underline" fw={500}>
-                    Ausgewählt
-                  </Text>
-                  <Text size="xs">Min: 0</Text>
-                  <Text size="xs">Max: 100</Text>
-                </Grid.Col>
-              </Grid>
-
-              <Divider my="xs" />
-              <NumberInput
-                disabled={disabled}
-                label="Mindestwert"
-                defaultValue={colorMin}
-                min={-1}
-              />
-              <NumberInput
-                disabled={disabled}
-                label="Maximalwert"
-                defaultValue={colorMax}
-                min={-1}
-              />
-              {selectedSchemeType === "divergent" && (
-                <NumberInput
-                  disabled={disabled}
-                  label="Diverge at"
-                  defaultValue={colorDiverge}
-                  min={-1}
-                />
-              )}
+          </Center>
+          <Divider my="sm"/>
+          <Group>
+            <Container>
+              <Text td="underline" fw={500}> Datenbestand</Text>
+              <Text size="xs">Min: {dataMinMax.min === Infinity ? "NaN" : dataMinMax.min}</Text>
+              <Text size="xs">Max: {dataMinMax.max === -Infinity ? "NaN" : dataMinMax.max}</Text>
+            </Container>
+            <Container>
+              <Text td="underline" fw={500}> Ausgewählt</Text>
+              <Text size="xs">Min: {color.min === -1 ? "Autom." : color.min}</Text>
+              <Text size="xs">Max: {color.max === -1 ? "Autom." : color.max}</Text>
+            </Container>
+          </Group>
+          <Divider my="sm" />
+          <NumberInput
+            disabled={autoMinMax}
+            label="Mindestwert"
+            description="Geben Sie den minimalen Wert für die Farbskala ein. [-1 = Automatisch]"
+            defaultValue={manualMinMax.min}
+            onChange={(value) => setManualMinMax({min: Number(value), max: manualMinMax.max})}
+            min={-1}
+          />
+          <NumberInput
+            disabled={autoMinMax}
+            label="Maximalwert"
+            description="Geben Sie den maximalen Wert für die Farbskala ein. [-1 = Automatisch]"
+            defaultValue={manualMinMax.max}
+            onChange={(value) => setManualMinMax({min: manualMinMax.min, max:Number(value)})}
+            min={-1}
+          />
+          {schemeType === "diverging" && (
+            <NumberInput
+              disabled={autoMinMax}
+              label="Diverge at"
+              description="Geben Sie den Wert ein, bei dem die Farbskala divergiert. [-1 = Automatisch]"
+              defaultValue={colorDiverge}
+              onChange={(value) => setColorDiverge(Number(value))}
+              min={-1}
+            />
+          )}
+          <Grid mt={10}>
+            <Grid.Col span={6}>
               <Button
-                mt={10}
-                fullWidth
                 color="green"
+                fullWidth
                 onClick={() => {
                   dispatch({
-                    type: "SET_COLOR",
+                    type: "voicemap/SET_COLOR",
                     payload: {
-                      stats: selectedStat,
+                      stat: stat,
                       color: {
-                        min: 0,
-                        max: 100,
-                        type: "divergent",
-                        scheme: "blues",
+                        min: autoMinMax ? -1 : manualMinMax.min,
+                        max: autoMinMax ? -1 : manualMinMax.max,
+                        type: schemeType,
+                        scheme: scheme,
                       },
                     },
                   });
+                  close();
                 }}
               >
                 Anwenden
               </Button>
-              <Button mt={5} fullWidth color="red">
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Button color="red" fullWidth onClick={() => {
+                  dispatch({type: "voicemap/SET_COLOR", payload: {stat: stat, color: {min: stat === "score" ? minScore : -1, max: stat === "score" ? 1 : -1, type: "diverging", scheme: "blues"}}});
+                  close();
+                }}
+              >
                 Zurücksetzen
               </Button>
-            </Container>
-          </Popover.Dropdown>
-        </Popover>
+            </Grid.Col>
+          </Grid>
+        </Modal>
+        <Button leftSection={<TbColorPicker />} onClick={open}>Farbskalierung</Button>
       </Group>
     </Group>
   );

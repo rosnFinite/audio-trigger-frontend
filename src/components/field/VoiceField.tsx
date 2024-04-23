@@ -1,3 +1,4 @@
+
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
@@ -5,11 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
 import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
-
-interface MinMax {
-  min: number,
-  max: number
-}
 
 interface FieldData {
   id: string;
@@ -29,22 +25,7 @@ function getDataByKey(data: VoiceField[], key: string) {
   }))
   return result
 }
-
-function getMinMax(data: FieldData[]) {
-  const values = data.flatMap(entry => entry.data.map(value => value.y))
-  const zeroFilteredValues = values.filter(y => y !== 0);
-  let min, max;
-  if (zeroFilteredValues.length === 0) {
-    min = 0;
-    max = 0;
-  } else {
-    min = Math.min(...zeroFilteredValues);
-    max = Math.max(...zeroFilteredValues);
-  }
-  console.log(min, max)
-  return {min: min, max: max}
-}
-
+const schemeTest = "blues";
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
 To visualize the current voice, we use the annotations feature of Nivo. This needs the id of the cell to be highlighted. We use the dba and frequency bin to calculate the id. 
@@ -60,9 +41,7 @@ export default function VoiceField({
   width?: string;
 }) {
   const socket = useContext(SocketContext);
-
   // needed to create matching string for annotation
-  const [selectedStat, setSelectedStat] = useState<string>("score");
   const dbBinSettings = useAppSelector((state) => state.settings.values.db);
   const freqBinSettings = useAppSelector(
     (state) => state.settings.values.frequency
@@ -70,21 +49,41 @@ export default function VoiceField({
   const status = useAppSelector(
     (state) => state.settings.values.status
   );
-  const minScore = useAppSelector((state) => state.settings.values.min_score);
-  const voicemap = useAppSelector((state) => state.voicemap.values);
-  const fieldBinNames = useAppSelector(
-    (state) => state.voicemap.values.fieldBinNames
-  );
-  const [fieldData, setFieldData] = useState<FieldData[]>(getDataByKey(voicemap.field, selectValue))
-  const [minmax, setMinmax] = useState<MinMax>({"min": minScore, "max": 1})
+  const dbBinVoice = useAppSelector((state) => state.voicemap.values.dbaSettings);
+  const freqBinVoice = useAppSelector((state) => state.voicemap.values.freqSettings);
+  const annotation = useAppSelector((state) => state.voicemap.values.annotation);
+  const field = useAppSelector((state) => state.voicemap.values.field);
+  const binNames = useAppSelector((state) => state.voicemap.values.fieldBinNames);
+  const color = useAppSelector((state) => state.voicemap.values.color);
   const dispatch = useAppDispatch();
+  const [selectedStat, setSelectedStat] = useState<string>("score");
+  const [selectedData, setSelectedData] = useState<FieldData[]>(getDataByKey(field, selectedStat));
+  const [selectedScheme, setSelectedScheme] = useState<string>(color[selectedStat as keyof StatColorSettings].scheme);
+  const [selectedSchemeType, setSelectedSchemeType] = useState<string>(color[selectedStat as keyof StatColorSettings].type);
+  const [selectedColorMinMax, setSelectedColorMinMax] = useState<{ min: number; max: number }>({
+    min: color[selectedStat as keyof StatColorSettings].min,
+    max: color[selectedStat as keyof StatColorSettings].max,
+  });
+
+  useEffect(() => {
+    setSelectedData(getDataByKey(field, selectedStat));
+  }, [selectedStat, field]);
+
+  useEffect(() => {
+    setSelectedScheme(color[selectedStat as keyof StatColorSettings].scheme);
+    setSelectedSchemeType(color[selectedStat as keyof StatColorSettings].type);
+    setSelectedColorMinMax({
+      min: color[selectedStat as keyof StatColorSettings].min,
+      max: color[selectedStat as keyof StatColorSettings].max,
+    });
+  }, [selectedStat, color]);
 
   useEffect(() => {
     // check current freq and dba settings of heatmap and compare to settings !IMPORTANT! This comparison requires the order of the attributes to be the same.
     // if the settings are different, we need to create a new empty heatmap
     if (
-      JSON.stringify(voicemap.dbaSettings) !== JSON.stringify(dbBinSettings) ||
-      JSON.stringify(voicemap.freqSettings) !== JSON.stringify(freqBinSettings)
+      JSON.stringify(dbBinVoice) !== JSON.stringify(dbBinSettings) ||
+      JSON.stringify(freqBinVoice) !== JSON.stringify(freqBinSettings)
     ) {
       dispatch({
         type: "voicemap/SET_DATAMAP",
@@ -95,9 +94,9 @@ export default function VoiceField({
         payload: { dbaSettings: dbBinSettings, freqSettings: freqBinSettings },
       });
     }
-    console.log("voicemap", voicemap);
-  }, []);
+  }, [dbBinSettings, freqBinSettings, dbBinVoice, freqBinVoice, dispatch]);
 
+  // Listen for voice and trigger events
   useEffect(() => {
     if (!socket) {
       console.error("Socket is not initialized");
@@ -109,8 +108,8 @@ export default function VoiceField({
         // Heatmap naturally reverses dbaBin order (y-axis, from top to bottom, high -> low), therefore we need to maniupulate incoming dbaBin (low -> high to high -> low)
         payload: {
           id: `${
-            fieldBinNames.dba[fieldBinNames.dba.length - data.dba_bin - 1]
-          }.${fieldBinNames.freq[data.freq_bin]}`,
+            binNames.dba[binNames.dba.length - data.dba_bin - 1]
+          }.${binNames.freq[data.freq_bin]}`,
           text: "Stimme",
         },
       });
@@ -128,7 +127,7 @@ export default function VoiceField({
         },
       });
     });
-  }, [socket]);
+  }, [binNames.dba, binNames.freq, dbBinSettings.lower, dbBinSettings.steps, dbBinSettings.upper, dispatch, socket]);
 
   useEffect(() => {
     console.log("status", status);
@@ -139,19 +138,6 @@ export default function VoiceField({
       });
     }
   }, [dispatch, dbBinSettings, freqBinSettings, status]);
-
-  useEffect(() => {
-    console.log("UPDATE MINMAX AND SELETED DATA")
-    // special case 'score' here we already have minimum provided for the values
-    const selectedData = getDataByKey(voicemap.field, selectValue);
-    if (selectValue === "score") {
-      setMinmax({min: minScore, max: 1});
-    } else {
-      const selectedDataMinMax = getMinMax(selectedData);
-      setMinmax(selectedDataMinMax);
-    }
-    setFieldData(selectedData);
-  }, [selectValue])
 
   return (
     <Container
@@ -164,7 +150,7 @@ export default function VoiceField({
     >
       <VoiceFieldControlGroup onStatChange={(selection) => setSelectedStat(selection)}/>
       <ResponsiveHeatMapCanvas
-        data={fieldData}
+        data={selectedData}
         valueFormat="0>-.4f"
         margin={{ top: 0, right: 60, bottom: 130, left: 40 }}
         xOuterPadding={0.5}
@@ -198,10 +184,10 @@ export default function VoiceField({
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: selectedStat === "score" ? minScore : 0,
-          maxValue: selectedStat === "score" ? 1 : undefined,
+          minValue: selectedColorMinMax.min === -1 ? undefined : selectedColorMinMax.min,
+          maxValue: selectedColorMinMax.max === -1 ? undefined : selectedColorMinMax.max,
         }}
-        emptyColor="#555555"
+        emptyColor="#ffffff"
         enableLabels={false}
         legends={[
           {
@@ -225,9 +211,9 @@ export default function VoiceField({
           {
             type: "rect",
             match: {
-              id: voicemap.annotation.id, // Fix: Assign the id property with the value as a string
+              id: annotation.id, // Fix: Assign the id property with the value as a string
             },
-            note: voicemap.annotation.text,
+            note: annotation.text,
             noteX: -22,
             noteY: -20,
             offset: 0,

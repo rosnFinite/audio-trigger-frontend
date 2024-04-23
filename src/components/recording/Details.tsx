@@ -37,57 +37,57 @@ export default function Details({
           <Accordion.Control>Überblick</Accordion.Control>
           <Accordion.Panel>
             <Text>
-              <strong>MeanF:</strong> {recordingData.meanF.toFixed(9)}
+              <strong>MeanF:</strong> {recordingData.meanF?.toFixed(9)}
             </Text>
             <Text>
-              <strong>StdevF:</strong> {recordingData.stdevF.toFixed(9)}
+              <strong>StdevF:</strong> {recordingData.stdevF?.toFixed(9)}
             </Text>
             <Text>
-              <strong>HNR:</strong> {recordingData.hnr.toFixed(9)}
+              <strong>HNR:</strong> {recordingData.hnr?.toFixed(9)}
             </Text>
             <Text>
               <strong>local Jitter:</strong>{" "}
-              {recordingData.localJitter.toFixed(9)}
+              {recordingData.localJitter?.toFixed(9)}
             </Text>
             <Text>
               <strong>local Absolute Jitter:</strong>{" "}
-              {recordingData.localAbsoluteJitter.toFixed(9)}
+              {recordingData.localAbsoluteJitter?.toFixed(9)}
             </Text>
             <Text>
               <strong>Relative Average Perturbation:</strong>{" "}
-              {recordingData.rapJitter.toFixed(9)}
+              {recordingData.rapJitter?.toFixed(9)}
             </Text>
             <Text>
               <strong>Five-point Period Perturbation Quotient:</strong>{" "}
-              {recordingData.ppq5Jitter.toFixed(9)}
+              {recordingData.ppq5Jitter?.toFixed(9)}
             </Text>
             <Text>
               <strong>Difference of Differences of Periods:</strong>{" "}
-              {recordingData.ddpJitter.toFixed(9)}
+              {recordingData.ddpJitter?.toFixed(9)}
             </Text>
             <Text>
               <strong>local Shimmer:</strong>{" "}
-              {recordingData.localShimmer.toFixed(9)}
+              {recordingData.localShimmer?.toFixed(9)}
             </Text>
             <Text>
               <strong>local DB Shimmer:</strong>{" "}
-              {recordingData.localdbShimmer.toFixed(9)}
+              {recordingData.localdbShimmer?.toFixed(9)}
             </Text>
             <Text>
               <strong>Three-point Amplitude Perturbation Quotient:</strong>{" "}
-              {recordingData.apq3Shimmer.toFixed(9)}
+              {recordingData.apq3Shimmer?.toFixed(9)}
             </Text>
             <Text>
               <strong>Five-point Amplitude Perturbation Quotient:</strong>{" "}
-              {recordingData.aqpq5Shimmer.toFixed(9)}
+              {recordingData.aqpq5Shimmer?.toFixed(9)}
             </Text>
             <Text>
               <strong>11-point Amplitude Perturbation Quotient:</strong>{" "}
-              {recordingData.apq11Shimmer.toFixed(9)}
+              {recordingData.apq11Shimmer?.toFixed(9)}
             </Text>
             <Text>
               <strong>DDA Shimmer:</strong>{" "}
-              {recordingData.ddaShimmer.toFixed(9)}
+              {recordingData.ddaShimmer?.toFixed(9)}
             </Text>
           </Accordion.Panel>
         </Accordion.Item>

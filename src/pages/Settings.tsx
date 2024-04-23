@@ -68,6 +68,7 @@ export default function Settings() {
     }
     socket.on("settings_update_complete", (data) => {
       dispatch({ type: "settings/UPDATE_SETTINGS", payload: data });
+      dispatch({ type: "voicemap/SET_COLOR", payload: {stat: "score", color: {min: data["min_score"], max: 1, type: "diverging", scheme: "blues"}}});
       setSettings(data);
       setPatient(data.patient);
     });

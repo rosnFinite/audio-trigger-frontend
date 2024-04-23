@@ -161,9 +161,14 @@ export const voicemapDataSlice = createSlice({
       };
     },
     SET_COLOR: (state, action) => {
-      const values = { ...state.values };
-      values.color[action.payload.stat] = action.payload.color;
-      state.values = values;
+      const newColorObj = {
+        min: action.payload.color.min, 
+        max: action.payload.color.max, 
+        type: action.payload.color.type, 
+        scheme: action.payload.color.scheme, 
+        divergeAt: action.payload.color.divergeAt === undefined ? -1 : action.payload.color.divergeAt
+      };
+      state.values = { ...state.values, color: { ...state.values.color, [action.payload.stat]: newColorObj }};
     },
   },
 });

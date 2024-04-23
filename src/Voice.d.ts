@@ -1,21 +1,25 @@
 interface Stats {
-  meanF: number;
-  stdevF: number;
-  hnr: number;
-  localJitter: number;
-  localAbsoluteJitter: number;
-  rapJitter: number;
-  ppq5Jitter: number;
-  ddpJitter: number;
-  localShimmer: number;
-  localdbShimmer: number;
-  apq3Shimmer: number;
-  aqpq5Shimmer: number;
-  apq11Shimmer: number;
-  ddaShimmer: number;
+  meanF: number | null;
+  stdevF: number | null;
+  hnr: number | null;
+  localJitter: number | null;
+  localAbsoluteJitter: number | null;
+  rapJitter: number | null;
+  ppq5Jitter: number | null;
+  ddpJitter: number | null;
+  localShimmer: number | null;
+  localdbShimmer: number | null;
+  apq3Shimmer: number | null;
+  aqpq5Shimmer: number | null;
+  apq11Shimmer: number | null;
+  ddaShimmer: number | null;
 }
 
-interface RecordingStats extends Stats {
+type NonNullableStats = {
+  [Property in keyof Stats]: number;
+};
+
+interface RecordingStats extends NonNullableStats {
   freqBin: number;
   dbaBin: number;
   qScore: string;
@@ -24,7 +28,7 @@ interface RecordingStats extends Stats {
 }
 
 interface VoiceStats extends Stats {
-  score: number;
+  score: number | null;
 }
 
 interface VoiceField {
@@ -73,7 +77,7 @@ interface VoiceState {
     freq: string[];
     dba: string[];
   };
-  color: ColorSettings;
+  color: StatColorSettings;
   annotation: {
     id: string;
     text: string;
