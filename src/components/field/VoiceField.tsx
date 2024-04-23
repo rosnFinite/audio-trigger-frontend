@@ -1,4 +1,4 @@
-import { Container, Flex, NativeSelect } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -21,9 +21,9 @@ export default function VoiceField({
   width?: string;
 }) {
   const socket = useContext(SocketContext);
-  const [selectValue, setSelectValue] = useState<string>("score");
 
   // needed to create matching string for annotation
+  const [selectedStat, setSelectedStat] = useState<string>("score");
   const settingsDb = useAppSelector((state) => state.settings.values.db);
   const settingsFreq = useAppSelector(
     (state) => state.settings.values.frequency
@@ -108,13 +108,13 @@ export default function VoiceField({
       w={width === undefined ? "100%" : width}
       fluid
     >
-      <VoiceFieldControlGroup />
+      <VoiceFieldControlGroup onStatChange={(selection) => setSelectedStat(selection)}/>
       <ResponsiveHeatMapCanvas
         data={voicemap.field.map((item) => ({
           id: item.id,
           data: item.data.map((d: { x: number; y: VoiceStats }) => ({
             x: d.x,
-            y: d.y[selectValue as keyof VoiceStats] as number,
+            y: d.y[selectedStat as keyof VoiceStats] as number,
           })),
         }))}
         valueFormat="0>-.4f"
@@ -150,8 +150,8 @@ export default function VoiceField({
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: selectValue === "score" ? minScore : 0,
-          maxValue: selectValue === "score" ? 1 : undefined,
+          minValue: selectedStat === "score" ? minScore : 0,
+          maxValue: selectedStat === "score" ? 1 : undefined,
         }}
         emptyColor="#555555"
         enableLabels={false}
@@ -168,7 +168,7 @@ export default function VoiceField({
             tickSpacing: 4,
             tickOverlap: false,
             tickFormat: ">-.2s",
-            title: `${selectValue} →`,
+            title: `${selectedStat} →`,
             titleAlign: "start",
             titleOffset: 4,
           },

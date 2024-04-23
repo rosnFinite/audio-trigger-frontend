@@ -16,9 +16,7 @@ import { TbColorPicker } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
 interface VoiceFieldControlGroupProps {
-  dataMin: number;
-  dataMax: number;
-  onAccept: () => void;
+  onStatChange: (selectedStat: string) => void;
 }
 
 function getMinMaxScore(
@@ -61,7 +59,7 @@ const colorSchemes = [
   { label: "Diverging: Red->Yellow->Green", value: "red_yellow_green" },
 ];
 
-export default function VoiceFieldControlGroup() {
+export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControlGroupProps) {
   const [selectedStat, setSelectedStat] = useState<string>("score");
   const [selectedSchemeType, setSelectedSchemeType] =
     useState<string>("divergent");
@@ -73,6 +71,12 @@ export default function VoiceFieldControlGroup() {
 
   const voicefield = useAppSelector((state) => state.voicemap.values.field);
   const dispatch = useAppDispatch();
+
+  const handleStatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedStat: string = event.currentTarget.value;
+    setSelectedStat(selectedStat);
+    onStatChange(selectedStat);
+  }
 
   useEffect(() => {
     const { min, max } = getMinMaxScore(
@@ -91,7 +95,7 @@ export default function VoiceFieldControlGroup() {
         label="Statistik"
         description="Wählen Sie die Statistik, die Sie visualisieren möchten."
         value={selectedStat}
-        onChange={(event) => setSelectedStat(event.currentTarget.value)}
+        onChange={handleStatChange}
         data={[
           "score",
           "meanF",
