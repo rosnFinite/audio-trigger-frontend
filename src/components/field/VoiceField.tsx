@@ -1,4 +1,3 @@
-
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
@@ -22,8 +21,8 @@ function getDataByKey(data: VoiceField[], key: string) {
       x: d.x,
       y: d.y[key as keyof VoiceStats] as number,
     })),
-  }))
-  return result
+  }));
+  return result;
 }
 const schemeTest = "blues";
 /**
@@ -46,21 +45,36 @@ export default function VoiceField({
   const freqBinSettings = useAppSelector(
     (state) => state.settings.values.frequency
   );
-  const status = useAppSelector(
-    (state) => state.settings.values.status
+  const status = useAppSelector((state) => state.settings.values.status);
+  const dbBinVoice = useAppSelector(
+    (state) => state.voicemap.values.dbaSettings
   );
-  const dbBinVoice = useAppSelector((state) => state.voicemap.values.dbaSettings);
-  const freqBinVoice = useAppSelector((state) => state.voicemap.values.freqSettings);
-  const annotation = useAppSelector((state) => state.voicemap.values.annotation);
+  const freqBinVoice = useAppSelector(
+    (state) => state.voicemap.values.freqSettings
+  );
+  const annotation = useAppSelector(
+    (state) => state.voicemap.values.annotation
+  );
   const field = useAppSelector((state) => state.voicemap.values.field);
-  const binNames = useAppSelector((state) => state.voicemap.values.fieldBinNames);
+  const binNames = useAppSelector(
+    (state) => state.voicemap.values.fieldBinNames
+  );
   const color = useAppSelector((state) => state.voicemap.values.color);
   const dispatch = useAppDispatch();
   const [selectedStat, setSelectedStat] = useState<string>("score");
-  const [selectedData, setSelectedData] = useState<FieldData[]>(getDataByKey(field, selectedStat));
-  const [selectedScheme, setSelectedScheme] = useState<string>(color[selectedStat as keyof StatColorSettings].scheme);
-  const [selectedSchemeType, setSelectedSchemeType] = useState<string>(color[selectedStat as keyof StatColorSettings].type);
-  const [selectedColorMinMax, setSelectedColorMinMax] = useState<{ min: number; max: number }>({
+  const [selectedData, setSelectedData] = useState<FieldData[]>(
+    getDataByKey(field, selectedStat)
+  );
+  const [selectedScheme, setSelectedScheme] = useState<string>(
+    color[selectedStat as keyof StatColorSettings].scheme
+  );
+  const [selectedSchemeType, setSelectedSchemeType] = useState<string>(
+    color[selectedStat as keyof StatColorSettings].type
+  );
+  const [selectedColorMinMax, setSelectedColorMinMax] = useState<{
+    min: number;
+    max: number;
+  }>({
     min: color[selectedStat as keyof StatColorSettings].min,
     max: color[selectedStat as keyof StatColorSettings].max,
   });
@@ -107,16 +121,17 @@ export default function VoiceField({
         type: "voicemap/SET_ANNOTATION",
         // Heatmap naturally reverses dbaBin order (y-axis, from top to bottom, high -> low), therefore we need to maniupulate incoming dbaBin (low -> high to high -> low)
         payload: {
-          id: `${
-            binNames.dba[binNames.dba.length - data.dba_bin - 1]
-          }.${binNames.freq[data.freq_bin]}`,
+          id: `${binNames.dba[binNames.dba.length - data.dba_bin - 1]}.${
+            binNames.freq[data.freq_bin]
+          }`,
           text: "Stimme",
         },
       });
     });
     socket.on("trigger", (data) => {
       console.log("trigger", data);
-      let numDbaBins = (dbBinSettings.upper - dbBinSettings.lower) / dbBinSettings.steps;
+      let numDbaBins =
+        (dbBinSettings.upper - dbBinSettings.lower) / dbBinSettings.steps;
       dispatch({
         type: "voicemap/UPDATE_DATAPOINT",
         payload: {
@@ -127,10 +142,18 @@ export default function VoiceField({
         },
       });
     });
-  }, [binNames.dba, binNames.freq, dbBinSettings.lower, dbBinSettings.steps, dbBinSettings.upper, dispatch, socket]);
+  }, [
+    binNames.dba,
+    binNames.freq,
+    dbBinSettings.lower,
+    dbBinSettings.steps,
+    dbBinSettings.upper,
+    dispatch,
+    socket,
+  ]);
 
+  // reset the grid on status changed to 'reset'
   useEffect(() => {
-    console.log("status", status);
     if (status === "reset") {
       dispatch({
         type: "voicemap/SET_DATAMAP",
@@ -148,9 +171,21 @@ export default function VoiceField({
       w={width === undefined ? "100%" : width}
       fluid
     >
-      <VoiceFieldControlGroup onStatChange={(selection) => setSelectedStat(selection)}/>
+      <VoiceFieldControlGroup
+        onStatChange={(selection) => setSelectedStat(selection)}
+      />
       <ResponsiveHeatMapCanvas
         data={selectedData}
+        animate={false}
+        inactiveOpacity={0.5}
+        onClick={(data, event) => {
+          if (status !== "online") {
+            dispatch({
+              type: "voicemap/SET_ANNOTATION",
+              payload: { id: data.id, text: "Auswahl" },
+            });
+          }
+        }}
         valueFormat="0>-.4f"
         margin={{ top: 0, right: 60, bottom: 130, left: 40 }}
         xOuterPadding={0.5}
@@ -184,8 +219,14 @@ export default function VoiceField({
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: selectedColorMinMax.min === -1 ? undefined : selectedColorMinMax.min,
-          maxValue: selectedColorMinMax.max === -1 ? undefined : selectedColorMinMax.max,
+          minValue:
+            selectedColorMinMax.min === -1
+              ? undefined
+              : selectedColorMinMax.min,
+          maxValue:
+            selectedColorMinMax.max === -1
+              ? undefined
+              : selectedColorMinMax.max,
         }}
         emptyColor="#ffffff"
         enableLabels={false}
