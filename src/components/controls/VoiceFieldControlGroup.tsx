@@ -119,7 +119,7 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
         ]}
       />
       <Group>
-        <Modal opened={opened} onClose={close} title="Farbskalierung">
+        <Modal opened={opened} onClose={close} title={`Farbskalierung für ${stat}`}>
           <Group>
             <NativeSelect
               label="Typ"
