@@ -1,9 +1,10 @@
-import { Container, Flex, NativeSelect, Text, NumberInput, Grid } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
 import SocketContext from "../../context/SocketContext";
+import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 
 interface MinMax {
   min: number,
@@ -59,9 +60,9 @@ export default function VoiceField({
   width?: string;
 }) {
   const socket = useContext(SocketContext);
-  const [selectValue, setSelectValue] = useState<string>("score");
 
   // needed to create matching string for annotation
+  const [selectedStat, setSelectedStat] = useState<string>("score");
   const dbBinSettings = useAppSelector((state) => state.settings.values.db);
   const freqBinSettings = useAppSelector(
     (state) => state.settings.values.frequency
@@ -161,46 +162,7 @@ export default function VoiceField({
       w={width === undefined ? "100%" : width}
       fluid
     >
-      <Flex align="flex-end" gap="md">
-        <NativeSelect
-          variant="filled"
-          label="Statistik"
-          description="Wählen Sie die Statistik, die Sie visualisieren möchten."
-          value={selectValue}
-          onChange={(event) => setSelectValue(event.currentTarget.value)}
-          data={[
-            "score",
-            "meanF",
-            "stdevF",
-            "hnr",
-            "localJitter",
-            "localAbsoluteJitter",
-            "rapJitter",
-            "ppq5Jitter",
-            "ddpJitter",
-            "localShimmer",
-            "localdbShimmer",
-            "apq3Shimmer",
-            "aqpq5Shimmer",
-            "apq11Shimmer",
-            "ddaShimmer",
-          ]}
-        />
-        <NumberInput 
-          size="xs"
-          label="Min."
-          placeholder={minmax["min"].toString()}
-          defaultValue={minmax["min"].toString()}
-          value={minmax["min"]}
-        />
-        <NumberInput
-          size="xs"
-          label="Max."
-          placeholder={minmax["max"].toString()}
-          defaultValue={minmax["max"].toString()}
-          value={minmax["max"]}
-        />
-      </Flex>
+      <VoiceFieldControlGroup onStatChange={(selection) => setSelectedStat(selection)}/>
       <ResponsiveHeatMapCanvas
         data={fieldData}
         valueFormat="0>-.4f"
@@ -236,8 +198,8 @@ export default function VoiceField({
         colors={{
           type: "diverging",
           scheme: "blues",
-          minValue: selectValue === "score" ? minScore : 0,
-          maxValue: selectValue === "score" ? 1 : undefined,
+          minValue: selectedStat === "score" ? minScore : 0,
+          maxValue: selectedStat === "score" ? 1 : undefined,
         }}
         emptyColor="#555555"
         enableLabels={false}
@@ -254,7 +216,7 @@ export default function VoiceField({
             tickSpacing: 4,
             tickOverlap: false,
             tickFormat: ">-.2s",
-            title: `${selectValue} →`,
+            title: `${selectedStat} →`,
             titleAlign: "start",
             titleOffset: 4,
           },

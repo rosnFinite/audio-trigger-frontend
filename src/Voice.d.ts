@@ -41,6 +41,31 @@ interface BinSettings {
   steps: number;
 }
 
+interface ColorSetting {
+  min: number;
+  max: number;
+  type: string;
+  scheme: string;
+  divergeAt?: number;
+}
+interface StatColorSettings {
+  score: ColorSetting;
+  meanF: ColorSetting;
+  stdevF: ColorSetting;
+  hnr: ColorSetting;
+  localJitter: ColorSetting;
+  localAbsoluteJitter: ColorSetting;
+  rapJitter: ColorSetting;
+  ppq5Jitter: ColorSetting;
+  ddpJitter: ColorSetting;
+  localShimmer: ColorSetting;
+  localdbShimmer: ColorSetting;
+  apq3Shimmer: ColorSetting;
+  aqpq5Shimmer: ColorSetting;
+  apq11Shimmer: ColorSetting;
+  ddaShimmer: ColorSetting;
+}
+
 interface VoiceState {
   dbaSettings: BinSettings;
   freqSettings: BinSettings;
@@ -48,6 +73,7 @@ interface VoiceState {
     freq: string[];
     dba: string[];
   };
+  color: ColorSettings;
   annotation: {
     id: string;
     text: string;

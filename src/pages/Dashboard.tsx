@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { TbInfoCircle, TbRefresh, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
-import ControlButtonGroup from "../components/ControlButtonGroup";
+import ControlButtonGroup from "../components/controls/ControlButtonGroup";
 import Layout from "../components/Layout/Layout";
 import Recording from "../components/recording/Recording";
 import { useAppSelector } from "../redux/hooks";
