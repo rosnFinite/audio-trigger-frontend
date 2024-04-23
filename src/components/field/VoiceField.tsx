@@ -1,9 +1,48 @@
-import { Container, Flex, NativeSelect } from "@mantine/core";
+import { Container, Flex, NativeSelect, Text, NumberInput, Grid } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
 import SocketContext from "../../context/SocketContext";
+
+interface MinMax {
+  min: number,
+  max: number
+}
+
+interface FieldData {
+  id: string;
+  data: {
+    x: number;
+    y: number;
+  }[];
+}
+
+function getDataByKey(data: VoiceField[], key: string) {
+  const result = data.map((item) => ({
+    id: item.id,
+    data: item.data.map((d: { x: number; y: VoiceStats }) => ({
+      x: d.x,
+      y: d.y[key as keyof VoiceStats] as number,
+    })),
+  }))
+  return result
+}
+
+function getMinMax(data: FieldData[]) {
+  const values = data.flatMap(entry => entry.data.map(value => value.y))
+  const zeroFilteredValues = values.filter(y => y !== 0);
+  let min, max;
+  if (zeroFilteredValues.length === 0) {
+    min = 0;
+    max = 0;
+  } else {
+    min = Math.min(...zeroFilteredValues);
+    max = Math.max(...zeroFilteredValues);
+  }
+  console.log(min, max)
+  return {min: min, max: max}
+}
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -23,34 +62,36 @@ export default function VoiceField({
   const [selectValue, setSelectValue] = useState<string>("score");
 
   // needed to create matching string for annotation
-  const settingsDb = useAppSelector((state) => state.settings.values.db);
-  const settingsFreq = useAppSelector(
+  const dbBinSettings = useAppSelector((state) => state.settings.values.db);
+  const freqBinSettings = useAppSelector(
     (state) => state.settings.values.frequency
   );
-  const settingsStatus = useAppSelector(
+  const status = useAppSelector(
     (state) => state.settings.values.status
   );
   const minScore = useAppSelector((state) => state.settings.values.min_score);
   const voicemap = useAppSelector((state) => state.voicemap.values);
-  const datamapBinNames = useAppSelector(
+  const fieldBinNames = useAppSelector(
     (state) => state.voicemap.values.fieldBinNames
   );
+  const [fieldData, setFieldData] = useState<FieldData[]>(getDataByKey(voicemap.field, selectValue))
+  const [minmax, setMinmax] = useState<MinMax>({"min": minScore, "max": 1})
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     // check current freq and dba settings of heatmap and compare to settings !IMPORTANT! This comparison requires the order of the attributes to be the same.
     // if the settings are different, we need to create a new empty heatmap
     if (
-      JSON.stringify(voicemap.dbaSettings) !== JSON.stringify(settingsDb) ||
-      JSON.stringify(voicemap.freqSettings) !== JSON.stringify(settingsFreq)
+      JSON.stringify(voicemap.dbaSettings) !== JSON.stringify(dbBinSettings) ||
+      JSON.stringify(voicemap.freqSettings) !== JSON.stringify(freqBinSettings)
     ) {
       dispatch({
         type: "voicemap/SET_DATAMAP",
-        payload: generateEmptyGrid(settingsDb, settingsFreq),
+        payload: generateEmptyGrid(dbBinSettings, freqBinSettings),
       });
       dispatch({
         type: "voicemap/UPDATE_SETTINGS",
-        payload: { dbaSettings: settingsDb, freqSettings: settingsFreq },
+        payload: { dbaSettings: dbBinSettings, freqSettings: freqBinSettings },
       });
     }
     console.log("voicemap", voicemap);
@@ -67,15 +108,15 @@ export default function VoiceField({
         // Heatmap naturally reverses dbaBin order (y-axis, from top to bottom, high -> low), therefore we need to maniupulate incoming dbaBin (low -> high to high -> low)
         payload: {
           id: `${
-            datamapBinNames.dba[datamapBinNames.dba.length - data.dba_bin - 1]
-          }.${datamapBinNames.freq[data.freq_bin]}`,
+            fieldBinNames.dba[fieldBinNames.dba.length - data.dba_bin - 1]
+          }.${fieldBinNames.freq[data.freq_bin]}`,
           text: "Stimme",
         },
       });
     });
     socket.on("trigger", (data) => {
       console.log("trigger", data);
-      let numDbaBins = (settingsDb.upper - settingsDb.lower) / settingsDb.steps;
+      let numDbaBins = (dbBinSettings.upper - dbBinSettings.lower) / dbBinSettings.steps;
       dispatch({
         type: "voicemap/UPDATE_DATAPOINT",
         payload: {
@@ -89,14 +130,27 @@ export default function VoiceField({
   }, [socket]);
 
   useEffect(() => {
-    console.log("status", settingsStatus);
-    if (settingsStatus === "reset") {
+    console.log("status", status);
+    if (status === "reset") {
       dispatch({
         type: "voicemap/SET_DATAMAP",
-        payload: generateEmptyGrid(settingsDb, settingsFreq),
+        payload: generateEmptyGrid(dbBinSettings, freqBinSettings),
       });
     }
-  }, [dispatch, settingsDb, settingsFreq, settingsStatus]);
+  }, [dispatch, dbBinSettings, freqBinSettings, status]);
+
+  useEffect(() => {
+    console.log("UPDATE MINMAX AND SELETED DATA")
+    // special case 'score' here we already have minimum provided for the values
+    const selectedData = getDataByKey(voicemap.field, selectValue);
+    if (selectValue === "score") {
+      setMinmax({min: minScore, max: 1});
+    } else {
+      const selectedDataMinMax = getMinMax(selectedData);
+      setMinmax(selectedDataMinMax);
+    }
+    setFieldData(selectedData);
+  }, [selectValue])
 
   return (
     <Container
@@ -107,7 +161,7 @@ export default function VoiceField({
       w={width === undefined ? "100%" : width}
       fluid
     >
-      <Flex>
+      <Flex align="flex-end" gap="md">
         <NativeSelect
           variant="filled"
           label="Statistik"
@@ -132,15 +186,23 @@ export default function VoiceField({
             "ddaShimmer",
           ]}
         />
+        <NumberInput 
+          size="xs"
+          label="Min."
+          placeholder={minmax["min"].toString()}
+          defaultValue={minmax["min"].toString()}
+          value={minmax["min"]}
+        />
+        <NumberInput
+          size="xs"
+          label="Max."
+          placeholder={minmax["max"].toString()}
+          defaultValue={minmax["max"].toString()}
+          value={minmax["max"]}
+        />
       </Flex>
       <ResponsiveHeatMapCanvas
-        data={voicemap.field.map((item) => ({
-          id: item.id,
-          data: item.data.map((d: { x: number; y: VoiceStats }) => ({
-            x: d.x,
-            y: d.y[selectValue as keyof VoiceStats] as number,
-          })),
-        }))}
+        data={fieldData}
         valueFormat="0>-.4f"
         margin={{ top: 0, right: 60, bottom: 130, left: 40 }}
         xOuterPadding={0.5}
