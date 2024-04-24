@@ -71,7 +71,7 @@ export default function Dashboard() {
           )}
         </Text>
         <Text>
-          Aufnahmename:{" "}
+          Speicherort:{" "}
           <Text span c="blue" inherit>
             {saveLocation.split("\\").pop()}
           </Text>
