@@ -88,12 +88,12 @@ export default function Dashboard() {
           ausschließlich das Stimmfeld und keine weiteren Schaltflächen.
         </Blockquote>
         <Divider />
-        <Center>
-          <Link to="/dashboard/patient" target="_blank">
-            <Button rightSection={<TbSwipe />}>Patientenansicht</Button>
-          </Link>
-        </Center>
         <ControlButtonGroup />
+        <Link to="/dashboard/patient" target="_blank">
+          <Button rightSection={<TbSwipe />} ml={15} size="xs">
+            Patientenansicht
+          </Button>
+        </Link>
         <VoiceField />
         <Group gap="xs">
           <Title order={2}>Aufnahmen</Title>
@@ -177,11 +177,7 @@ export default function Dashboard() {
                 return 0;
               })
               .map((item) => (
-                <Recording
-                  key={item.id}
-                  data={item}
-                  acceptable={true}
-                />
+                <Recording key={item.id} data={item} acceptable={true} />
               ))
           ) : (
             acceptedRecordings
@@ -199,11 +195,7 @@ export default function Dashboard() {
                 return 0;
               })
               .map((item) => (
-                <Recording
-                  key={item.id}
-                  data={item}
-                  acceptable={false}
-                />
+                <Recording key={item.id} data={item} acceptable={false} />
               ))
           )}
         </ScrollArea>

@@ -96,6 +96,7 @@ export default function VoiceFieldControlGroup({
   return (
     <Group align="flex-end">
       <NativeSelect
+        size="xs"
         variant="filled"
         label="Statistik"
         description="Wählen Sie die Statistik, die Sie visualisieren möchten."
@@ -119,7 +120,7 @@ export default function VoiceFieldControlGroup({
           "ddaShimmer",
         ]}
       />
-      <Button leftSection={<TbColorPicker />} onClick={open}>
+      <Button size="xs" leftSection={<TbColorPicker />} onClick={open}>
         Farbskalierung
       </Button>
       {!autoMinMax && (
