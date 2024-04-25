@@ -2,7 +2,7 @@ import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { generateEmptyGrid } from "../../utils/voicemapUtils";
+import { generateEmptyGrid } from "../../utils/stateUtils";
 import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";

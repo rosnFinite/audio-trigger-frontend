@@ -28,9 +28,9 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
-import { initialSettingsState } from "../utils/initialStates";
+import { initialSettingsState } from "../utils/stateUtils";
 import SocketContext from "../context/SocketContext";
-import { generateEmptyGrid } from "../utils/voicemapUtils";
+import { generateEmptyGrid } from "../utils/stateUtils";
 
 const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 

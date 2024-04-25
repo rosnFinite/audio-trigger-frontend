@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { generateVoicemapBinNames } from "../../utils/voicemapUtils";
-import { initialVoiceState } from "../../utils/initialStates";
+import { generateVoicemapBinNames } from "../../utils/stateUtils";
+import { initialVoiceState } from "../../utils/stateUtils";
 
 export const voicemapDataSlice = createSlice({
   name: "voicemap",
