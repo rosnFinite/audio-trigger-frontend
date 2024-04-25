@@ -11,6 +11,7 @@ import {
   Modal,
   Center,
   Stack,
+  Badge,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { TbColorPicker } from "react-icons/tb";
@@ -40,39 +41,57 @@ const colorSchemes = [
   { label: "Diverging: Red->Yellow->Green", value: "red_yellow_green" },
 ];
 
-export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControlGroupProps) {
-  const [opened, { open, close }] = useDisclosure(false);
+export default function VoiceFieldControlGroup({
+  onStatChange,
+}: VoiceFieldControlGroupProps) {
   const [stat, setStat] = useState<string>("score");
+  const field = useAppSelector((state) => state.voicemap.values.field);
+  const colorSettings = useAppSelector((state) => state.voicemap.values.color);
+  const dispatch = useAppDispatch();
+
+  const [opened, { open, close }] = useDisclosure(false);
   const minScore = useAppSelector((state) => state.settings.values.min_score);
-  const [schemeType, setSchemeType] =
-    useState<string>("diverging");
-  const [scheme, setScheme] = useState<string>("blues");
-  const [colorMinMax, setColorMinMax] = useState<{min: number | undefined; max: number | undefined}>({min: undefined, max: undefined});
-  const [dataMinMax, setDataMinMax] = useState<{min: number; max: number}>({min: 0, max: 0});
+  const [statColorSettings, setStatColorSettings] = useState<ColorSetting>(
+    colorSettings[stat as keyof StatColorSettings]
+  );
+  const [colorMinMax, setColorMinMax] = useState<{
+    min: number | undefined;
+    max: number | undefined;
+  }>({ min: undefined, max: undefined });
+  const [dataMinMax, setDataMinMax] = useState<{ min: number; max: number }>({
+    min: 0,
+    max: 0,
+  });
   const [colorDiverge, setColorDiverge] = useState<number>(0.5);
   const [autoMinMax, setAutoMinMax] = useState<boolean>(true);
-
-  const field = useAppSelector((state) => state.voicemap.values.field);
-  const color = useAppSelector((state) => state.voicemap.values.color[stat as keyof StatColorSettings]);
-  const dispatch = useAppDispatch();
+  const [schemeType, setSchemeType] = useState<string>("");
+  const [scheme, setScheme] = useState<string>("");
 
   const handleStatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const stat: string = event.currentTarget.value;
     setStat(stat);
     onStatChange(stat);
-  }
+  };
 
   useEffect(() => {
-    const { min, max } = getMinMaxScore(
-      field,
-      stat as keyof VoiceStats
-    );
-    if (min !== undefined && max !== undefined) {
-      setAutoMinMax(false);
-    };
-    setColorMinMax({min: color.min, max: color.max});
-    setDataMinMax({min: min, max: max});
-  }, [stat, field, color.min, color.max]);
+    const color = colorSettings[stat as keyof StatColorSettings];
+    const { min, max } = getMinMaxScore(field, stat as keyof VoiceStats);
+    // handle if scaling menu is shown per default for selected stat depending on min max values have been changed in the past
+    if (color.min !== undefined || color.max !== undefined) {
+      if (stat === "score" && minScore === color.min && color.max === 1) {
+        setAutoMinMax(true);
+      } else {
+        setAutoMinMax(false);
+      }
+    } else {
+      setAutoMinMax(true);
+    }
+    setSchemeType(color.type);
+    setScheme(color.scheme);
+    setColorMinMax({ min: color.min, max: color.max });
+    setDataMinMax({ min: min, max: max });
+    setStatColorSettings(color);
+  }, [stat, field, statColorSettings.min, statColorSettings.max]);
 
   return (
     <Group align="flex-end">
@@ -100,15 +119,25 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
           "ddaShimmer",
         ]}
       />
+      <Button leftSection={<TbColorPicker />} onClick={open}>
+        Farbskalierung
+      </Button>
+      {!autoMinMax && (
+        <Badge size="xs" variant="transparent" color="green" pl={0}>
+          Angepasst
+        </Badge>
+      )}
       <Group>
-        <Modal opened={opened} onClose={close} title={`Farbskalierung für ${stat}`}>
+        <Modal
+          opened={opened}
+          onClose={close}
+          title={`Farbskalierung für ${stat}`}
+        >
           <Group>
             <NativeSelect
               label="Typ"
               value={schemeType}
-              onChange={(event) =>
-                setSchemeType(event.currentTarget.value)
-              }
+              onChange={(event) => setSchemeType(event.currentTarget.value)}
               data={[
                 { label: "Diverging", value: "diverging" },
                 { label: "Sequential", value: "sequential" },
@@ -130,18 +159,34 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
               onChange={(event) => setAutoMinMax(event.currentTarget.checked)}
             />
           </Center>
-          {!autoMinMax && 
+          {!autoMinMax && (
             <Stack mt={10} gap="xs">
               <Group>
                 <Container>
-                  <Text td="underline" fw={500}> Datenbestand</Text>
-                  <Text size="xs">Min: {dataMinMax.min === Infinity ? "NaN" : dataMinMax.min}</Text>
-                  <Text size="xs">Max: {dataMinMax.max === -Infinity ? "NaN" : dataMinMax.max}</Text>
+                  <Text td="underline" fw={500}>
+                    {" "}
+                    Datenbestand
+                  </Text>
+                  <Text size="xs">
+                    Min: {dataMinMax.min === Infinity ? "NaN" : dataMinMax.min}
+                  </Text>
+                  <Text size="xs">
+                    Max: {dataMinMax.max === -Infinity ? "NaN" : dataMinMax.max}
+                  </Text>
                 </Container>
                 <Container>
-                  <Text td="underline" fw={500}> Ausgewählt</Text>
-                  <Text size="xs">Min: {color.min ? color.min : "Autom."}</Text>
-                  <Text size="xs">Max: {color.max ? color.max : "Autom."}</Text>
+                  <Text td="underline" fw={500}>
+                    {" "}
+                    Ausgewählt
+                  </Text>
+                  <Text size="xs">
+                    Min:{" "}
+                    {statColorSettings.min ? statColorSettings.min : "Autom."}
+                  </Text>
+                  <Text size="xs">
+                    Max:{" "}
+                    {statColorSettings.max ? statColorSettings.max : "Autom."}
+                  </Text>
                 </Container>
               </Group>
               <Divider my="sm" />
@@ -149,15 +194,23 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
                 disabled={autoMinMax}
                 label="Mindestwert"
                 description="Geben Sie den minimalen Wert für die Farbskala ein."
-                defaultValue={colorMinMax.min ? colorMinMax.min : dataMinMax.min}
-                onChange={(value) => setColorMinMax({min: Number(value), max: colorMinMax.max})}
+                defaultValue={
+                  colorMinMax.min ? colorMinMax.min : dataMinMax.min
+                }
+                onChange={(value) =>
+                  setColorMinMax({ min: Number(value), max: colorMinMax.max })
+                }
               />
               <NumberInput
                 disabled={autoMinMax}
                 label="Maximalwert"
                 description="Geben Sie den maximalen Wert für die Farbskala ein."
-                defaultValue={colorMinMax.max ? colorMinMax.max : dataMinMax.max}
-                onChange={(value) => setColorMinMax({min: colorMinMax.min, max:Number(value)})}
+                defaultValue={
+                  colorMinMax.max ? colorMinMax.max : dataMinMax.max
+                }
+                onChange={(value) =>
+                  setColorMinMax({ min: colorMinMax.min, max: Number(value) })
+                }
               />
               {schemeType === "diverging" && (
                 <NumberInput
@@ -171,7 +224,7 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
                 />
               )}
             </Stack>
-          }
+          )}
           <Grid mt={10}>
             <Grid.Col span={6}>
               <Button
@@ -197,8 +250,25 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
               </Button>
             </Grid.Col>
             <Grid.Col span={6}>
-              <Button color="red" fullWidth onClick={() => {
-                  dispatch({type: "voicemap/SET_COLOR", payload: {stat: stat, color: {min: stat === "score" ? minScore : -1, max: stat === "score" ? 1 : undefined, type: "diverging", scheme: "blues"}}});
+              <Button
+                color="red"
+                fullWidth
+                onClick={() => {
+                  dispatch({
+                    type: "voicemap/SET_COLOR",
+                    payload: {
+                      stat: stat,
+                      color: {
+                        min: stat === "score" ? minScore : undefined,
+                        max: stat === "score" ? 1 : undefined,
+                        type: "diverging",
+                        scheme: "blues",
+                      },
+                    },
+                  });
+                  setAutoMinMax(true);
+                  setSchemeType("diverging");
+                  setScheme("blues");
                   close();
                 }}
               >
@@ -207,7 +277,6 @@ export default function VoiceFieldControlGroup({onStatChange}: VoiceFieldControl
             </Grid.Col>
           </Grid>
         </Modal>
-        <Button leftSection={<TbColorPicker />} onClick={open}>Farbskalierung</Button>
       </Group>
     </Group>
   );
