@@ -8,6 +8,7 @@ import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
 
+
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
 To visualize the current voice, we use the annotations feature of Nivo. This needs the id of the cell to be highlighted. We use the dba and frequency bin to calculate the id. 
@@ -204,8 +205,8 @@ export default function VoiceField({
         }}
         axisRight={null}
         colors={{
-          type: "diverging",
-          scheme: "blues",
+          type: selectedSchemeType as any,
+          scheme: selectedScheme as any,
           minValue:
             selectedColorMinMax.min === -1
               ? undefined
