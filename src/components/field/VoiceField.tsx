@@ -8,7 +8,6 @@ import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
 
-
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
 To visualize the current voice, we use the annotations feature of Nivo. This needs the id of the cell to be highlighted. We use the dba and frequency bin to calculate the id. 
@@ -163,7 +162,8 @@ export default function VoiceField({
       <ResponsiveHeatMapCanvas
         data={selectedData}
         animate={false}
-        inactiveOpacity={0.5}
+        hoverTarget="cell"
+        inactiveOpacity={0.7}
         onClick={(data, event) => {
           if (status !== "running") {
             dispatch({
@@ -246,7 +246,11 @@ export default function VoiceField({
           },
         ]}
       />
-      <VoiceFieldSelectionModal opened={modalOpened} onClose={() => setModalOpened(false)} selectionId={selectionId} />
+      <VoiceFieldSelectionModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        selectionId={selectionId}
+      />
     </Container>
   );
 }
