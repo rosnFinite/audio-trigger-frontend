@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useContext, useState } from "react";
 import Details from "./Details";
 import SocketContext from "../../context/SocketContext";
+import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 
 interface RecordingProps {
   data: RecordingStats;
@@ -24,24 +25,17 @@ interface RecordingProps {
 export default function Recording({data, acceptable}: RecordingProps) {
   const socket = useContext(SocketContext);
 
-  const datamapBinNames = useAppSelector(
+  const voicefieldBins = useAppSelector(
     (state) => state.voicemap.values.fieldBinNames
   );
-  const settingsSaveLocation = useAppSelector(
+  const saveLocation = useAppSelector(
     (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
 
-  // get the basic api endpoint url for recording related informations
-  const get_endpoint_url = () => {
-    const splittedLocation = settingsSaveLocation.split("\\");
-    const filename = `${datamapBinNames.dba.length - data.dbaBin - 1}_${data.freqBin}`;
-    const endpoint = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${filename}`;
-    return endpoint;
-  };
-  const api_endpoint = get_endpoint_url();
+  const apiRecordingBaseUrl = getRestBaseUrlForRecording(saveLocation, voicefieldBins.dba.length - data.dbaBin - 1, data.freqBin);
 
   return (
     <Card
@@ -60,14 +54,14 @@ export default function Recording({data, acceptable}: RecordingProps) {
           dispatch({
             type: "voicemap/SET_ANNOTATION",
             payload: {
-              id: `${datamapBinNames.dba[data.dbaBin]}.${datamapBinNames.freq[data.freqBin]}`,
+              id: `${voicefieldBins.dba[data.dbaBin]}.${voicefieldBins.freq[data.freqBin]}`,
               text: "Auswahl",
             },
           });
         }}
       >
         <Image
-          src={`${api_endpoint}\\spectrogram_intensity.png`}
+          src={`${apiRecordingBaseUrl}\\spectrogram_intensity.png`}
           h={150}
           w={150}
         />
@@ -77,16 +71,16 @@ export default function Recording({data, acceptable}: RecordingProps) {
               Frequenz [Hz]:
             </Text>
             <Text size="xs">
-              {datamapBinNames.freq[data.freqBin].slice(0, -2) +
+              {voicefieldBins.freq[data.freqBin].slice(0, -2) +
                 "." +
-                datamapBinNames.freq[data.freqBin].slice(-2)}
+                voicefieldBins.freq[data.freqBin].slice(-2)}
             </Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Dezibel [db(A)]:
             </Text>
-            <Text size="xs">{datamapBinNames.dba[data.dbaBin]}</Text>
+            <Text size="xs">{voicefieldBins.dba[data.dbaBin]}</Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
@@ -115,14 +109,14 @@ export default function Recording({data, acceptable}: RecordingProps) {
           <TbSwipe size={30} />
         </ActionIcon>
         <Details
-          title={`Aufnahmedetails zu ${datamapBinNames.dba[data.dbaBin]} db(A) / ${
-            datamapBinNames.freq[data.freqBin].slice(0, -2) +
+          title={`Aufnahmedetails zu ${voicefieldBins.dba[data.dbaBin]} db(A) / ${
+            voicefieldBins.freq[data.freqBin].slice(0, -2) +
             "." +
-            datamapBinNames.freq[data.freqBin].slice(-2)
+            voicefieldBins.freq[data.freqBin].slice(-2)
           } Hz / ${data.qScore}`}
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
-          api_endpoint={api_endpoint}
+          api_endpoint={apiRecordingBaseUrl}
           recordingData={data}
         />
         {acceptable ? (
@@ -171,7 +165,7 @@ export default function Recording({data, acceptable}: RecordingProps) {
                 }
                 socket.emit("remove_recording_request", {
                   freqBin: data.freqBin,
-                  dbaBin: datamapBinNames.dba.length - data.dbaBin - 1,
+                  dbaBin: voicefieldBins.dba.length - data.dbaBin - 1,
                 });
                 dispatch({
                   type: "voicemap/REMOVE_RECORDING",
