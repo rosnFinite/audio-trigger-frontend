@@ -39,6 +39,14 @@ interface VoiceField {
   }[];
 }
 
+interface VoiceFieldScalarData {
+  id: string;
+  data: {
+    x: number;
+    y: number;
+  }[];
+}
+
 interface BinSettings {
   lower: number;
   upper: number;

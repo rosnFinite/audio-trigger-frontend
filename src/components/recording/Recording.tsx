@@ -12,61 +12,32 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import Details from "./Details";
 import SocketContext from "../../context/SocketContext";
 
-const findRecordingById = (recordings: RecordingStats[], dbBin: number, freqBin: number) => {
-  const recording = recordings[
-    recordings.findIndex(
-      (item) => item.dbaBin === dbBin && item.freqBin === freqBin
-    )
-  ];
-  return recording;
-};
-
-interface DataOnlyProps {
+interface RecordingProps {
   data: RecordingStats;
-  freqBin?: never;
-  dbaBin?: never;
   acceptable: boolean;
 }
 
-interface BinOnlyProps {
-  data?: never;
-  freqBin: number;
-  dbaBin: number;
-  acceptable: boolean;
-}
-
-type RecordingProps = DataOnlyProps | BinOnlyProps;
-
-export default function Recording(props: RecordingProps) {
+export default function Recording({data, acceptable}: RecordingProps) {
   const socket = useContext(SocketContext);
 
   const datamapBinNames = useAppSelector(
     (state) => state.voicemap.values.fieldBinNames
   );
-  const recordings = useAppSelector(
-    (state) => state.voicemap.values.recordings
-  );
   const settingsSaveLocation = useAppSelector(
     (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
-  const recording = useMemo(() => {
-    if (props.data) {
-      return props.data;
-    }
-    return findRecordingById(recordings, props.dbaBin, props.freqBin);
-  }, [props.data, recordings, props.dbaBin, props.freqBin]);
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
 
   // get the basic api endpoint url for recording related informations
   const get_endpoint_url = () => {
     const splittedLocation = settingsSaveLocation.split("\\");
-    const filename = `${datamapBinNames.dba.length - recording.dbaBin - 1}_${recording.freqBin}`;
+    const filename = `${datamapBinNames.dba.length - data.dbaBin - 1}_${data.freqBin}`;
     const endpoint = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${filename}`;
     return endpoint;
   };
@@ -89,7 +60,7 @@ export default function Recording(props: RecordingProps) {
           dispatch({
             type: "voicemap/SET_ANNOTATION",
             payload: {
-              id: `${datamapBinNames.dba[recording.dbaBin]}.${datamapBinNames.freq[recording.freqBin]}`,
+              id: `${datamapBinNames.dba[data.dbaBin]}.${datamapBinNames.freq[data.freqBin]}`,
               text: "Auswahl",
             },
           });
@@ -106,28 +77,28 @@ export default function Recording(props: RecordingProps) {
               Frequenz [Hz]:
             </Text>
             <Text size="xs">
-              {datamapBinNames.freq[recording.freqBin].slice(0, -2) +
+              {datamapBinNames.freq[data.freqBin].slice(0, -2) +
                 "." +
-                datamapBinNames.freq[recording.freqBin].slice(-2)}
+                datamapBinNames.freq[data.freqBin].slice(-2)}
             </Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Dezibel [db(A)]:
             </Text>
-            <Text size="xs">{datamapBinNames.dba[recording.dbaBin]}</Text>
+            <Text size="xs">{datamapBinNames.dba[data.dbaBin]}</Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Q-Score:
             </Text>
-            <Text size="xs">{recording.qScore}</Text>
+            <Text size="xs">{data.qScore}</Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Zeitstempel:
             </Text>
-            <Text size="xs">{recording.timestamp}</Text>
+            <Text size="xs">{data.timestamp}</Text>
           </Group>
         </Stack>
         <ActionIcon
@@ -144,17 +115,17 @@ export default function Recording(props: RecordingProps) {
           <TbSwipe size={30} />
         </ActionIcon>
         <Details
-          title={`Aufnahmedetails zu ${datamapBinNames.dba[recording.dbaBin]} db(A) / ${
-            datamapBinNames.freq[recording.freqBin].slice(0, -2) +
+          title={`Aufnahmedetails zu ${datamapBinNames.dba[data.dbaBin]} db(A) / ${
+            datamapBinNames.freq[data.freqBin].slice(0, -2) +
             "." +
-            datamapBinNames.freq[recording.freqBin].slice(-2)
-          } Hz / ${recording.qScore}`}
+            datamapBinNames.freq[data.freqBin].slice(-2)
+          } Hz / ${data.qScore}`}
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
           api_endpoint={api_endpoint}
-          recordingData={recording}
+          recordingData={data}
         />
-        {props.acceptable ? (
+        {acceptable ? (
           <Button
             h="100%"
             color="green"
@@ -165,7 +136,7 @@ export default function Recording(props: RecordingProps) {
               console.log("Accepting recording");
               dispatch({
                 type: "voicemap/ACCEPT_RECORDING",
-                payload: { freqBin: recording.freqBin, dbaBin: recording.dbaBin },
+                payload: { freqBin: data.freqBin, dbaBin: data.dbaBin },
               });
             }}
           />
@@ -199,12 +170,12 @@ export default function Recording(props: RecordingProps) {
                   return;
                 }
                 socket.emit("remove_recording_request", {
-                  freqBin: recording.freqBin,
-                  dbaBin: datamapBinNames.dba.length - recording.dbaBin - 1,
+                  freqBin: data.freqBin,
+                  dbaBin: datamapBinNames.dba.length - data.dbaBin - 1,
                 });
                 dispatch({
                   type: "voicemap/REMOVE_RECORDING",
-                  payload: { freqBin: recording.freqBin, dbaBin: recording.dbaBin },
+                  payload: { freqBin: data.freqBin, dbaBin: data.dbaBin },
                 });
                 setConfirmOpened(false);
               }}

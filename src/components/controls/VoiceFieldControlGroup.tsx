@@ -15,32 +15,10 @@ import { useEffect, useState } from "react";
 import { TbColorPicker } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useDisclosure } from "@mantine/hooks";
+import { getMinMaxScore } from "../../utils/selectionUtils";
 
 interface VoiceFieldControlGroupProps {
   onStatChange: (selectedStat: string) => void;
-}
-
-function getMinMaxScore(
-  voicefield: VoiceField[],
-  stat: keyof VoiceStats
-): { min: number; max: number } {
-  let min = Infinity;
-  let max = -Infinity;
-
-  for (const field of voicefield) {
-    for (const data of field.data) {
-      const value = data.y[stat];
-      if (value != null) {
-        if (value < min) {
-          min = value;
-        }
-        if (value > max) {
-          max = value;
-        }
-      }
-    }
-  }
-  return { min, max };
 }
 
 const colorSchemes = [

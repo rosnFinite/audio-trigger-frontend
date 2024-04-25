@@ -3,29 +3,11 @@ import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/stateUtils";
+import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
 import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
 
-interface FieldData {
-  id: string;
-  data: {
-    x: number;
-    y: number;
-  }[];
-}
-
-function getDataByKey(data: VoiceField[], key: string) {
-  const result = data.map((item) => ({
-    id: item.id,
-    data: item.data.map((d: { x: number; y: VoiceStats }) => ({
-      x: d.x,
-      y: d.y[key as keyof VoiceStats] as number,
-    })),
-  }));
-  return result;
-}
-const schemeTest = "blues";
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
 To visualize the current voice, we use the annotations feature of Nivo. This needs the id of the cell to be highlighted. We use the dba and frequency bin to calculate the id. 
@@ -63,8 +45,8 @@ export default function VoiceField({
   const color = useAppSelector((state) => state.voicemap.values.color);
   const dispatch = useAppDispatch();
   const [selectedStat, setSelectedStat] = useState<string>("score");
-  const [selectedData, setSelectedData] = useState<FieldData[]>(
-    getDataByKey(field, selectedStat)
+  const [selectedData, setSelectedData] = useState<VoiceFieldScalarData[]>(
+    getVoiceFieldDataByKey(field, selectedStat)
   );
   const [selectedScheme, setSelectedScheme] = useState<string>(
     color[selectedStat as keyof StatColorSettings].scheme
@@ -83,7 +65,7 @@ export default function VoiceField({
   const [selectionId, setSelectionId] = useState("");
 
   useEffect(() => {
-    setSelectedData(getDataByKey(field, selectedStat));
+    setSelectedData(getVoiceFieldDataByKey(field, selectedStat));
   }, [selectedStat, field]);
 
   useEffect(() => {
