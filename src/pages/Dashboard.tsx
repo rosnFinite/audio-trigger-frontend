@@ -90,7 +90,7 @@ export default function Dashboard() {
         <Divider />
         <ControlButtonGroup />
         <Link to="/dashboard/patient" target="_blank">
-          <Button rightSection={<TbSwipe />} ml={15} size="xs">
+          <Button rightSection={<TbSwipe />} ml={15} mb={-10} size="xs">
             Patientenansicht
           </Button>
         </Link>
