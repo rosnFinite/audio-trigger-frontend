@@ -1,5 +1,6 @@
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
+import { BasicTooltip } from "@nivo/tooltip";
 import { useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/stateUtils";
@@ -245,6 +246,18 @@ export default function VoiceField({
             borderRadius: 20,
           },
         ]}
+        tooltip={({ cell }) => {
+          const [db, freq] = cell.id.split(".");
+          const formattedDb = db + " dB";
+          const formattedFreq =
+            freq.slice(0, -2) + "." + freq.slice(-2) + " Hz";
+          return (
+            <BasicTooltip
+              id={formattedDb + " / " + formattedFreq}
+              value={cell.label ? cell.label : "Keine Daten"}
+            />
+          );
+        }}
       />
       <VoiceFieldSelectionModal
         opened={modalOpened}
