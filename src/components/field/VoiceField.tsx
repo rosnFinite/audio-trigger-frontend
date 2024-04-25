@@ -56,8 +56,8 @@ export default function VoiceField({
     color[selectedStat as keyof StatColorSettings].type
   );
   const [selectedColorMinMax, setSelectedColorMinMax] = useState<{
-    min: number;
-    max: number;
+    min: number | undefined;
+    max: number | undefined;
   }>({
     min: color[selectedStat as keyof StatColorSettings].min,
     max: color[selectedStat as keyof StatColorSettings].max,
@@ -207,14 +207,8 @@ export default function VoiceField({
         colors={{
           type: selectedSchemeType as any,
           scheme: selectedScheme as any,
-          minValue:
-            selectedColorMinMax.min === -1
-              ? undefined
-              : selectedColorMinMax.min,
-          maxValue:
-            selectedColorMinMax.max === -1
-              ? undefined
-              : selectedColorMinMax.max,
+          minValue: selectedColorMinMax.min,
+          maxValue: selectedColorMinMax.max,
         }}
         emptyColor="#ffffff"
         enableLabels={false}

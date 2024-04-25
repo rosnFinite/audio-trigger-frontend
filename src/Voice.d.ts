@@ -54,10 +54,10 @@ interface BinSettings {
 }
 
 interface ColorSetting {
-  min: number;
-  max: number;
   type: string;
   scheme: string;
+  min?: number;
+  max?: number;
   divergeAt?: number;
 }
 interface StatColorSettings {

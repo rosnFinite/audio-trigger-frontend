@@ -166,7 +166,7 @@ export const voicemapDataSlice = createSlice({
         max: action.payload.color.max, 
         type: action.payload.color.type, 
         scheme: action.payload.color.scheme, 
-        divergeAt: action.payload.color.divergeAt === undefined ? -1 : action.payload.color.divergeAt
+        divergeAt: action.payload.color.divergeAt === undefined ? 0.5 : action.payload.color.divergeAt
       };
       state.values = { ...state.values, color: { ...state.values.color, [action.payload.stat]: newColorObj }};
     },
