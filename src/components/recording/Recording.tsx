@@ -12,23 +12,36 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import Details from "./Details";
 import SocketContext from "../../context/SocketContext";
 
-export default function Recording({
-  freqBin,
-  dbaBin,
-  qScore,
-  timestamp,
-  acceptable = true,
-}: {
+const findRecordingById = (recordings: RecordingStats[], dbBin: number, freqBin: number) => {
+  const recording = recordings[
+    recordings.findIndex(
+      (item) => item.dbaBin === dbBin && item.freqBin === freqBin
+    )
+  ];
+  return recording;
+};
+
+interface DataOnlyProps {
+  data: RecordingStats;
+  freqBin?: never;
+  dbaBin?: never;
+  acceptable: boolean;
+}
+
+interface BinOnlyProps {
+  data?: never;
   freqBin: number;
   dbaBin: number;
-  qScore: string;
-  timestamp: string;
   acceptable: boolean;
-}) {
+}
+
+type RecordingProps = DataOnlyProps | BinOnlyProps;
+
+export default function Recording(props: RecordingProps) {
   const socket = useContext(SocketContext);
 
   const datamapBinNames = useAppSelector(
@@ -41,34 +54,23 @@ export default function Recording({
     (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
-  const [recording, setRecording] = useState<RecordingStats>(
-    recordings[
-      recordings.findIndex(
-        (item) => item.dbaBin === dbaBin && item.freqBin === freqBin
-      )
-    ]
-  );
+  const recording = useMemo(() => {
+    if (props.data) {
+      return props.data;
+    }
+    return findRecordingById(recordings, props.dbaBin, props.freqBin);
+  }, [props.data, recordings, props.dbaBin, props.freqBin]);
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
 
   // get the basic api endpoint url for recording related informations
   const get_endpoint_url = () => {
     const splittedLocation = settingsSaveLocation.split("\\");
-    const filename = `${datamapBinNames.dba.length - dbaBin - 1}_${freqBin}`;
+    const filename = `${datamapBinNames.dba.length - recording.dbaBin - 1}_${recording.freqBin}`;
     const endpoint = `http://localhost:5001/api/recordings/${splittedLocation.pop()}/${filename}`;
     return endpoint;
   };
   const api_endpoint = get_endpoint_url();
-
-  useEffect(() => {
-    setRecording(
-      recordings[
-        recordings.findIndex(
-          (item) => item.dbaBin === dbaBin && item.freqBin === freqBin
-        )
-      ]
-    );
-  }, [recordings]);
 
   return (
     <Card
@@ -87,7 +89,7 @@ export default function Recording({
           dispatch({
             type: "voicemap/SET_ANNOTATION",
             payload: {
-              id: `${datamapBinNames.dba[dbaBin]}.${datamapBinNames.freq[freqBin]}`,
+              id: `${datamapBinNames.dba[recording.dbaBin]}.${datamapBinNames.freq[recording.freqBin]}`,
               text: "Auswahl",
             },
           });
@@ -104,36 +106,28 @@ export default function Recording({
               Frequenz [Hz]:
             </Text>
             <Text size="xs">
-              {datamapBinNames.freq[freqBin].slice(0, -2) +
+              {datamapBinNames.freq[recording.freqBin].slice(0, -2) +
                 "." +
-                datamapBinNames.freq[freqBin].slice(-2)}
+                datamapBinNames.freq[recording.freqBin].slice(-2)}
             </Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Dezibel [db(A)]:
             </Text>
-            <Text size="xs">{datamapBinNames.dba[dbaBin]}</Text>
+            <Text size="xs">{datamapBinNames.dba[recording.dbaBin]}</Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Q-Score:
             </Text>
-            <Text size="xs">{qScore}</Text>
-          </Group>
-          <Group visibleFrom="md">
-            <Text size="xs" fw={700}>
-              Speicherort:
-            </Text>
-            <Text size="xs">{`${settingsSaveLocation}\\${
-              datamapBinNames.dba.length - dbaBin - 1
-            }_${freqBin}`}</Text>
+            <Text size="xs">{recording.qScore}</Text>
           </Group>
           <Group>
             <Text size="xs" fw={700}>
               Zeitstempel:
             </Text>
-            <Text size="xs">{timestamp}</Text>
+            <Text size="xs">{recording.timestamp}</Text>
           </Group>
         </Stack>
         <ActionIcon
@@ -150,17 +144,17 @@ export default function Recording({
           <TbSwipe size={30} />
         </ActionIcon>
         <Details
-          title={`Aufnahmedetails zu ${datamapBinNames.dba[dbaBin]} db(A) / ${
-            datamapBinNames.freq[freqBin].slice(0, -2) +
+          title={`Aufnahmedetails zu ${datamapBinNames.dba[recording.dbaBin]} db(A) / ${
+            datamapBinNames.freq[recording.freqBin].slice(0, -2) +
             "." +
-            datamapBinNames.freq[freqBin].slice(-2)
-          } Hz / ${qScore}`}
+            datamapBinNames.freq[recording.freqBin].slice(-2)
+          } Hz / ${recording.qScore}`}
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
           api_endpoint={api_endpoint}
           recordingData={recording}
         />
-        {acceptable ? (
+        {props.acceptable ? (
           <Button
             h="100%"
             color="green"
@@ -171,7 +165,7 @@ export default function Recording({
               console.log("Accepting recording");
               dispatch({
                 type: "voicemap/ACCEPT_RECORDING",
-                payload: { freqBin: freqBin, dbaBin: dbaBin },
+                payload: { freqBin: recording.freqBin, dbaBin: recording.dbaBin },
               });
             }}
           />
@@ -205,12 +199,12 @@ export default function Recording({
                   return;
                 }
                 socket.emit("remove_recording_request", {
-                  freqBin: freqBin,
-                  dbaBin: datamapBinNames.dba.length - dbaBin - 1,
+                  freqBin: recording.freqBin,
+                  dbaBin: datamapBinNames.dba.length - recording.dbaBin - 1,
                 });
                 dispatch({
                   type: "voicemap/REMOVE_RECORDING",
-                  payload: { freqBin: freqBin, dbaBin: dbaBin },
+                  payload: { freqBin: recording.freqBin, dbaBin: recording.dbaBin },
                 });
                 setConfirmOpened(false);
               }}

@@ -179,11 +179,8 @@ export default function Dashboard() {
               .map((item) => (
                 <Recording
                   key={item.id}
-                  freqBin={item.freqBin}
-                  dbaBin={item.dbaBin}
-                  qScore={item.qScore}
-                  timestamp={item.timestamp}
-                  acceptable
+                  data={item}
+                  acceptable={true}
                 />
               ))
           ) : (
@@ -204,10 +201,7 @@ export default function Dashboard() {
               .map((item) => (
                 <Recording
                   key={item.id}
-                  freqBin={item.freqBin}
-                  dbaBin={item.dbaBin}
-                  qScore={item.qScore}
-                  timestamp={item.timestamp}
+                  data={item}
                   acceptable={false}
                 />
               ))
