@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/voicemapUtils";
 import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
+import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
 
 interface FieldData {
   id: string;
@@ -78,6 +79,8 @@ export default function VoiceField({
     min: color[selectedStat as keyof StatColorSettings].min,
     max: color[selectedStat as keyof StatColorSettings].max,
   });
+  const [modalOpened, setModalOpened] = useState(false);
+  const [selectionId, setSelectionId] = useState("");
 
   useEffect(() => {
     setSelectedData(getDataByKey(field, selectedStat));
@@ -179,11 +182,13 @@ export default function VoiceField({
         animate={false}
         inactiveOpacity={0.5}
         onClick={(data, event) => {
-          if (status !== "online") {
+          if (status !== "running") {
             dispatch({
               type: "voicemap/SET_ANNOTATION",
               payload: { id: data.id, text: "Auswahl" },
             });
+            setSelectionId(data.id);
+            setModalOpened(true);
           }
         }}
         valueFormat="0>-.4f"
@@ -264,6 +269,7 @@ export default function VoiceField({
           },
         ]}
       />
+      <VoiceFieldSelectionModal opened={modalOpened} onClose={() => setModalOpened(false)} selectionId={selectionId} />
     </Container>
   );
 }
