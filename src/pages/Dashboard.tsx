@@ -71,28 +71,19 @@ export default function Dashboard() {
           )}
         </Text>
         <Text>
-          Speicherort:{" "}
+          Aufnahme:{" "}
           <Text span c="blue" inherit>
             {saveLocation.split("\\").pop()}
           </Text>
         </Text>
-        <Blockquote
-          color="blue"
-          icon={<TbInfoCircle size={"25"} />}
-          mt="xs"
-          pt={10}
-          pb={10}
-        >
-          Über die Schaltfläche 'Patientenansicht' wird ein neuer Tab geöffnet,
-          in dem die Patientenansicht angezeigt wird. Diese beinhaltet
-          ausschließlich das Stimmfeld und keine weiteren Schaltflächen.
-        </Blockquote>
         <Divider />
         <ControlButtonGroup />
         <Link to="/dashboard/patient" target="_blank">
-          <Button rightSection={<TbSwipe />} ml={15} mb={-10} size="xs">
-            Patientenansicht
-          </Button>
+          <Tooltip label="Öffnet Ansicht für den Patienten in neuen Tab">
+            <Button rightSection={<TbSwipe />} ml={15} mb={-10} size="xs">
+              Patientenansicht
+            </Button>
+          </Tooltip>
         </Link>
         <VoiceField />
         <Group gap="xs">

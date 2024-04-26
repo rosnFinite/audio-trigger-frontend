@@ -12,6 +12,7 @@ import {
   Center,
   Stack,
   Badge,
+  Tooltip,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { TbColorPicker } from "react-icons/tb";
@@ -98,8 +99,8 @@ export default function VoiceFieldControlGroup({
       <NativeSelect
         size="xs"
         variant="filled"
-        label="Statistik"
-        description="Wählen Sie die Statistik, die Sie visualisieren möchten."
+        label="Datenauswahl"
+        description="Wählen Sie die Daten, die Sie visualisieren möchten."
         value={stat}
         onChange={handleStatChange}
         data={[
@@ -120,9 +121,11 @@ export default function VoiceFieldControlGroup({
           "ddaShimmer",
         ]}
       />
-      <Button size="xs" leftSection={<TbColorPicker />} onClick={open}>
-        Farbskalierung
-      </Button>
+      <Tooltip label="Anpassung des Farbschemas der Heatmap">
+        <Button size="xs" leftSection={<TbColorPicker />} onClick={open}>
+          Farbskalierung
+        </Button>
+      </Tooltip>
       {!autoMinMax && (
         <Badge size="xs" variant="transparent" color="green" pl={0}>
           Angepasst
