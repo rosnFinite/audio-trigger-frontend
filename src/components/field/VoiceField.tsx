@@ -176,7 +176,7 @@ export default function VoiceField({
           }
         }}
         valueFormat="0>-.4f"
-        margin={{ top: 0, right: 60, bottom: 130, left: 40 }}
+        margin={{ top: 0, right: 65, bottom: 130, left: 40 }}
         xOuterPadding={0.5}
         yOuterPadding={0.5}
         axisBottom={{
