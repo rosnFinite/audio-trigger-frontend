@@ -64,7 +64,7 @@ export default function VoiceFieldSelectionModal({
             </Button>
           ) : (
             <>
-              <Button size="lg" color="green" onClick={}>
+              <Button size="lg" color="green" onClick={onClose}>
                 Akzeptieren
               </Button>
               <Button size="lg" color="red" onClick={onClose}>
