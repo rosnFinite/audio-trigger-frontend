@@ -8,6 +8,7 @@ import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
 import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
+import QualityIndicator from "../QualityIndicator";
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -29,6 +30,7 @@ export default function VoiceField({
   const freqBinSettings = useAppSelector(
     (state) => state.settings.values.frequency
   );
+  const minScore = useAppSelector((state) => state.settings.values.min_score);
   const status = useAppSelector((state) => state.settings.values.status);
   const dbBinVoice = useAppSelector(
     (state) => state.voicemap.values.dbaSettings
@@ -64,6 +66,7 @@ export default function VoiceField({
   });
   const [modalOpened, setModalOpened] = useState(false);
   const [selectionId, setSelectionId] = useState("");
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     setSelectedData(getVoiceFieldDataByKey(field, selectedStat));
@@ -103,6 +106,7 @@ export default function VoiceField({
       return;
     }
     socket.on("voice", (data) => {
+      setScore(data.score);
       dispatch({
         type: "voicemap/SET_ANNOTATION",
         // Heatmap naturally reverses dbaBin order (y-axis, from top to bottom, high -> low), therefore we need to maniupulate incoming dbaBin (low -> high to high -> low)
@@ -145,6 +149,10 @@ export default function VoiceField({
         type: "voicemap/SET_DATAMAP",
         payload: generateEmptyGrid(dbBinSettings, freqBinSettings),
       });
+      setScore(0);
+    }
+    if (status === "ready") {
+      setScore(0);
     }
   }, [dispatch, dbBinSettings, freqBinSettings, status]);
 
@@ -159,6 +167,15 @@ export default function VoiceField({
     >
       <VoiceFieldControlGroup
         onStatChange={(selection) => setSelectedStat(selection)}
+      />
+      <QualityIndicator
+        fluid
+        size="xl"
+        value={score}
+        triggerThreshold={minScore}
+        pl={0}
+        pr={0}
+        mt={10}
       />
       <ResponsiveHeatMapCanvas
         data={selectedData}
