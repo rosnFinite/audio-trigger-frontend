@@ -34,12 +34,20 @@ export default function VoiceFieldSelectionModal({
     fieldBinNames.dba.length - recording?.dbaBin - 1,
     recording?.freqBin
   );
-  const freq =
-    fieldBinNames.freq[recording.freqBin].slice(0, -2) +
-    "." +
-    fieldBinNames.freq[recording.freqBin].slice(-2) +
-    " Hz";
-  const db = fieldBinNames.dba[recording.dbaBin] + " dB";
+  const freq = () => {
+    if (recording === undefined) {
+      return null;
+    } else {
+      return (
+        fieldBinNames.freq[recording?.freqBin].slice(0, -2) +
+        "." +
+        fieldBinNames.freq[recording?.freqBin].slice(-2) +
+        " Hz"
+      );
+    }
+  };
+
+  const db = fieldBinNames.dba[recording?.dbaBin] + " dB";
 
   if (recording === undefined) {
     return null;
