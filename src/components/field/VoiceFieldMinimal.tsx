@@ -1,5 +1,7 @@
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
+import { useEffect, useState } from "react";
+import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
 
 export default function VoicemapMinimal({
   field,
@@ -15,16 +17,16 @@ export default function VoicemapMinimal({
   maxScore: number;
   minScore: number;
 }) {
+  const [data, setData] = useState<VoiceFieldScalarData[]>(getVoiceFieldDataByKey(field, "score"));
+
+  useEffect(() => {
+    setData(getVoiceFieldDataByKey(field, "score"))
+  }, [field])
+
   return (
     <Container fluid h="99vh" w="100vw">
       <ResponsiveHeatMapCanvas
-        data={field.map((item) => ({
-          id: item.id,
-          data: item.data.map((d: { x: number; y: VoiceStats }) => ({
-            x: d.x,
-            y: d.y["score" as keyof VoiceStats] as number,
-          })),
-        }))}
+        data={data}
         margin={{ top: 10, right: 5, bottom: 70, left: 45 }}
         valueFormat=" >-.2s"
         xOuterPadding={0}
@@ -61,7 +63,7 @@ export default function VoicemapMinimal({
           minValue: minScore,
           maxValue: maxScore,
         }}
-        emptyColor="#555555"
+        emptyColor="#ffffff"
         enableLabels={false}
         legends={[]}
         annotations={[
