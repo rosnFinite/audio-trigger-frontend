@@ -17,11 +17,13 @@ export default function VoicemapMinimal({
   maxScore: number;
   minScore: number;
 }) {
-  const [data, setData] = useState<VoiceFieldScalarData[]>(getVoiceFieldDataByKey(field, "score"));
+  const [data, setData] = useState<VoiceFieldScalarData[]>(
+    getVoiceFieldDataByKey(field, "accepted")
+  );
 
   useEffect(() => {
-    setData(getVoiceFieldDataByKey(field, "score"))
-  }, [field])
+    setData(getVoiceFieldDataByKey(field, "score"));
+  }, [field]);
 
   return (
     <Container fluid h="99vh" w="100vw">
@@ -57,12 +59,7 @@ export default function VoicemapMinimal({
           legendOffset: -35,
         }}
         axisRight={null}
-        colors={{
-          type: "diverging",
-          scheme: "blues",
-          minValue: minScore,
-          maxValue: maxScore,
-        }}
+        colors={(d) => (d.value === 0 || d.value === 1 ? "#236bfa" : "#ffffff")}
         emptyColor="#ffffff"
         enableLabels={false}
         legends={[]}
