@@ -12,7 +12,9 @@ import {
   Tooltip,
   SegmentedControl,
   NativeSelect,
+  Slider,
   ActionIcon,
+  Grid,
 } from "@mantine/core";
 import { TbInfoCircle, TbRefresh, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
@@ -44,6 +46,7 @@ export default function Dashboard() {
     ReloadableRecordingStats[]
   >([]);
   const [sortedBy, setSortedBy] = useState("timestamp");
+  const [recordingSize, setRecordingSize] = useState(150);
 
   useEffect(() => {
     // addind random id to each item to avoid key conflicts in dynamic rendering of Recording components
@@ -119,30 +122,55 @@ export default function Dashboard() {
           ]}
           onChange={(value) => setActiveRecordingTab(value)}
         />
-        <Group>
-          <Text>Sortieren nach:</Text>
-          <NativeSelect
-            value={sortedBy}
-            onChange={(event) => setSortedBy(event.currentTarget.value)}
-            data={[
-              { label: "Zeitstempel", value: "timestamp" },
-              { label: "Frequenz", value: "freqBin" },
-              { label: "Dezibel", value: "dbaBin" },
-              { label: "Q-Score", value: "qScore" },
-            ]}
-          />
-          <Tooltip label="Aktualisiert die dargestellten Aufnahmen, falls Visualisierung/Daten fehlen sollten.">
-            <ActionIcon
-              onClick={() => setReloadableSeed(reloadableSeed + 1)}
-              aria-label="refresh-button"
-            >
-              <TbRefresh />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
+        <Grid grow align="flex-end">
+          <Grid.Col span={{ base: 11, md: 5 }}>
+            <Text>Sortieren nach:</Text>
+            <NativeSelect
+              value={sortedBy}
+              onChange={(event) => setSortedBy(event.currentTarget.value)}
+              data={[
+                { label: "Zeitstempel", value: "timestamp" },
+                { label: "Frequenz", value: "freqBin" },
+                { label: "Dezibel", value: "dbaBin" },
+                { label: "Q-Score", value: "qScore" },
+              ]}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 1 }}>
+            <Center>
+              <Tooltip label="Aktualisiert die dargestellten Aufnahmen, falls Visualisierung/Daten fehlen sollten.">
+                <ActionIcon
+                  onClick={() => setReloadableSeed(reloadableSeed + 1)}
+                  aria-label="refresh-button"
+                  mb={3}
+                >
+                  <TbRefresh />
+                </ActionIcon>
+              </Tooltip>
+            </Center>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Text>Darstellungsgröße:</Text>
+            <Slider
+              defaultValue={150}
+              min={50}
+              max={750}
+              mb={20}
+              pr={25}
+              marks={[
+                { value: 50, label: "50px" },
+                { value: 250, label: "250px" },
+                { value: 500, label: "500px" },
+                { value: 750, label: "750px" },
+              ]}
+              label={(value) => `${value}px`}
+              onChange={(value) => setRecordingSize(value)}
+            />
+          </Grid.Col>
+        </Grid>
         <ScrollArea
           key={reloadableSeed}
-          h={450}
+          h={750}
           type="auto"
           offsetScrollbars
           scrollbarSize={8}
@@ -168,7 +196,12 @@ export default function Dashboard() {
                 return 0;
               })
               .map((item) => (
-                <Recording key={item.id} data={item} acceptable={true} />
+                <Recording
+                  key={item.id}
+                  data={item}
+                  acceptable={true}
+                  size={recordingSize}
+                />
               ))
           ) : (
             acceptedRecordings
@@ -186,7 +219,12 @@ export default function Dashboard() {
                 return 0;
               })
               .map((item) => (
-                <Recording key={item.id} data={item} acceptable={false} />
+                <Recording
+                  key={item.id}
+                  data={item}
+                  acceptable={false}
+                  size={recordingSize}
+                />
               ))
           )}
         </ScrollArea>

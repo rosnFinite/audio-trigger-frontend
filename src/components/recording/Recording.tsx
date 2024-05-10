@@ -20,9 +20,10 @@ import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 interface RecordingProps {
   data: RecordingStats;
   acceptable: boolean;
+  size: number;
 }
 
-export default function Recording({data, acceptable}: RecordingProps) {
+export default function Recording({ data, acceptable, size }: RecordingProps) {
   const socket = useContext(SocketContext);
 
   const voicefieldBins = useAppSelector(
@@ -35,7 +36,11 @@ export default function Recording({data, acceptable}: RecordingProps) {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
 
-  const apiRecordingBaseUrl = getRestBaseUrlForRecording(saveLocation, voicefieldBins.dba.length - data.dbaBin - 1, data.freqBin);
+  const apiRecordingBaseUrl = getRestBaseUrlForRecording(
+    saveLocation,
+    voicefieldBins.dba.length - data.dbaBin - 1,
+    data.freqBin
+  );
 
   return (
     <Card
@@ -43,7 +48,7 @@ export default function Recording({data, acceptable}: RecordingProps) {
       mb={8}
       shadow="sm"
       withBorder
-      h={150}
+      h={size}
       pt={0}
       pl={0}
       pr={0}
@@ -54,7 +59,9 @@ export default function Recording({data, acceptable}: RecordingProps) {
           dispatch({
             type: "voicemap/SET_ANNOTATION",
             payload: {
-              id: `${voicefieldBins.dba[data.dbaBin]}.${voicefieldBins.freq[data.freqBin]}`,
+              id: `${voicefieldBins.dba[data.dbaBin]}.${
+                voicefieldBins.freq[data.freqBin]
+              }`,
               text: "Auswahl",
             },
           });
@@ -62,8 +69,8 @@ export default function Recording({data, acceptable}: RecordingProps) {
       >
         <Image
           src={`${apiRecordingBaseUrl}\\spectrogram_intensity.png`}
-          h={150}
-          w={150}
+          h={size}
+          w={size}
         />
         <Stack ml={10} align="stretch" justify="center" gap={1}>
           <Group>
@@ -98,7 +105,7 @@ export default function Recording({data, acceptable}: RecordingProps) {
         <ActionIcon
           mr={15}
           variant="light"
-          size="xl"
+          size="lg"
           radius="lg"
           ml={"auto"}
           aria-label="detail-modal"
@@ -106,10 +113,12 @@ export default function Recording({data, acceptable}: RecordingProps) {
             setDetailsOpened(true);
           }}
         >
-          <TbSwipe size={30} />
+          <TbSwipe size="60%" />
         </ActionIcon>
         <Details
-          title={`Aufnahmedetails zu ${voicefieldBins.dba[data.dbaBin]} db(A) / ${
+          title={`Aufnahmedetails zu ${
+            voicefieldBins.dba[data.dbaBin]
+          } db(A) / ${
             voicefieldBins.freq[data.freqBin].slice(0, -2) +
             "." +
             voicefieldBins.freq[data.freqBin].slice(-2)
@@ -122,6 +131,7 @@ export default function Recording({data, acceptable}: RecordingProps) {
         {acceptable ? (
           <Button
             h="100%"
+            w="15%"
             color="green"
             rightSection={<TbCheck size={30} />}
             pr={25}
@@ -180,6 +190,7 @@ export default function Recording({data, acceptable}: RecordingProps) {
         </Modal>
         <Button
           h="100%"
+          w="15%"
           color="red"
           rightSection={<TbTrashX size={30} />}
           pr={25}
