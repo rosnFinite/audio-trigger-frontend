@@ -52,10 +52,12 @@ function getMinMaxScore(
 ): { min: number; max: number } {
   let min = Infinity;
   let max = -Infinity;
-
+  if (stat === "accepted") {
+    return { min: 0, max: 1 };
+  }
   for (const field of voicefield) {
     for (const data of field.data) {
-      const value = data.y[stat];
+      const value = data.y[stat] as number; // Cast value to number in case of boolean "accepted"
       if (value != null) {
         if (value < min) {
           min = value;

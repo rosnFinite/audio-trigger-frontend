@@ -75,6 +75,7 @@ export const voicemapDataSlice = createSlice({
       let field = JSON.parse(JSON.stringify(state.values.field));
       field[action.payload.dbaBin].data[action.payload.freqBin].y = {
         score: action.payload.score,
+        accepted: false,
         meanF: action.payload.stats.meanF,
         stdevF: action.payload.stats.stdevF,
         hnr: action.payload.stats.hnr,
@@ -118,6 +119,7 @@ export const voicemapDataSlice = createSlice({
       );
       newData.field[action.payload.dbaBin].data[action.payload.freqBin].y = {
         score: 0,
+        accepted: null,
         meanF: 0,
         stdevF: 0,
         hnr: 0,
@@ -137,20 +139,30 @@ export const voicemapDataSlice = createSlice({
     },
     ACCEPT_RECORDING: (state, action) => {
       // action.payload = {freqBin: freqBin, dbaBin:dbaBin} to identify data point to accept
+      let recordings = [...state.values.recordings];
+      let field = JSON.parse(JSON.stringify(state.values.field));
+      // update the recording to accepted
+      recordings = recordings.map((item) => {
+        if (
+          item.dbaBin === action.payload.dbaBin &&
+          item.freqBin === action.payload.freqBin
+        ) {
+          return {
+            ...item,
+            accepted: true,
+          };
+        }
+        return item;
+      });
+      // updazte the field to accepted
+      field[action.payload.dbaBin].data[action.payload.freqBin].y = {
+        ...field[action.payload.dbaBin].data[action.payload.freqBin].y,
+        accepted: true,
+      };
       const newData = {
         ...state.values,
-        recordings: state.values.recordings.map((item) => {
-          if (
-            item.dbaBin === action.payload.dbaBin &&
-            item.freqBin === action.payload.freqBin
-          ) {
-            return {
-              ...item,
-              accepted: true,
-            };
-          }
-          return item;
-        }),
+        recordings: recordings,
+        field: field,
       };
       state.values = newData;
     },
@@ -162,13 +174,19 @@ export const voicemapDataSlice = createSlice({
     },
     SET_COLOR: (state, action) => {
       const newColorObj = {
-        min: action.payload.color.min, 
-        max: action.payload.color.max, 
-        type: action.payload.color.type, 
-        scheme: action.payload.color.scheme, 
-        divergeAt: action.payload.color.divergeAt === undefined ? 0.5 : action.payload.color.divergeAt
+        min: action.payload.color.min,
+        max: action.payload.color.max,
+        type: action.payload.color.type,
+        scheme: action.payload.color.scheme,
+        divergeAt:
+          action.payload.color.divergeAt === undefined
+            ? 0.5
+            : action.payload.color.divergeAt,
       };
-      state.values = { ...state.values, color: { ...state.values.color, [action.payload.stat]: newColorObj }};
+      state.values = {
+        ...state.values,
+        color: { ...state.values.color, [action.payload.stat]: newColorObj },
+      };
     },
   },
 });

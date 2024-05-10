@@ -42,6 +42,25 @@ const colorSchemes = [
   { label: "Diverging: Red->Yellow->Green", value: "red_yellow_green" },
 ];
 
+const selectableData = [
+  { label: "Qualität", value: "score" },
+  { label: "Aufnahmestatus", value: "accepted" },
+  { label: "Mittelwert der Frequenz", value: "meanF" },
+  { label: "Standardabweichung der Frequenz", value: "stdevF" },
+  { label: "Harmonics-to-Noise Ratio", value: "hnr" },
+  { label: "Jitter (local)", value: "localJitter" },
+  { label: "Jitter (local, absolute)", value: "localAbsoluteJitter" },
+  { label: "Jitter (rap)", value: "rapJitter" },
+  { label: "Jitter (ppq5)", value: "ppq5Jitter" },
+  { label: "Jitter (ddp)", value: "ddpJitter" },
+  { label: "Shimmer (local)", value: "localShimmer" },
+  { label: "Shimmer (local, dB)", value: "localdbShimmer" },
+  { label: "Shimmer (apq3)", value: "apq3Shimmer" },
+  { label: "Shimmer (apq5)", value: "aqpq5Shimmer" },
+  { label: "Shimmer (apq11)", value: "apq11Shimmer" },
+  { label: "Shimmer (dda)", value: "ddaShimmer" },
+];
+
 export default function VoiceFieldControlGroup({
   onStatChange,
 }: VoiceFieldControlGroupProps) {
@@ -103,23 +122,7 @@ export default function VoiceFieldControlGroup({
         description="Wählen Sie die Daten, die Sie visualisieren möchten."
         value={stat}
         onChange={handleStatChange}
-        data={[
-          "score",
-          "meanF",
-          "stdevF",
-          "hnr",
-          "localJitter",
-          "localAbsoluteJitter",
-          "rapJitter",
-          "ppq5Jitter",
-          "ddpJitter",
-          "localShimmer",
-          "localdbShimmer",
-          "apq3Shimmer",
-          "aqpq5Shimmer",
-          "apq11Shimmer",
-          "ddaShimmer",
-        ]}
+        data={selectableData}
       />
       <Tooltip label="Anpassung des Farbschemas der Heatmap">
         <Button size="xs" leftSection={<TbColorPicker />} onClick={open}>

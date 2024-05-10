@@ -29,6 +29,7 @@ interface RecordingStats extends NonNullableStats {
 
 interface VoiceStats extends Stats {
   score: number | null;
+  accepted: boolean | null;
 }
 
 interface VoiceField {
@@ -62,6 +63,7 @@ interface ColorSetting {
 }
 interface StatColorSettings {
   score: ColorSetting;
+  accepted: ColorSetting;
   meanF: ColorSetting;
   stdevF: ColorSetting;
   hnr: ColorSetting;

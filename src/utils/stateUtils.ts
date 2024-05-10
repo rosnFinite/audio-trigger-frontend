@@ -18,6 +18,7 @@ function generateEmptyGrid(dbSettings: MapSettings, freqSettings: MapSettings) {
         x: j.toFixed(2).toString().replace(".", ""),
         y: {
           score: null,
+          accepted: null,
           meanF: null,
           stdevF: null,
           hnr: null,
@@ -101,31 +102,106 @@ const initialVoiceState: VoiceState = {
     { lower: 55, upper: 1700, steps: 2 }
   ),
   color: {
-    score: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    meanF: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    stdevF: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
+    score: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    accepted: {
+      min: 0,
+      max: 1,
+      type: "diverging",
+      scheme: "red_yellow_green",
+    },
+    meanF: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    stdevF: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
     hnr: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    localJitter: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
+    localJitter: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
     localAbsoluteJitter: {
       min: undefined,
       max: undefined,
       type: "diverging",
       scheme: "blues",
     },
-    rapJitter: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    ppq5Jitter: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    ddpJitter: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    localShimmer: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    localdbShimmer: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    apq3Shimmer: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    aqpq5Shimmer: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    apq11Shimmer: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
-    ddaShimmer: { min: undefined, max: undefined, type: "diverging", scheme: "blues" },
+    rapJitter: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    ppq5Jitter: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    ddpJitter: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    localShimmer: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    localdbShimmer: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    apq3Shimmer: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    aqpq5Shimmer: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    apq11Shimmer: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
+    ddaShimmer: {
+      min: undefined,
+      max: undefined,
+      type: "diverging",
+      scheme: "blues",
+    },
   },
   annotation: { id: "", text: "" },
   recordings: [],
   field: [],
 };
 
-export { generateEmptyGrid, generateVoicemapBinNames, initialSettingsState, initialVoiceState };
-
+export {
+  generateEmptyGrid,
+  generateVoicemapBinNames,
+  initialSettingsState,
+  initialVoiceState,
+};
