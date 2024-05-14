@@ -12,6 +12,7 @@ import {
   LoadingOverlay,
   Text,
   Tooltip,
+  Button,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -22,7 +23,7 @@ import {
   TbNotes,
 } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Layout(props: { children: React.ReactNode }) {
   const { pathname } = useLocation();
@@ -110,24 +111,39 @@ export default function Layout(props: { children: React.ReactNode }) {
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
-        <NavLink
-          href="/"
-          label="Einstellungen"
-          leftSection={<TbSettings />}
-          active={pathname === "/"}
-        />
-        <NavLink
-          href="/dashboard"
-          label="Dashboard"
-          leftSection={<TbMusicSearch />}
-          active={pathname === "/dashboard"}
-        />
-        <NavLink
-          href="/logs"
-          label="Logs"
-          leftSection={<TbNotes />}
-          active={pathname === "/logs"}
-        />
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button
+            radius="xs"
+            justify="space-between"
+            fullWidth
+            rightSection={<TbSettings />}
+            variant={pathname === "/" ? "light" : "transparent"}
+          >
+            Einstellungen
+          </Button>
+        </Link>
+        <Link to="/dashboard" style={{ textDecoration: "none" }}>
+          <Button
+            radius="xs"
+            justify="space-between"
+            fullWidth
+            rightSection={<TbMusicSearch />}
+            variant={pathname === "/dashboard" ? "light" : "transparent"}
+          >
+            Stimmfeld
+          </Button>
+        </Link>
+        <Link to="/logs" style={{ textDecoration: "none" }}>
+          <Button
+            radius="xs"
+            justify="space-between"
+            fullWidth
+            rightSection={<TbNotes />}
+            variant={pathname === "/logs" ? "light" : "transparent"}
+          >
+            Logs
+          </Button>
+        </Link>
       </AppShell.Navbar>
       <AppShell.Main pos="relative">
         {process.env.NODE_ENV === "development" ? (
