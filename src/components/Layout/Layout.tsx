@@ -18,6 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { TbAlpha, TbMusicSearch, TbSettings, TbNotes } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
 import { Link, useLocation } from "react-router-dom";
+import Logo from "./Logo";
 
 export default function Layout(props: { children: React.ReactNode }) {
   const { pathname } = useLocation();
@@ -57,7 +58,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         <Flex justify="flex-start" align="center">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Container w={70} ml={-5} mr={-10} mt={10}>
-            <Image src="/logo192.png" alt="Logo" />
+            <Logo />
           </Container>
           <Text fw={500} size="xl" visibleFrom="sm">
             Laryngeal Voice Range Field (LVRF)

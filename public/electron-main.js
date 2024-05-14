@@ -22,7 +22,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 1024,
-    title: "Stimmfeldanalyse",
+    title: "Laryngeal Voice Range Field (LVRF)",
+    autoHideMenuBar: true,
   });
   mainWindow.loadURL(
     isDev

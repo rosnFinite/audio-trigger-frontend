@@ -1,8 +1,8 @@
 {
-  "name": "trigger-frontend",
+  "name": "LVRF",
   "version": "0.1.0",
   "author": "Fabio Rose",
-  "description": "Web app to control the trigger system and accumulate voice data",
+  "description": "Webanwendung für die Durchführung und Visualisierung von Stimmfeldaufnahmen",
   "homepage": "./",
   "main": "public/electron-main.js",
   "private": true,
@@ -42,7 +42,8 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "electron-builder -c.extraMetadata.main=build/electron-main.js",
     "preelectron-pack": "react-scripts build",
-    "electron": "electron ."
+    "electron": "electron .",
+    "electron-build": "npm run build && electron-builder -c.extraMetadata.main=build/electron-main.js"
   },
   "eslintConfig": {
     "extends": [
@@ -70,5 +71,10 @@
     "electron": "^29.1.5",
     "electron-builder": "^24.13.3",
     "wait-on": "^7.2.0"
+  },
+  "build": {
+    "win": {
+      "icon": "build/logo512.png"
+    }
   }
 }
