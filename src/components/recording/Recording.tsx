@@ -1,6 +1,5 @@
 import {
   Card,
-  Container,
   Image,
   Flex,
   Text,
@@ -9,34 +8,39 @@ import {
   Modal,
   Alert,
   ActionIcon,
+  Stack,
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { Socket } from "socket.io-client";
-import { useDisclosure } from "@mantine/hooks";
+import { useContext, useState } from "react";
+import Details from "./Details";
+import SocketContext from "../../context/SocketContext";
+import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 
-export default function Recording({
-  socket,
-  freqBin,
-  dbaBin,
-  qScore,
-  saveLocation,
-  timestamp,
-  acceptable = true,
-}: {
-  socket: Socket;
-  freqBin: number;
-  dbaBin: number;
-  qScore: string;
-  saveLocation: string;
-  timestamp: string;
+interface RecordingProps {
+  data: RecordingStats;
   acceptable: boolean;
-}) {
-  const datamapBinNames = useAppSelector(
-    (state) => state.voicemap.value.datamapBinNames
+  size: number;
+}
+
+export default function Recording({ data, acceptable, size }: RecordingProps) {
+  const socket = useContext(SocketContext);
+
+  const voicefieldBins = useAppSelector(
+    (state) => state.voicemap.values.fieldBinNames
+  );
+  const saveLocation = useAppSelector(
+    (state) => state.settings.values.save_location
   );
   const dispatch = useAppDispatch();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [detailsOpened, setDetailsOpened] = useState(false);
+  const [confirmOpened, setConfirmOpened] = useState(false);
+
+  const apiRecordingBaseUrl = getRestBaseUrlForRecording(
+    saveLocation,
+    voicefieldBins.dba.length - data.dbaBin - 1,
+    data.freqBin
+  );
 
   return (
     <Card
@@ -44,7 +48,7 @@ export default function Recording({
       mb={8}
       shadow="sm"
       withBorder
-      h={150}
+      h={size}
       pt={0}
       pl={0}
       pr={0}
@@ -55,66 +59,100 @@ export default function Recording({
           dispatch({
             type: "voicemap/SET_ANNOTATION",
             payload: {
-              id: `${datamapBinNames.dba[dbaBin]}.${datamapBinNames.freq[freqBin]}`,
+              id: `${voicefieldBins.dba[data.dbaBin]}.${
+                voicefieldBins.freq[data.freqBin]
+              }`,
               text: "Auswahl",
             },
           });
         }}
       >
-        <Image src="/temp/TEST_C001H001S0002000001.jpg" h={150} w={150} />
-        <Container ml={0} mt={10} h={"100%"}>
+        <Image
+          src={`${apiRecordingBaseUrl}\\spectrogram_intensity.png`}
+          h={size}
+          w={size}
+        />
+        <Stack ml={10} align="stretch" justify="center" gap={1}>
           <Group>
-            <Text fw={700}>Frequenz-Bin [Hz]:</Text>
-            <Text>
-              {datamapBinNames.freq[freqBin].slice(0, -2) +
+            <Text size="xs" fw={700}>
+              Frequenz [Hz]:
+            </Text>
+            <Text size="xs">
+              {voicefieldBins.freq[data.freqBin].slice(0, -2) +
                 "." +
-                datamapBinNames.freq[freqBin].slice(-2)}
+                voicefieldBins.freq[data.freqBin].slice(-2)}
             </Text>
           </Group>
           <Group>
-            <Text fw={700}>Dezibel-Bin [db(A)]:</Text>
-            <Text>{datamapBinNames.dba[dbaBin]}</Text>
+            <Text size="xs" fw={700}>
+              Dezibel [db(A)]:
+            </Text>
+            <Text size="xs">{voicefieldBins.dba[data.dbaBin]}</Text>
           </Group>
           <Group>
-            <Text fw={700}>Q-Score:</Text>
-            <Text>{qScore}</Text>
+            <Text size="xs" fw={700}>
+              Q-Score:
+            </Text>
+            <Text size="xs">{data.qScore}</Text>
           </Group>
           <Group>
-            <Text fw={700}>Speicherort:</Text>
-            <Text>{saveLocation}</Text>
+            <Text size="xs" fw={700}>
+              Zeitstempel:
+            </Text>
+            <Text size="xs">{data.timestamp}</Text>
           </Group>
-          <Group>
-            <Text fw={700}>Zeitstempel:</Text>
-            {timestamp}
-          </Group>
-        </Container>
+        </Stack>
         <ActionIcon
           mr={15}
           variant="light"
-          size="xl"
+          size="lg"
           radius="lg"
+          ml={"auto"}
           aria-label="detail-modal"
+          onClick={() => {
+            setDetailsOpened(true);
+          }}
         >
-          <TbSwipe size={30} />
+          <TbSwipe size="60%" />
         </ActionIcon>
+        <Details
+          title={`Aufnahmedetails zu ${
+            voicefieldBins.dba[data.dbaBin]
+          } db(A) / ${
+            voicefieldBins.freq[data.freqBin].slice(0, -2) +
+            "." +
+            voicefieldBins.freq[data.freqBin].slice(-2)
+          } Hz / ${data.qScore}`}
+          opened={detailsOpened}
+          onClose={() => setDetailsOpened(false)}
+          api_endpoint={apiRecordingBaseUrl}
+          recordingData={data}
+        />
         {acceptable ? (
           <Button
             h="100%"
+            w="15%"
             color="green"
             rightSection={<TbCheck size={30} />}
             pr={25}
             radius={0}
             onClick={() => {
+              console.log("Accepting recording");
               dispatch({
                 type: "voicemap/ACCEPT_RECORDING",
-                payload: { freqBin: freqBin, dbaBin: dbaBin },
+                payload: { freqBin: data.freqBin, dbaBin: data.dbaBin },
               });
             }}
           />
         ) : (
           <></>
         )}
-        <Modal opened={opened} onClose={close} centered title="Löschen">
+        <Modal
+          opened={confirmOpened}
+          onClose={() => setConfirmOpened(false)}
+          centered
+          title="Löschen"
+        >
           <Alert
             variant="light"
             color="red"
@@ -125,21 +163,25 @@ export default function Recording({
             das Stimmfeld aktualisieren.
           </Alert>
           <Group mt={15} grow>
-            <Button variant="light" onClick={close}>
+            <Button variant="light" onClick={() => setConfirmOpened(false)}>
               Abbrechen
             </Button>
             <Button
               color="red"
               onClick={() => {
-                socket.emit("removeRecording", {
-                  freqBin: freqBin,
-                  dbaBin: datamapBinNames.dba.length - dbaBin - 1,
+                if (!socket) {
+                  console.error("Socket is not initialized");
+                  return;
+                }
+                socket.emit("remove_recording_request", {
+                  freqBin: data.freqBin,
+                  dbaBin: voicefieldBins.dba.length - data.dbaBin - 1,
                 });
                 dispatch({
                   type: "voicemap/REMOVE_RECORDING",
-                  payload: { freqBin: freqBin, dbaBin: dbaBin },
+                  payload: { freqBin: data.freqBin, dbaBin: data.dbaBin },
                 });
-                close();
+                setConfirmOpened(false);
               }}
             >
               Löschen
@@ -148,11 +190,12 @@ export default function Recording({
         </Modal>
         <Button
           h="100%"
+          w="15%"
           color="red"
           rightSection={<TbTrashX size={30} />}
           pr={25}
           radius={0}
-          onClick={open}
+          onClick={() => setConfirmOpened(true)}
         />
       </Flex>
     </Card>

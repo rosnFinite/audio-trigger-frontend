@@ -9,17 +9,21 @@ import { PersistGate } from "redux-persist/integration/react";
 import { HashRouter } from "react-router-dom";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
+import SocketContext, { socket } from "./context/SocketContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 root.render(
   <Provider store={store}>
-    <HashRouter basename="/">
+    <HashRouter>
       <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
         <MantineProvider>
           <Notifications limit={5} position="bottom-right" />
-          <App />
+          <SocketContext.Provider value={socket}>
+            <App />
+          </SocketContext.Provider>
         </MantineProvider>
       </PersistGate>
     </HashRouter>

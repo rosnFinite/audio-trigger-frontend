@@ -1,30 +1,34 @@
 import { Container } from "@mantine/core";
-import { useAppSelector } from "../../redux/hooks";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
 
 export default function VoicemapMinimal({
-  datamap,
+  field,
   annotation,
   maxScore,
+  minScore,
 }: {
-  datamap: {
-    id: string;
-    data: {
-      x: number;
-      y: number;
-    }[];
-  }[];
+  field: VoiceField[];
   annotation: {
     id: string;
     text: string;
   };
   maxScore: number;
+  minScore: number;
 }) {
+  const [data, setData] = useState<VoiceFieldScalarData[]>(
+    getVoiceFieldDataByKey(field, "accepted")
+  );
+
+  useEffect(() => {
+    setData(getVoiceFieldDataByKey(field, "score"));
+  }, [field]);
+
   return (
     <Container fluid h="99vh" w="100vw">
       <ResponsiveHeatMapCanvas
-        data={datamap}
+        data={data}
         margin={{ top: 10, right: 5, bottom: 70, left: 45 }}
         valueFormat=" >-.2s"
         xOuterPadding={0}
@@ -55,13 +59,8 @@ export default function VoicemapMinimal({
           legendOffset: -35,
         }}
         axisRight={null}
-        colors={{
-          type: "diverging",
-          scheme: "blues",
-          minValue: 0,
-          maxValue: maxScore,
-        }}
-        emptyColor="#555555"
+        colors={(d) => (d.value === 0 || d.value === 1 ? "#236bfa" : "#ffffff")}
+        emptyColor="#ffffff"
         enableLabels={false}
         legends={[]}
         annotations={[

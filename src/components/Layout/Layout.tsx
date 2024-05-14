@@ -5,12 +5,13 @@ import {
   AppShell,
   Badge,
   Burger,
-  Button,
+  NavLink,
   Container,
   Flex,
   Group,
   LoadingOverlay,
   Text,
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -18,14 +19,14 @@ import {
   TbChartGridDots,
   TbMusicSearch,
   TbSettings,
+  TbNotes,
 } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function Layout(props: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const [opened, { toggle }] = useDisclosure();
-  const [recBadgeColor, setRecBadgeColor] = useState("red");
   const [trigBadgeColor, setTrigBadgeColor] = useState("red");
   const [loadingVisible, setLoadingVisible] = useState(false);
   const status = useAppSelector((state) => state.settings.values.status);
@@ -33,19 +34,7 @@ export default function Layout(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     console.log("Status: ", status);
-    switch (status.recorder) {
-      case "running":
-        setRecBadgeColor("lime");
-        break;
-      case "ready":
-      case "reset":
-        setRecBadgeColor("yellow");
-        break;
-      default:
-        setRecBadgeColor("red");
-    }
-
-    switch (status.trigger) {
+    switch (status) {
       case "running":
         setTrigBadgeColor("lime");
         break;
@@ -75,8 +64,8 @@ export default function Layout(props: { children: React.ReactNode }) {
           <Container w={70} ml={-5} mr={-10} mt={10}>
             <TbChartGridDots size={"100%"} color="#1C7ED6" />
           </Container>
-          <Text fw={500} size="xl">
-            Stimmfeldanalyse
+          <Text fw={500} size="xl" visibleFrom="sm">
+            Laryngeal Voice Range Field (LVRF)
           </Text>
           <Badge
             rightSection={<TbAlpha />}
@@ -85,53 +74,73 @@ export default function Layout(props: { children: React.ReactNode }) {
             gradient={{ from: "blue", to: "green", deg: 90 }}
             ml={10}
             mt={5}
+            visibleFrom="sm"
           >
             Alpha
           </Badge>
           <Group justify="flex-end" gap="xs" ml={"auto"} mr={"2%"}>
-            <Text size="xs">{audioClientSID}</Text>
-            <Badge size="md" variant="filled" color={recBadgeColor}>
-              Recorder
-            </Badge>
-            <Badge size="md" variant="filled" color={trigBadgeColor}>
-              Trigger
-            </Badge>
+            <Text size="xs" visibleFrom="sm">
+              ClientID:&nbsp;&nbsp;
+              {audioClientSID === "" ? (
+                <Text span c="red" inherit>
+                  Nicht verbunden
+                </Text>
+              ) : (
+                <Text span c="blue" inherit>
+                  {audioClientSID}
+                </Text>
+              )}
+            </Text>
+            <Tooltip
+              label={`Triggerprozess ist ${
+                status === "running"
+                  ? "aktiv"
+                  : status === "ready" || status === "reset"
+                  ? "bereit"
+                  : "inaktiv"
+              }`}
+              color={trigBadgeColor}
+            >
+              <Badge size="md" variant="filled" color={trigBadgeColor}>
+                Trigger
+              </Badge>
+            </Tooltip>
           </Group>
         </Flex>
       </AppShell.Header>
 
-      <AppShell.Navbar p={0}>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Button
-            radius="xs"
-            justify="space-between"
-            fullWidth
-            rightSection={<TbSettings />}
-            variant={pathname === "/" ? "light" : "transparent"}
-          >
-            Einstellungen
-          </Button>
-        </Link>
-        <Link to="/stimmfeld" style={{ textDecoration: "none" }}>
-          <Button
-            radius="xs"
-            justify="space-between"
-            fullWidth
-            rightSection={<TbMusicSearch />}
-            variant={pathname === "/stimmfeld" ? "light" : "transparent"}
-          >
-            Stimmfeld
-          </Button>
-        </Link>
+      <AppShell.Navbar p="sm">
+        <NavLink
+          href="/"
+          label="Einstellungen"
+          leftSection={<TbSettings />}
+          active={pathname === "/"}
+        />
+        <NavLink
+          href="/dashboard"
+          label="Dashboard"
+          leftSection={<TbMusicSearch />}
+          active={pathname === "/dashboard"}
+        />
+        <NavLink
+          href="/logs"
+          label="Logs"
+          leftSection={<TbNotes />}
+          active={pathname === "/logs"}
+        />
       </AppShell.Navbar>
       <AppShell.Main pos="relative">
-        <LoadingOverlay
-          visible={loadingVisible}
-          loaderProps={{
-            children:
-              "Kein Audioclient verbunden. Bitte stelle eine Verbindung her...",
-          }}
-        />
+        {process.env.NODE_ENV === "development" ? (
+          <></>
+        ) : (
+          <LoadingOverlay
+            visible={loadingVisible}
+            loaderProps={{
+              children:
+                "Kein Audioclient verbunden. Bitte stelle eine Verbindung her...",
+            }}
+          />
+        )}
         {props.children}
       </AppShell.Main>
     </AppShell>
