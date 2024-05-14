@@ -5,7 +5,7 @@ import {
   AppShell,
   Badge,
   Burger,
-  NavLink,
+  Image,
   Container,
   Flex,
   Group,
@@ -15,13 +15,7 @@ import {
   Button,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  TbAlpha,
-  TbChartGridDots,
-  TbMusicSearch,
-  TbSettings,
-  TbNotes,
-} from "react-icons/tb";
+import { TbAlpha, TbMusicSearch, TbSettings, TbNotes } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
 import { Link, useLocation } from "react-router-dom";
 
@@ -63,7 +57,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         <Flex justify="flex-start" align="center">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Container w={70} ml={-5} mr={-10} mt={10}>
-            <TbChartGridDots size={"100%"} color="#1C7ED6" />
+            <Image src="/logo192.png" alt="Logo" />
           </Container>
           <Text fw={500} size="xl" visibleFrom="sm">
             Laryngeal Voice Range Field (LVRF)
