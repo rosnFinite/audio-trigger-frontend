@@ -18,12 +18,12 @@ app.on("activate", function () {
     createWindow();
   }
 });
+app.commandLine.appendSwitch("ignore-certificate-errors");
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 1024,
     title: "Laryngeal Voice Range Field (LVRF)",
-    autoHideMenuBar: true,
   });
   mainWindow.loadURL(
     isDev
