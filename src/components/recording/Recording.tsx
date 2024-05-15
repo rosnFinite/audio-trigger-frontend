@@ -95,12 +95,6 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
             </Text>
             <Text size="xs">{data.qScore}</Text>
           </Group>
-          <Group>
-            <Text size="xs" fw={700}>
-              Zeitstempel:
-            </Text>
-            <Text size="xs">{data.timestamp}</Text>
-          </Group>
         </Stack>
         <ActionIcon
           mr={15}
