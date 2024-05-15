@@ -7,6 +7,7 @@ import Logs from "./pages/Logs";
 import Settings from "./pages/Settings";
 import Patient from "./pages/Patient";
 import Dashboard from "./pages/Dashboard";
+import { notifications } from "@mantine/notifications";
 
 export default function App() {
   const socket = useContext(SocketContext);
@@ -28,8 +29,19 @@ export default function App() {
       dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
       dispatch({ type: "voicemap/INITIALIZE" });
     });
+    socket.on("disconnect", () => {
+      persistor.purge();
+      dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
+      dispatch({ type: "voicemap/INITIALIZE" });
+      notifications.show({
+        title: "Andere App-Instanz reserviert Backend-Verbindung",
+        message:
+          "Die Verbindung zum Backend wurde verweigert, da bereits eine andere Instanz der App verbunden ist. Bitte überprüfen Sie, ob noch ein anderes Fenster geöffnet ist, schließen Sie es und laden Sie die Seite neu.",
+        color: "red",
+        autoClose: false,
+      });
+    });
     socket.on("clients", (clients: { sid: string; type: string }[]) => {
-      console.log("clients event", clients);
       // find audio client in clients array
       const audioClient = clients.find((item) => item.type === "audio");
       // if audio client is connected
