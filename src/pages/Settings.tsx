@@ -72,10 +72,32 @@ export default function Settings() {
       // generate a new empty grid based on the updated settings
       dispatch({
         type: "voicemap/SET_DATAMAP",
-        payload: generateEmptyGrid({lower: data["db"]["lower"], upper: data["db"]["upper"], steps: data["db"]["steps"]}, {lower: data["frequency"]["lower"], upper: data["frequency"]["upper"], steps: data["frequency"]["steps"]}),
+        payload: generateEmptyGrid(
+          {
+            lower: data["db"]["lower"],
+            upper: data["db"]["upper"],
+            steps: data["db"]["steps"],
+          },
+          {
+            lower: data["frequency"]["lower"],
+            upper: data["frequency"]["upper"],
+            steps: data["frequency"]["steps"],
+          }
+        ),
       });
       // update the color settings for 'score' based on the new min_score
-      dispatch({ type: "voicemap/SET_COLOR", payload: {stat: "score", color: {min: data["min_score"], max: 1, type: "diverging", scheme: "blues"}}});
+      dispatch({
+        type: "voicemap/SET_COLOR",
+        payload: {
+          stat: "score",
+          color: {
+            min: data["min_score"],
+            max: 1,
+            type: "diverging",
+            scheme: "blues",
+          },
+        },
+      });
       setSettings(data);
       setPatient(data.patient);
     });
@@ -186,8 +208,8 @@ export default function Settings() {
                   />
                 </Group>
                 <Blockquote
-                  color="red"
-                  icon={<TbInfoCircle size={"25"} />}
+                  iconSize={20}
+                  icon={<TbInfoCircle size="20px" />}
                   mt="xs"
                   pt={10}
                   pb={10}
@@ -208,7 +230,8 @@ export default function Settings() {
                 />
                 <Blockquote
                   color="yellow"
-                  icon={<TbInfoCircle size={"25"} />}
+                  iconSize={20}
+                  icon={<TbInfoCircle size="20px" />}
                   mt="xs"
                   pt={10}
                   pb={10}
@@ -240,13 +263,14 @@ export default function Settings() {
                 <Divider />
                 <Blockquote
                   color="blue"
-                  icon={<TbInfoCircle size={"25"} />}
+                  iconSize={20}
+                  icon={<TbInfoCircle size="20px" />}
                   mt="xs"
                   pt={10}
                   pb={10}
                 >
-                  Definition des zu erfassenden Stimmfeldes. Hieraus resultiert
-                  die Größe der unter "Stimmfeld" dargestellten Heatmap.
+                  Hieraus ergibt sich die Größe der unter "Stimmfeld"
+                  dargestellten Heatmap.
                 </Blockquote>
                 <Group grow>
                   <NumberInput

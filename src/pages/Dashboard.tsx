@@ -104,7 +104,8 @@ export default function Dashboard() {
         </Group>
         <Blockquote
           color="blue"
-          icon={<TbInfoCircle size={"25"} />}
+          iconSize={20}
+          icon={<TbInfoCircle size="20px" />}
           mt="xs"
           pt={10}
           pb={10}

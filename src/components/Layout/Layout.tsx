@@ -76,7 +76,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           </Badge>
           <Group justify="flex-end" gap="xs" ml={"auto"} mr={"2%"}>
             <Text size="xs" visibleFrom="sm">
-              ClientID:&nbsp;&nbsp;
+              BackendID:&nbsp;&nbsp;
               {audioClientSID === "" ? (
                 <Text span c="red" inherit>
                   Nicht verbunden
