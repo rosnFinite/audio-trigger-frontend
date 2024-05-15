@@ -1,6 +1,6 @@
 {
-  "name": "LVRF",
-  "version": "0.1.0",
+  "name": "Laryngeal-Voice-Range-Field-Application",
+  "version": "0.9.0",
   "author": "Fabio Rose",
   "description": "Webanwendung für die Durchführung und Visualisierung von Stimmfeldaufnahmen",
   "homepage": "./",
@@ -40,10 +40,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron-pack": "electron-builder -c.extraMetadata.main=build/electron-main.js",
-    "preelectron-pack": "react-scripts build",
-    "electron": "electron .",
-    "electron-build": "npm run build && electron-builder -c.extraMetadata.main=build/electron-main.js"
+    "electron-build": "npm run build && electron-builder -c.extraMetadata.main=build/electron-main.js",
+    "electron-deploy": "npm run build && electron-builder -c.extraMetadata.main=build/electron-main.js --win --publish always",
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -76,5 +75,9 @@
     "win": {
       "icon": "build/logo512.png"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rosnFinite/audio-trigger-frontend.git"
   }
 }

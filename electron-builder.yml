@@ -1,0 +1,4 @@
+appId: LaryngealVoiceRangeField
+publish:
+  provider: github
+  token: ${GH_TOKEN}
