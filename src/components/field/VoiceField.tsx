@@ -271,7 +271,7 @@ export default function VoiceField({
           return (
             <BasicTooltip
               id={formattedDb + " / " + formattedFreq}
-              value={cell.label ? cell.label : "Keine Daten"}
+              value={cell.label ? cell.label : undefined}
             />
           );
         }}
