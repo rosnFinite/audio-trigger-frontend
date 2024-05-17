@@ -41,6 +41,7 @@ export default function Settings() {
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
   );
+  const status = useAppSelector((state) => state.settings.values.status);
   const [patient, setPatient] = useState(settings.patient);
   const dispatch = useAppDispatch();
 
@@ -133,6 +134,14 @@ export default function Settings() {
     <Layout>
       <Stack h="100%">
         <Title order={2}>Einstellungen</Title>
+        {status !== "offline" ? (
+          <Blockquote color="green" icon={null} mt={0} pt={10} pb={10}>
+            Diese Seite zeigt die gesetzten Parameter der aktuellen
+            Triggerinstanz. Beim Speichern oder Zurücksetzen wird eine neue
+            Instanz erzeugt und die aktuelle Aufnahme kann nicht weiter
+            bearbeitet werden.
+          </Blockquote>
+        ) : null}
         <Divider />
         <TextInput
           label="Patient"
@@ -229,7 +238,6 @@ export default function Settings() {
                   }}
                 />
                 <Blockquote
-                  color="yellow"
                   iconSize={20}
                   icon={<TbInfoCircle size="20px" />}
                   mt="xs"
