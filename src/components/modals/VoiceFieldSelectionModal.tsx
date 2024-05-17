@@ -30,16 +30,13 @@ export default function VoiceFieldSelectionModal({
   const dispatch = useAppDispatch();
   const [frequency, setFrequency] = useState<string | null>(null);
   const [decibel, setDecibel] = useState<string | null>(null);
-  const recording = getRecordingBySelectionId(
-    recordings,
-    selectionId,
-    fieldBinNames
-  );
-  const apiRecordingBaseUrl = getRestBaseUrlForRecording(
-    saveLocation,
-    fieldBinNames.dba.length - recording?.dbaBin - 1,
-    recording?.freqBin
-  );
+  console.log("selectionId", selectionId);
+  console.log(opened);
+  const [recording, setRecording] = useState<RecordingStats | undefined>();
+  const [apiRecordingBaseUrl, setApiRecordingBaseUrl] = useState<
+    string | null
+  >();
+
   const freq = () => {
     if (recording === undefined) {
       return null;
@@ -54,9 +51,22 @@ export default function VoiceFieldSelectionModal({
   };
 
   useEffect(() => {
+    const tmp_recording = getRecordingBySelectionId(
+      recordings,
+      selectionId,
+      fieldBinNames
+    );
+    setApiRecordingBaseUrl(
+      getRestBaseUrlForRecording(
+        saveLocation,
+        fieldBinNames.dba.length - tmp_recording?.dbaBin - 1,
+        tmp_recording?.freqBin
+      )
+    );
+    setRecording(tmp_recording);
     setFrequency(freq());
-    setDecibel(fieldBinNames.dba[recording?.dbaBin] + " dB");
-  }, [recording]);
+    setDecibel(fieldBinNames.dba[tmp_recording?.dbaBin] + " dB");
+  }, [recording, selectionId]);
 
   if (recording === undefined) {
     return null;
