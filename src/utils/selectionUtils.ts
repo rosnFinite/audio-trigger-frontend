@@ -14,7 +14,6 @@ const getRecordingBySelectionId = (
         (item) => item.dbaBin === dbBin && item.freqBin === freqBin
       )
     ];
-  console.log(recording);
   return recording;
 };
 
