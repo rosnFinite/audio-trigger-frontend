@@ -63,7 +63,7 @@ export default function VoiceFieldSelectionModal({
   }
   return (
     <Modal
-      size="auto"
+      size="70%"
       title={decibel + " / " + frequency + " / " + recording.qScore}
       opened={opened}
       onClose={onClose}
@@ -71,8 +71,8 @@ export default function VoiceFieldSelectionModal({
       <Stack>
         <Image
           src={`${apiRecordingBaseUrl}\\spectrogram_intensity.png`}
-          h={850}
-          w={850}
+          h={"100%"}
+          w={"100%"}
         />
         <Group grow>
           {recording.accepted ? (
