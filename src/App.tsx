@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
 import SocketContext from "./context/SocketContext";
@@ -13,6 +13,7 @@ export default function App() {
   const socket = useContext(SocketContext);
   const settings = useAppSelector((state) => state.settings.values);
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   // handles registering of web client to socketio backend and sets the audio client sid
   useEffect(() => {
@@ -33,13 +34,16 @@ export default function App() {
       persistor.purge();
       dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
       dispatch({ type: "voicemap/INITIALIZE" });
-      notifications.show({
-        title: "Verbindung zum Backend fehlgeschlagen",
-        message:
-          "Das Backend ist aktuell nicht erreichbar. Entweder wurde das Backend beendet oder eine andere Webanwendung reserviert aktuell die Verbindung. Sollte eine BackendID angezeigt werden, kann diese Nachricht ignoriert werden.",
-        color: "red",
-        autoClose: false,
-      });
+      console.log(location.pathname);
+      if (location.pathname !== "/dashboard/patient") {
+        notifications.show({
+          title: "Verbindung zum Backend fehlgeschlagen",
+          message:
+            "Das Backend ist aktuell nicht erreichbar. Entweder wurde das Backend beendet oder eine andere Webanwendung reserviert aktuell die Verbindung. Sollte eine BackendID angezeigt werden, kann diese Nachricht ignoriert werden.",
+          color: "red",
+          autoClose: false,
+        });
+      }
     });
     socket.on("clients", (clients: { sid: string; type: string }[]) => {
       // find audio client in clients array
