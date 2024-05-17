@@ -73,7 +73,7 @@ export default function Dashboard() {
             </Text>
           )}
         </Text>
-        <Text>
+        <Text mt={-15}>
           Aufnahme:{" "}
           <Text span c="blue" inherit>
             {saveLocation.split("\\").pop()}
