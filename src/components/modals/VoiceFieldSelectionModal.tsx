@@ -2,6 +2,7 @@ import { Modal, Stack, Image, Group, Button } from "@mantine/core";
 import { useAppSelector } from "../../redux/hooks";
 import { getRecordingBySelectionId } from "../../utils/selectionUtils";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
+import { useEffect, useState } from "react";
 
 interface VoiceFieldSelectionModalProps {
   selectionId: string;
@@ -23,7 +24,8 @@ export default function VoiceFieldSelectionModal({
   const saveLocation = useAppSelector(
     (state) => state.settings.values.save_location
   );
-
+  const [frequency, setFrequency] = useState<string | null>(null);
+  const [decibel, setDecibel] = useState<string | null>(null);
   const recording = getRecordingBySelectionId(
     recordings,
     selectionId,
@@ -47,7 +49,10 @@ export default function VoiceFieldSelectionModal({
     }
   };
 
-  const db = fieldBinNames.dba[recording?.dbaBin] + " dB";
+  useEffect(() => {
+    setFrequency(freq());
+    setDecibel(fieldBinNames.dba[recording?.dbaBin] + " dB");
+  }, [recording]);
 
   if (recording === undefined) {
     return null;
@@ -55,7 +60,7 @@ export default function VoiceFieldSelectionModal({
   return (
     <Modal
       size="auto"
-      title={db + " / " + freq + " / " + recording.qScore}
+      title={decibel + " / " + frequency + " / " + recording.qScore}
       opened={opened}
       onClose={onClose}
     >
