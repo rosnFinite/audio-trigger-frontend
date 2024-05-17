@@ -6,23 +6,20 @@ import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
 export default function VoicemapMinimal({
   field,
   annotation,
-  maxScore,
-  minScore,
 }: {
   field: VoiceField[];
   annotation: {
     id: string;
     text: string;
   };
-  maxScore: number;
-  minScore: number;
 }) {
   const [data, setData] = useState<VoiceFieldScalarData[]>(
     getVoiceFieldDataByKey(field, "accepted")
   );
 
   useEffect(() => {
-    setData(getVoiceFieldDataByKey(field, "score"));
+    setData(getVoiceFieldDataByKey(field, "accepted"));
+    console.log("field", data);
   }, [field]);
 
   return (
@@ -59,7 +56,7 @@ export default function VoicemapMinimal({
           legendOffset: -35,
         }}
         axisRight={null}
-        colors={(d) => (d.value === 0 || d.value === 1 ? "#236bfa" : "#ffffff")}
+        colors={(d) => (d.value || !d.value ? "#236bfa" : "#ffffff")}
         emptyColor="#ffffff"
         enableLabels={false}
         legends={[]}
