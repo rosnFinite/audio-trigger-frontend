@@ -38,6 +38,9 @@ export default function Layout(props: { children: React.ReactNode }) {
       case "reset":
         setTrigBadgeColor("yellow");
         break;
+      case "waiting":
+        setTrigBadgeColor("grey");
+        break;
       default:
         setTrigBadgeColor("red");
     }

@@ -183,7 +183,7 @@ export default function VoiceField({
         hoverTarget="cell"
         inactiveOpacity={0.7}
         onClick={(data, event) => {
-          if (status !== "running") {
+          if (status !== "running" && status !== "waiting") {
             dispatch({
               type: "voicemap/SET_ANNOTATION",
               payload: { id: data.id, text: "Auswahl" },
