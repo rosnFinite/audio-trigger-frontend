@@ -34,9 +34,9 @@ export default function App() {
       dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
       dispatch({ type: "voicemap/INITIALIZE" });
       notifications.show({
-        title: "Andere App-Instanz reserviert Backend-Verbindung",
+        title: "Verbindung zum Backend fehlgeschlagen",
         message:
-          "Die Verbindung zum Backend wurde verweigert, da bereits eine andere Instanz der App verbunden ist. Bitte überprüfen Sie, ob noch ein anderes Fenster geöffnet ist, schließen Sie es und laden Sie die Seite neu.",
+          "Das Backend ist aktuell nicht erreichbar. Entweder wurde das Backend beendet oder eine andere Webanwendung reserviert aktuell die Verbindung. Sollte eine BackendID angezeigt werden, kann diese Nachricht ignoriert werden.",
         color: "red",
         autoClose: false,
       });
