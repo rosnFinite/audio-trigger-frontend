@@ -119,6 +119,11 @@ export default function Settings() {
         autoClose: 4000,
       });
     });
+
+    return () => {
+      socket.off("settings_update_complete");
+      socket.off("client_error");
+    };
   }, [socket, dispatch]);
 
   useEffect(() => {
