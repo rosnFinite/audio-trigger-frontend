@@ -50,7 +50,7 @@ export default function ControlButtonGroup() {
               variant={status === "running" ? "filled" : "outline"}
               color="red"
               leftSection={<TbPlayerStop size={"20"} />}
-              disabled={status === "ready"}
+              disabled={status === "ready" || status === "reset"}
               onClick={() => {
                 socket?.emit("status_update_request", { trigger: "stop" });
               }}
