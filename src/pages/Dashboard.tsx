@@ -81,13 +81,20 @@ export default function Dashboard() {
         </Text>
         <Divider />
         <ControlButtonGroup />
-        <Link to="/dashboard/patient" target="_blank">
-          <Tooltip label="Öffnet Ansicht für den Patienten in neuen Tab">
-            <Button rightSection={<TbSwipe />} ml={15} mb={-10} size="xs">
-              Patientenansicht
-            </Button>
-          </Tooltip>
-        </Link>
+        <Tooltip label="Öffnet Ansicht für den Patienten in neuen Tab">
+          <Button
+            rightSection={<TbSwipe />}
+            ml={15}
+            mb={-10}
+            w="230px"
+            size="xs"
+            component={Link}
+            to="/dashboard/patient"
+            target="_blank"
+          >
+            Patientenansicht
+          </Button>
+        </Tooltip>
         <VoiceField />
         <Group gap="xs">
           <Title order={2}>Aufnahmen</Title>
