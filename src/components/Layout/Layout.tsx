@@ -24,6 +24,7 @@ export default function Layout(props: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const [opened, { toggle }] = useDisclosure();
   const [trigBadgeColor, setTrigBadgeColor] = useState("red");
+  const [trigText, setTrigText] = useState("offline");
   const [loadingVisible, setLoadingVisible] = useState(false);
   const status = useAppSelector((state) => state.settings.values.status);
   const audioClientSID = useAppSelector((state) => state.settings.values.sid);
@@ -31,16 +32,20 @@ export default function Layout(props: { children: React.ReactNode }) {
   useEffect(() => {
     switch (status) {
       case "running":
+        setTrigText("aktiv");
         setTrigBadgeColor("lime");
         break;
       case "ready":
       case "reset":
+        setTrigText("bereit");
         setTrigBadgeColor("yellow");
         break;
       case "waiting":
+        setTrigText("wartet");
         setTrigBadgeColor("grey");
         break;
       default:
+        setTrigText("offline");
         setTrigBadgeColor("red");
     }
   }, [status]);
@@ -100,7 +105,7 @@ export default function Layout(props: { children: React.ReactNode }) {
               color={trigBadgeColor}
             >
               <Badge size="md" variant="filled" color={trigBadgeColor}>
-                Trigger
+                {trigText}
               </Badge>
             </Tooltip>
           </Group>
