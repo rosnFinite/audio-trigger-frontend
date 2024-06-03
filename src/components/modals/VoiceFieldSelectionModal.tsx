@@ -30,8 +30,6 @@ export default function VoiceFieldSelectionModal({
   const dispatch = useAppDispatch();
   const [frequency, setFrequency] = useState<string | null>(null);
   const [decibel, setDecibel] = useState<string | null>(null);
-  console.log("selectionId", selectionId);
-  console.log(opened);
   const [recording, setRecording] = useState<RecordingStats | undefined>();
   const [apiRecordingBaseUrl, setApiRecordingBaseUrl] = useState<
     string | null

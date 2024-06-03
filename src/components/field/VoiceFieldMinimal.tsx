@@ -19,11 +19,10 @@ export default function VoicemapMinimal({
 
   useEffect(() => {
     setData(getVoiceFieldDataByKey(field, "accepted"));
-    console.log("field", data);
   }, [field]);
 
   return (
-    <Container fluid h="99vh" w="100vw">
+    <Container fluid h="95vh" w="100vw">
       <ResponsiveHeatMapCanvas
         data={data}
         margin={{ top: 10, right: 5, bottom: 70, left: 45 }}

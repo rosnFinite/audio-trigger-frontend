@@ -29,7 +29,6 @@ export default function Layout(props: { children: React.ReactNode }) {
   const audioClientSID = useAppSelector((state) => state.settings.values.sid);
 
   useEffect(() => {
-    console.log("Status: ", status);
     switch (status) {
       case "running":
         setTrigBadgeColor("lime");
