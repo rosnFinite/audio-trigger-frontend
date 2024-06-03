@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
@@ -11,7 +11,8 @@ import { notifications } from "@mantine/notifications";
 
 export default function App() {
   const socket = useContext(SocketContext);
-  const settings = useAppSelector((state) => state.settings.values);
+  const settingsSID = useRef("");
+  // const settingsSID = useAppSelector((state) => state.settings.values.sid);
   const dispatch = useAppDispatch();
   const location = useLocation();
 
@@ -22,20 +23,30 @@ export default function App() {
       return;
     }
     socket.on("connect", () => {
-      socket.emit("register", { type: "web" });
+      // need to specifically handle patient view -> should not register as web client
+      // also in following event handlers
+      if (location.pathname === "/dashboard/patient") {
+        socket.emit("register", { type: "web_patient" });
+      } else {
+        socket.emit("register", { type: "web" });
+      }
     });
     socket.on("connect_error", (error: Error) => {
       console.log("connect_error", error);
-      persistor.purge();
-      dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
-      dispatch({ type: "voicemap/INITIALIZE" });
-    });
-    socket.on("disconnect", () => {
-      persistor.purge();
-      dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
-      dispatch({ type: "voicemap/INITIALIZE" });
-      console.log(location.pathname);
       if (location.pathname !== "/dashboard/patient") {
+        persistor.purge();
+        dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
+        dispatch({ type: "voicemap/INITIALIZE" });
+      }
+    });
+    socket.on("disconnect", (data) => {
+      console.log(data);
+      if (location.pathname !== "/dashboard/patient") {
+        persistor.purge();
+        dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
+        settingsSID.current = "";
+        dispatch({ type: "voicemap/INITIALIZE" });
+        console.log(location.pathname);
         notifications.show({
           title: "Verbindung zum Backend fehlgeschlagen",
           message:
@@ -46,23 +57,39 @@ export default function App() {
       }
     });
     socket.on("clients", (clients: { sid: string; type: string }[]) => {
+      console.log("clients", clients);
       // find audio client in clients array
       const audioClient = clients.find((item) => item.type === "audio");
       // if audio client is connected
       if (audioClient) {
         const { sid } = audioClient;
-        if (sid !== settings.sid) {
-          // clear persisted state if sid of connected audio client changes
-          persistor.purge();
-          dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid } });
-          dispatch({ type: "voicemap/INITIALIZE" });
+        if (location.pathname !== "/dashboard/patient") {
+          console.log("location", location.pathname);
+          console.log("settingsSID", settingsSID, "sid", sid);
+          if (sid !== settingsSID.current) {
+            // clear persisted state if sid of connected audio client changes
+            persistor.purge();
+            console.log("persistor.purge()");
+            settingsSID.current = sid;
+            dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid } });
+            dispatch({ type: "voicemap/INITIALIZE" });
+          }
+          console.log(
+            "NACH clients EVENT: settingsSID",
+            settingsSID,
+            "sid",
+            sid
+          );
         }
-      } else {
-        // clear persisted state if audio client is disconnected or not found
-        dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
-        dispatch({ type: "voicemap/INITIALIZE" });
       }
     });
+
+    return () => {
+      if (location.pathname === "/dashboard/patient") {
+        socket.off("connect_error");
+        socket.off("disconnect");
+      }
+    };
   }, [socket]);
 
   // Careful  when using HashRouter: Different behaviour between NavLink in Layout and Link from react-router-dom. href in NavLink needs /#/pathname whereas Link works without prepending /# to /pathname
