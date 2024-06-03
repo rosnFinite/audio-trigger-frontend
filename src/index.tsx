@@ -20,7 +20,7 @@ root.render(
     <HashRouter>
       <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
         <MantineProvider>
-          <Notifications limit={5} position="bottom-right" />
+          <Notifications limit={5} position="bottom-left" />
           <SocketContext.Provider value={socket}>
             <App />
           </SocketContext.Provider>

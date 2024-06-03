@@ -8,6 +8,7 @@ import Settings from "./pages/Settings";
 import Patient from "./pages/Patient";
 import Dashboard from "./pages/Dashboard";
 import { notifications } from "@mantine/notifications";
+import { error } from "console";
 
 export default function App() {
   const socket = useContext(SocketContext);
@@ -39,8 +40,21 @@ export default function App() {
         dispatch({ type: "voicemap/INITIALIZE" });
       }
     });
+    socket.on("client_error", (error_data) => {
+      console.log("client_error", error_data.error);
+      if (location.pathname !== "/dashboard/patient") {
+        notifications.show({
+          title: error_data.error,
+          message: error_data.location,
+          color: error_data.type === "warning" ? "yellow" : "red",
+          autoClose: error_data.type === "warning" ? 4000 : false,
+        });
+        if (error_data.type === "error") {
+          dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
+        }
+      }
+    });
     socket.on("disconnect", (data) => {
-      console.log(data);
       if (location.pathname !== "/dashboard/patient") {
         persistor.purge();
         dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
@@ -71,15 +85,18 @@ export default function App() {
             persistor.purge();
             console.log("persistor.purge()");
             settingsSID.current = sid;
-            dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid } });
+            dispatch({
+              type: "settings/SET_CLIENT_SID",
+              payload: { sid: sid },
+            });
             dispatch({ type: "voicemap/INITIALIZE" });
+            notifications.show({
+              title: "Verbindung hergestellt",
+              message: "Verbindung zum Backend mit ID " + sid + " hergestellt.",
+              color: "green",
+              autoClose: 2000,
+            });
           }
-          console.log(
-            "NACH clients EVENT: settingsSID",
-            settingsSID,
-            "sid",
-            sid
-          );
         }
       }
     });

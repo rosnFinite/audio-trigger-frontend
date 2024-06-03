@@ -101,6 +101,23 @@ export default function Settings() {
       });
       setSettings(data);
       setPatient(data.patient);
+      notifications.show({
+        title: "Neue Instanz gestartet",
+        message: "Die Einstellungen wurden erforlgreich angewendet.",
+        color: "green",
+        autoClose: 2000,
+        icon: <TbCheck size={"20"} />,
+      });
+    });
+
+    socket.on("client_error", (error_data) => {
+      notifications.show({
+        title: "Fehlgeschlagen",
+        message:
+          "Aufgrund eines Fehlers konnten die Einstellungen nicht übernommen werden.",
+        color: "red",
+        autoClose: 4000,
+      });
     });
   }, [socket, dispatch]);
 
@@ -136,10 +153,8 @@ export default function Settings() {
         <Title order={2}>Einstellungen</Title>
         {status !== "offline" ? (
           <Blockquote color="green" icon={null} mt={0} pt={10} pb={10}>
-            Diese Seite zeigt die gesetzten Parameter der aktuellen
-            Triggerinstanz. Beim Speichern oder Zurücksetzen wird eine neue
-            Instanz erzeugt und die aktuelle Aufnahme kann nicht weiter
-            bearbeitet werden.
+            Einstellungen der aktuellen Instanz. Speichern startet einen neue
+            Instanz. Aktuelle Aufnahme kann nicht fortgesetzt werden.
           </Blockquote>
         ) : null}
         <Divider />
@@ -433,13 +448,6 @@ export default function Settings() {
                 return;
               }
               socket.emit("settings_update_request", settings);
-              notifications.show({
-                title: "Einstellungen angewendet",
-                message: "Die Einstellungen wurden erforlgreich angewendet.",
-                color: "green",
-                autoClose: 3000,
-                icon: <TbCheck size={"20"} />,
-              });
             }}
           >
             Speichern
@@ -453,14 +461,6 @@ export default function Settings() {
                 return;
               }
               socket?.emit("settings_update_request", initialSettingsState);
-              notifications.show({
-                title: "Einstellungen zurückgesetzt",
-                message:
-                  "Die Einstellungen wurden auf die Standardeinstellungen zurückgesetzt.",
-                color: "red",
-                autoClose: 3000,
-                icon: <TbArrowBackUp size={"20"} />,
-              });
             }}
           >
             Zurücksetzen
