@@ -22,9 +22,13 @@ export const settingsDataSlice = createSlice({
       };
     },
     SET_CLIENT_SID: (state, action) => {
-      state.values = { ...initialSettingsState };
       console.log("SET_CLIENT_SID", action.payload);
-      state.values.sid = action.payload.sid;
+      // when the client sid is set to an empty string, reset the settings state
+      if (action.payload.sid === "") {
+        state.values = { ...initialSettingsState, sid: "" };
+      } else {
+        state.values = { ...state.values, sid: action.payload.sid };
+      }
     },
   },
 });
