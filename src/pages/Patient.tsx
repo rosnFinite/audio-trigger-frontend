@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import VoicemapMinimal from "../components/field/VoiceFieldMinimal";
-import { Stack } from "@mantine/core";
+import { Progress, Stack } from "@mantine/core";
 import QualityIndicator from "../components/QualityIndicator";
-import { useWebSocketCtx } from "../context";
 
 export default function Patient() {
-  const { socket } = useWebSocketCtx();
-  const [score, setScore] = useState(0);
   // UGLY solution to listen to state changes from another tab!!
   // useAppSelector does not work in this component, although localStorage changes are synced to other tabs
   const [voicemap, setVoicemap] = useState(
@@ -42,24 +39,6 @@ export default function Patient() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!socket) {
-      console.error("Socket is not initialized");
-      return;
-    }
-
-    const voiceHandler = (data: any) => {
-      console.log("voice", data);
-      setScore(data.score);
-    };
-
-    socket.on("voice", voiceHandler);
-
-    return () => {
-      socket.off("voice", voiceHandler);
-    };
-  }, []);
-
   return (
     <Stack>
       <VoicemapMinimal
@@ -67,12 +46,10 @@ export default function Patient() {
         annotation={voicemap.annotation}
       />
       <QualityIndicator
+        key="patient_view"
         fluid
         size="xl"
-        value={score}
-        triggerThreshold={settings.min_score}
-        isPatientView
-        status={settings.status}
+        threshold={settings.min_score}
       />
     </Stack>
   );

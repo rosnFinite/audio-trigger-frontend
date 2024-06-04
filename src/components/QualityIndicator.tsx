@@ -6,11 +6,10 @@ import {
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import "./QualityIndicator.css";
-import { useAppSelector } from "../redux/hooks";
+import { useWebSocketCtx } from "../context";
 
 interface QualityIndicatorProps {
-  value: number;
-  triggerThreshold: number;
+  threshold: number;
   size?: MantineSize;
   fluid?: boolean;
   pl?: ContainerProps["pl"];
@@ -25,8 +24,12 @@ interface QualityIndicatorProps {
 }
 
 export default function QualityIndicator(props: QualityIndicatorProps) {
-  const status = useAppSelector((state) => state.settings.values.status);
+  const { socket } = useWebSocketCtx();
+  const [status, setStatus] = useState("ready");
+  const prevStatus = useRef(status);
   const [progressBarHeight, setProgressBarHeight] = useState(0);
+  const [score, setScore] = useState(0);
+  const [color, setColor] = useState("red");
   const progressBarRef = useRef(null);
 
   useEffect(() => {
@@ -36,6 +39,46 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
       );
     }
   }, [props.size]);
+
+  useEffect(() => {
+    if (!socket) {
+      console.error("Socket is not initialized");
+      return;
+    }
+
+    const voiceHandler = (data: any) => {
+      setScore(data.score);
+    };
+    const statusHandler = (data: any) => {
+      setStatus(data.status);
+    };
+
+    socket.on("voice", voiceHandler);
+    socket.on("status_update_complete", statusHandler);
+
+    return () => {
+      socket.off("voice", voiceHandler);
+      socket.off("status_update_complete", statusHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (status === "waiting") {
+      setColor("grey");
+    } else if (
+      status === "ready" ||
+      (prevStatus.current === "waiting" && status === "running")
+    ) {
+      console.log("resetting score");
+      setColor("red");
+      setScore(0);
+    } else if (score < props.threshold) {
+      setColor("red");
+    } else {
+      setColor("green");
+    }
+    prevStatus.current = status;
+  }, [score, status]);
 
   return (
     <Container
@@ -53,21 +96,15 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
       <Progress
         size={props.size ? props.size : "sm"}
         animated={status === "waiting"}
-        transitionDuration={200}
-        value={props.value * 100}
-        color={
-          status === "waiting"
-            ? "grey"
-            : props.value < props.triggerThreshold
-            ? "red"
-            : "green"
-        }
+        transitionDuration={50}
+        value={score * 100}
+        color={color}
         ref={progressBarRef}
       />
       <div
         className="progress-marker"
         style={{
-          left: `${props.triggerThreshold * 100}%`,
+          left: `${props.threshold * 100}%`,
           height: progressBarHeight,
         }}
       />

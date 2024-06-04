@@ -171,10 +171,10 @@ export default function VoiceField({
         onStatChange={(selection) => setSelectedStat(selection)}
       />
       <QualityIndicator
+        key="voicemap"
         fluid
         size="xl"
-        value={score}
-        triggerThreshold={minScore}
+        threshold={minScore}
         pl={0}
         pr={0}
         mt={10}
