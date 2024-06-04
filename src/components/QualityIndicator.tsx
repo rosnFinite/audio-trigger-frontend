@@ -31,6 +31,7 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
   const [score, setScore] = useState(0);
   const [color, setColor] = useState("red");
   const progressBarRef = useRef(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!socket) {
@@ -41,6 +42,16 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
     const voiceHandler = (data: any) => {
       console.log("voice", data);
       setScore(data.score);
+
+      // Clear the existing timeout if there is one
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      // Set a new timeout to reset the score after 1 second
+      timeoutRef.current = setTimeout(() => {
+        setScore(0);
+      }, 1000);
     };
     const statusHandler = (data: any) => {
       setStatus(data.status);
@@ -52,6 +63,11 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
     return () => {
       socket.off("voice", voiceHandler);
       socket.off("status_update_complete", statusHandler);
+
+      // Clear the timeout when the component unmounts
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, []);
 
