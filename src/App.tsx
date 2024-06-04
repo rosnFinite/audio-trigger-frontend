@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { useAppDispatch } from "./redux/hooks";
 import { persistor } from "./redux/store";
-import SocketContext from "./context/SocketContext";
+import { useWebSocketCtx } from "./context";
 import Logs from "./pages/Logs";
 import Settings from "./pages/Settings";
 import Patient from "./pages/Patient";
 import Dashboard from "./pages/Dashboard";
 import { notifications } from "@mantine/notifications";
-import { error } from "console";
 
 export default function App() {
-  const socket = useContext(SocketContext);
+  const { socket } = useWebSocketCtx();
   const settingsSID = useRef("");
   // const settingsSID = useAppSelector((state) => state.settings.values.sid);
   const dispatch = useAppDispatch();
@@ -23,7 +22,8 @@ export default function App() {
       console.error("Socket is not initialized");
       return;
     }
-    socket.on("connect", () => {
+    const connectHandler = () => {
+      console.log("connect    APP.tsx");
       // need to specifically handle patient view -> should not register as web client
       // also in following event handlers
       if (location.pathname === "/dashboard/patient") {
@@ -31,30 +31,10 @@ export default function App() {
       } else {
         socket.emit("register", { type: "web" });
       }
-    });
-    socket.on("connect_error", (error: Error) => {
-      console.log("connect_error", error);
-      if (location.pathname !== "/dashboard/patient") {
-        persistor.purge();
-        dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
-        dispatch({ type: "voicemap/INITIALIZE" });
-      }
-    });
-    socket.on("client_error", (error_data) => {
-      console.log("client_error", error_data.error);
-      if (location.pathname !== "/dashboard/patient") {
-        notifications.show({
-          title: error_data.error,
-          message: error_data.location,
-          color: error_data.type === "warning" ? "yellow" : "red",
-          autoClose: error_data.type === "warning" ? 4000 : false,
-        });
-        if (error_data.type === "error") {
-          dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
-        }
-      }
-    });
-    socket.on("disconnect", (data) => {
+    };
+    const disconnectHandler = (reason: any) => {
+      console.log("disconnect    APP.tsx");
+      console.log("reason", reason);
       if (location.pathname !== "/dashboard/patient") {
         persistor.purge();
         dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
@@ -69,9 +49,9 @@ export default function App() {
           autoClose: false,
         });
       }
-    });
-    socket.on("clients", (clients: { sid: string; type: string }[]) => {
-      console.log("clients", clients);
+    };
+    const clientsHandler = (clients: { sid: string; type: string }[]) => {
+      console.log("clients    APP.tsx");
       // find audio client in clients array
       const audioClient = clients.find((item) => item.type === "audio");
       // if audio client is connected
@@ -99,15 +79,20 @@ export default function App() {
           }
         }
       }
-    });
+    };
+
+    socket.on("connect", connectHandler);
+    socket.on("disconnect", disconnectHandler);
+    socket.on("clients", clientsHandler);
 
     return () => {
       if (location.pathname === "/dashboard/patient") {
-        socket.off("connect_error");
-        socket.off("disconnect");
+        socket.off("connect", connectHandler);
+        socket.off("disconnect", disconnectHandler);
+        socket.off("clients", clientsHandler);
       }
     };
-  }, [socket]);
+  }, []);
 
   // Careful  when using HashRouter: Different behaviour between NavLink in Layout and Link from react-router-dom. href in NavLink needs /#/pathname whereas Link works without prepending /# to /pathname
   return (

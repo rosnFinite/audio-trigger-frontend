@@ -1,11 +1,11 @@
 import { Button, Group, Paper, Tooltip } from "@mantine/core";
 import { TbPlayerRecord, TbPlayerStop, TbProgressX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useContext, useEffect } from "react";
-import SocketContext from "../../context/SocketContext";
+import { useEffect } from "react";
+import { useWebSocketCtx } from "../../context";
 
 export default function ControlButtonGroup() {
-  const socket = useContext(SocketContext);
+  const { socket } = useWebSocketCtx();
 
   const status = useAppSelector((state) => state.settings.values.status);
   const dispatch = useAppDispatch();
@@ -16,15 +16,22 @@ export default function ControlButtonGroup() {
       console.error("Socket is not initialized");
       return;
     }
-    socket.on("status_update_complete", (changedStatus) => {
+
+    const statusUpdateHandler = (changedStatus: any) => {
       dispatch({ type: "settings/UPDATE_STATUS", payload: changedStatus });
       // when trigger status changes, reset annotation to be invisible (this will allows the correct annotation to be visible when the trigger starts again)
       dispatch({
         type: "voicemap/SET_ANNOTATION",
         payload: { id: "", text: "" },
       });
-    });
-  }, [dispatch, socket]);
+    };
+
+    socket.on("status_update_complete", statusUpdateHandler);
+
+    return () => {
+      socket.off("status_update_complete", statusUpdateHandler);
+    };
+  }, []);
 
   return (
     <Tooltip.Group>

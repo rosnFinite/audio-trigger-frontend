@@ -9,7 +9,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import { HashRouter } from "react-router-dom";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import SocketContext, { socket } from "./context/SocketContext";
+// import SocketContext, { socket } from "./context/SocketContext";
+import WebSocketCtxProvider from "./context/provider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,14 +19,14 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <HashRouter>
-      <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
-        <MantineProvider>
-          <Notifications limit={5} position="bottom-left" />
-          <SocketContext.Provider value={socket}>
+      <WebSocketCtxProvider>
+        <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+          <MantineProvider>
+            <Notifications limit={5} position="bottom-left" />
             <App />
-          </SocketContext.Provider>
-        </MantineProvider>
-      </PersistGate>
+          </MantineProvider>
+        </PersistGate>
+      </WebSocketCtxProvider>
     </HashRouter>
   </Provider>
 );

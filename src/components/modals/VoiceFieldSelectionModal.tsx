@@ -4,6 +4,7 @@ import { getRecordingBySelectionId } from "../../utils/selectionUtils";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 import { useContext, useEffect, useState } from "react";
 import SocketContext from "../../context/SocketContext";
+import { useWebSocketCtx } from "../../context";
 
 interface VoiceFieldSelectionModalProps {
   selectionId: string;
@@ -17,7 +18,7 @@ export default function VoiceFieldSelectionModal({
   onClose,
 }: VoiceFieldSelectionModalProps) {
   // needed for requesting removing recording from voice field on the backend
-  const socket = useContext(SocketContext);
+  const { socket } = useWebSocketCtx();
   const recordings = useAppSelector(
     (state) => state.voicemap.values.recordings
   );

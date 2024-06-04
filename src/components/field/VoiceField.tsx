@@ -1,14 +1,14 @@
 import { Container } from "@mantine/core";
 import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { BasicTooltip } from "@nivo/tooltip";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/stateUtils";
 import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
-import SocketContext from "../../context/SocketContext";
 import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
 import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
 import QualityIndicator from "../QualityIndicator";
+import { useWebSocketCtx } from "../../context";
 
 /**
 To visualize the voicemap, we use the Nivo library. We use a Heatmap to visualize the data. For it to work Nivo needs a grid of data. First dimension contains the dba values, the second dimension contains the frequency values. 
@@ -24,7 +24,7 @@ export default function VoiceField({
   height?: string;
   width?: string;
 }) {
-  const socket = useContext(SocketContext);
+  const { socket } = useWebSocketCtx();
   // needed to create matching string for annotation
   const dbBinSettings = useAppSelector((state) => state.settings.values.db);
   const freqBinSettings = useAppSelector(
@@ -105,7 +105,9 @@ export default function VoiceField({
       console.error("Socket is not initialized");
       return;
     }
-    socket.on("voice", (data) => {
+
+    const voiceHandler = (data: any) => {
+      console.log("voice    VaoiceField.tsx", data);
       setScore(data.score);
       dispatch({
         type: "voicemap/SET_ANNOTATION",
@@ -117,9 +119,9 @@ export default function VoiceField({
           text: "Stimme",
         },
       });
-    });
-    socket.on("trigger", (data) => {
-      console.log("trigger", data);
+    };
+    const triggerHandler = (data: any) => {
+      console.log("trigger    VaoiceField.tsx", data);
       let numDbaBins =
         (dbBinSettings.upper - dbBinSettings.lower) / dbBinSettings.steps;
       dispatch({
@@ -131,16 +133,16 @@ export default function VoiceField({
           stats: data.stats,
         },
       });
-    });
-  }, [
-    binNames.dba,
-    binNames.freq,
-    dbBinSettings.lower,
-    dbBinSettings.steps,
-    dbBinSettings.upper,
-    dispatch,
-    socket,
-  ]);
+    };
+
+    socket.on("voice", voiceHandler);
+    socket.on("trigger", triggerHandler);
+
+    return () => {
+      socket.off("voice", voiceHandler);
+      socket.off("trigger", triggerHandler);
+    };
+  }, []);
 
   // reset the grid on status changed to 'reset'
   useEffect(() => {

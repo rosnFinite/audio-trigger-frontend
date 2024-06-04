@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "@mantine/core/styles.css";
 import {
   Accordion,
@@ -29,13 +29,13 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
 import { initialSettingsState } from "../utils/stateUtils";
-import SocketContext from "../context/SocketContext";
 import { generateEmptyGrid } from "../utils/stateUtils";
+import { useWebSocketCtx } from "../context";
 
 const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
 
 export default function Settings() {
-  const socket = useContext(SocketContext);
+  const { socket } = useWebSocketCtx();
   const [devices, setDevices] = useState(initialDevices);
   const [patientError, setPatientError] = useState("");
   const [settings, setSettings] = useState(
@@ -68,7 +68,8 @@ export default function Settings() {
       console.error("Socket is not initialized");
       return;
     }
-    socket.on("settings_update_complete", (data) => {
+
+    const settingsUpdateHandler = (data: any) => {
       dispatch({ type: "settings/UPDATE_SETTINGS", payload: data });
       // generate a new empty grid based on the updated settings
       dispatch({
@@ -108,23 +109,14 @@ export default function Settings() {
         autoClose: 2000,
         icon: <TbCheck size={"20"} />,
       });
-    });
+    };
 
-    socket.on("client_error", (error_data) => {
-      notifications.show({
-        title: "Fehlgeschlagen",
-        message:
-          "Aufgrund eines Fehlers konnten die Einstellungen nicht übernommen werden.",
-        color: "red",
-        autoClose: 4000,
-      });
-    });
+    socket.on("settings_update_complete", settingsUpdateHandler);
 
     return () => {
-      socket.off("settings_update_complete");
-      socket.off("client_error");
+      socket.off("settings_update_complete", settingsUpdateHandler);
     };
-  }, [socket, dispatch]);
+  }, []);
 
   useEffect(() => {
     const fetchDevices = async () => {

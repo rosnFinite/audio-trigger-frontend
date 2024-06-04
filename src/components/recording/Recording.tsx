@@ -12,10 +12,10 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Details from "./Details";
-import SocketContext from "../../context/SocketContext";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
+import { useWebSocketCtx } from "../../context";
 
 interface RecordingProps {
   data: RecordingStats;
@@ -24,7 +24,7 @@ interface RecordingProps {
 }
 
 export default function Recording({ data, acceptable, size }: RecordingProps) {
-  const socket = useContext(SocketContext);
+  const { socket } = useWebSocketCtx();
 
   const voicefieldBins = useAppSelector(
     (state) => state.voicemap.values.fieldBinNames
