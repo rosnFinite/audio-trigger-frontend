@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useAppDispatch } from "./redux/hooks";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { persistor } from "./redux/store";
 import { useWebSocketCtx } from "./context";
 import Logs from "./pages/Logs";
@@ -8,13 +8,15 @@ import Settings from "./pages/Settings";
 import Patient from "./pages/Patient";
 import Dashboard from "./pages/Dashboard";
 import { notifications } from "@mantine/notifications";
+import { TbCheck } from "react-icons/tb";
 
 export default function App() {
   const { socket } = useWebSocketCtx();
-  const settingsSID = useRef("");
-  // const settingsSID = useAppSelector((state) => state.settings.values.sid);
+  const settingsSID = useAppSelector((state) => state.settings.values.sid);
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const hasConErrorNotificationOccurred = useRef(false);
+  const updatableNotificationId = useRef<string | null>(null);
 
   // handles registering of web client to socketio backend and sets the audio client sid
   useEffect(() => {
@@ -31,25 +33,37 @@ export default function App() {
       } else {
         socket.emit("register", { type: "web" });
       }
+      hasConErrorNotificationOccurred.current = false;
     };
-    const disconnectHandler = (reason: any) => {
-      console.log("disconnect    APP.tsx");
-      console.log("reason", reason);
-      if (location.pathname !== "/dashboard/patient") {
+
+    const connectErrorHandler = (error: any) => {
+      console.log("connect error:", error);
+      if (
+        location.pathname !== "/dashboard/patient" &&
+        !hasConErrorNotificationOccurred.current
+      ) {
+        // when connection error occurs, clear persisted state and show loading notification
+        // after backend disconnect, recordings can't be continued
         persistor.purge();
         dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: "" } });
-        settingsSID.current = "";
         dispatch({ type: "voicemap/INITIALIZE" });
-        console.log(location.pathname);
-        notifications.show({
-          title: "Verbindung zum Backend fehlgeschlagen",
+        updatableNotificationId.current = notifications.show({
+          withCloseButton: false,
+          loading: true,
+          title: "Backend nicht verbunden!",
           message:
-            "Das Backend ist aktuell nicht erreichbar. Entweder wurde das Backend beendet oder eine andere Webanwendung reserviert aktuell die Verbindung. Sollte eine BackendID angezeigt werden, kann diese Nachricht ignoriert werden.",
-          color: "red",
+            "Es wird versucht, die Verbindung zum Backend wiederherzustellen.",
+          color: "blue",
           autoClose: false,
         });
+        hasConErrorNotificationOccurred.current = true;
       }
     };
+
+    const disconnectHandler = (reason: any) => {
+      console.log("disconnect reason:", reason);
+    };
+
     const clientsHandler = (clients: { sid: string; type: string }[]) => {
       console.log("clients    APP.tsx");
       // find audio client in clients array
@@ -58,24 +72,29 @@ export default function App() {
       if (audioClient) {
         const { sid } = audioClient;
         if (location.pathname !== "/dashboard/patient") {
-          console.log("location", location.pathname);
           console.log("settingsSID", settingsSID, "sid", sid);
-          if (sid !== settingsSID.current) {
+          if (sid !== settingsSID) {
             // clear persisted state if sid of connected audio client changes
             persistor.purge();
             console.log("persistor.purge()");
-            settingsSID.current = sid;
             dispatch({
               type: "settings/SET_CLIENT_SID",
               payload: { sid: sid },
             });
             dispatch({ type: "voicemap/INITIALIZE" });
-            notifications.show({
-              title: "Verbindung hergestellt",
-              message: "Verbindung zum Backend mit ID " + sid + " hergestellt.",
-              color: "green",
-              autoClose: 2000,
-            });
+            // only update loading notification if it exist (no page reload happened)
+            if (updatableNotificationId.current !== null) {
+              notifications.update({
+                id: updatableNotificationId.current,
+                title: "Verbindung hergestellt",
+                loading: false,
+                message:
+                  "Verbindung zum Backend mit ID " + sid + " hergestellt.",
+                icon: <TbCheck />,
+                color: "green",
+                autoClose: 2000,
+              });
+            }
           }
         }
       }
@@ -84,12 +103,14 @@ export default function App() {
     socket.on("connect", connectHandler);
     socket.on("disconnect", disconnectHandler);
     socket.on("clients", clientsHandler);
+    socket.on("connect_error", connectErrorHandler);
 
     return () => {
       if (location.pathname === "/dashboard/patient") {
         socket.off("connect", connectHandler);
         socket.off("disconnect", disconnectHandler);
         socket.off("clients", clientsHandler);
+        socket.off("connect_error", connectErrorHandler);
       }
     };
   }, []);
