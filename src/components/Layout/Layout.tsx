@@ -5,11 +5,9 @@ import {
   AppShell,
   Badge,
   Burger,
-  Image,
   Container,
   Flex,
   Group,
-  LoadingOverlay,
   Text,
   Tooltip,
   Button,
@@ -25,7 +23,6 @@ export default function Layout(props: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const [trigBadgeColor, setTrigBadgeColor] = useState("red");
   const [trigText, setTrigText] = useState("offline");
-  const [loadingVisible, setLoadingVisible] = useState(false);
   const status = useAppSelector((state) => state.settings.values.status);
   const audioClientSID = useAppSelector((state) => state.settings.values.sid);
 
@@ -49,11 +46,6 @@ export default function Layout(props: { children: React.ReactNode }) {
         setTrigBadgeColor("red");
     }
   }, [status]);
-
-  useEffect(() => {
-    // Show loading overlay if no audio client is connected
-    setLoadingVisible(audioClientSID === "" ? true : false);
-  }, [audioClientSID]);
 
   return (
     <AppShell
