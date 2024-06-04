@@ -12,7 +12,6 @@ import { TbCheck } from "react-icons/tb";
 
 export default function App() {
   const { socket } = useWebSocketCtx();
-  const settingsSID = useAppSelector((state) => state.settings.values.sid);
   const dispatch = useAppDispatch();
   const location = useLocation();
   const hasConErrorNotificationOccurred = useRef(false);
@@ -72,29 +71,19 @@ export default function App() {
       if (audioClient) {
         const { sid } = audioClient;
         if (location.pathname !== "/dashboard/patient") {
-          console.log("settingsSID", settingsSID, "sid", sid);
-          if (sid !== settingsSID) {
-            // clear persisted state if sid of connected audio client changes
-            persistor.purge();
-            console.log("persistor.purge()");
-            dispatch({
-              type: "settings/SET_CLIENT_SID",
-              payload: { sid: sid },
+          console.log("audio client sid:", sid);
+          // only update loading notification if it exist (no page reload happened)
+          dispatch({ type: "settings/SET_CLIENT_SID", payload: { sid: sid } });
+          if (updatableNotificationId.current !== null) {
+            notifications.update({
+              id: updatableNotificationId.current,
+              title: "Verbindung hergestellt",
+              loading: false,
+              message: "Verbindung zum Backend mit ID " + sid + " hergestellt.",
+              icon: <TbCheck />,
+              color: "green",
+              autoClose: 2000,
             });
-            dispatch({ type: "voicemap/INITIALIZE" });
-            // only update loading notification if it exist (no page reload happened)
-            if (updatableNotificationId.current !== null) {
-              notifications.update({
-                id: updatableNotificationId.current,
-                title: "Verbindung hergestellt",
-                loading: false,
-                message:
-                  "Verbindung zum Backend mit ID " + sid + " hergestellt.",
-                icon: <TbCheck />,
-                color: "green",
-                autoClose: 2000,
-              });
-            }
           }
         }
       }
