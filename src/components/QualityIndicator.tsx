@@ -25,20 +25,12 @@ interface QualityIndicatorProps {
 
 export default function QualityIndicator(props: QualityIndicatorProps) {
   const { socket } = useWebSocketCtx();
-  const [status, setStatus] = useState("ready");
+  const [status, setStatus] = useState("running");
   const prevStatus = useRef(status);
   const [progressBarHeight, setProgressBarHeight] = useState(0);
   const [score, setScore] = useState(0);
   const [color, setColor] = useState("red");
   const progressBarRef = useRef(null);
-
-  useEffect(() => {
-    if (progressBarRef.current) {
-      setProgressBarHeight(
-        (progressBarRef.current as HTMLElement).offsetHeight
-      );
-    }
-  }, [props.size]);
 
   useEffect(() => {
     if (!socket) {
@@ -47,6 +39,7 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
     }
 
     const voiceHandler = (data: any) => {
+      console.log("voice", data);
       setScore(data.score);
     };
     const statusHandler = (data: any) => {
@@ -63,13 +56,20 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
   }, []);
 
   useEffect(() => {
+    if (progressBarRef.current) {
+      setProgressBarHeight(
+        (progressBarRef.current as HTMLElement).offsetHeight
+      );
+    }
+  }, [props.size]);
+
+  useEffect(() => {
     if (status === "waiting") {
       setColor("grey");
     } else if (
       status === "ready" ||
       (prevStatus.current === "waiting" && status === "running")
     ) {
-      console.log("resetting score");
       setColor("red");
       setScore(0);
     } else if (score < props.threshold) {
