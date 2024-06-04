@@ -147,20 +147,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           </Button>
         </Link>
       </AppShell.Navbar>
-      <AppShell.Main pos="relative">
-        {process.env.NODE_ENV === "development" ? (
-          <></>
-        ) : (
-          <LoadingOverlay
-            visible={loadingVisible}
-            loaderProps={{
-              children:
-                "Kein Audioclient verbunden. Bitte stelle eine Verbindung her...",
-            }}
-          />
-        )}
-        {props.children}
-      </AppShell.Main>
+      <AppShell.Main pos="relative">{props.children}</AppShell.Main>
     </AppShell>
   );
 }
