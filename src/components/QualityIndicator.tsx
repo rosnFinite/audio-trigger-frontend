@@ -81,18 +81,7 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
   }, [score, status]);
 
   return (
-    <Container
-      pos={"relative"}
-      fluid={props.fluid}
-      pt={props.pt}
-      pb={props.pb}
-      pr={props.pr}
-      pl={props.pl}
-      mt={props.mt}
-      mb={props.mb}
-      mr={props.mr}
-      ml={props.ml}
-    >
+    <Container pos={"relative"} {...props}>
       <Progress
         size={props.size ? props.size : "sm"}
         animated={status === "waiting"}

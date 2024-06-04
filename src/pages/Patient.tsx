@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import VoicemapMinimal from "../components/field/VoiceFieldMinimal";
-import { Progress, Stack } from "@mantine/core";
+import { Container, Flex, Progress, Stack } from "@mantine/core";
 import QualityIndicator from "../components/QualityIndicator";
 
 export default function Patient() {
@@ -40,17 +40,12 @@ export default function Patient() {
   }, []);
 
   return (
-    <Stack>
+    <Container fluid>
       <VoicemapMinimal
         field={voicemap.field}
         annotation={voicemap.annotation}
       />
-      <QualityIndicator
-        key="patient_view"
-        fluid
-        size="xl"
-        threshold={settings.min_score}
-      />
-    </Stack>
+      <QualityIndicator fluid size="xl" threshold={settings.min_score} />
+    </Container>
   );
 }
