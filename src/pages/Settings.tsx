@@ -32,7 +32,7 @@ import { initialSettingsState } from "../utils/stateUtils";
 import { generateEmptyGrid } from "../utils/stateUtils";
 import { useWebSocketCtx } from "../context";
 
-const initialDevices = [{ label: "Automatisch erkennen", value: "-1" }];
+const initialDevices = [{ label: "Kein Mikrofon gefunden", value: "-1" }];
 
 export default function Settings() {
   const { socket } = useWebSocketCtx();
@@ -135,7 +135,7 @@ export default function Settings() {
             };
           });
           // reset to initial devices state on first component render, then add the loaded devices
-          setDevices([...initialDevices, ...transformed]);
+          setDevices([...transformed]);
           break; // break the loop if fetching was successful
         } catch (error: any) {
           console.log(
