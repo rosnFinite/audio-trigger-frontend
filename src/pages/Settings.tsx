@@ -42,6 +42,7 @@ export default function Settings() {
     useAppSelector((state) => state.settings.values)
   );
   const status = useAppSelector((state) => state.settings.values.status);
+  const sid = useAppSelector((state) => state.settings.values.sid);
   const [patient, setPatient] = useState(settings.patient);
   const dispatch = useAppDispatch();
 
@@ -120,29 +121,39 @@ export default function Settings() {
 
   useEffect(() => {
     const fetchDevices = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5001/api/audio-client/devices"
-        );
-        const data = response.data;
-        // transform data to match the format of the NativeSelect component
-        const transformed = data.devices.map((device: any) => {
-          return {
-            label: device.name,
-            value: device.id,
-          };
-        });
-        // reset to initial devices state on first component render, then add the loaded devices
-        setDevices([...initialDevices, ...transformed]);
-      } catch (error: any) {
-        console.log(
-          "Fehler beim Laden der angeschlossenen Geräte: " + error.message
-        );
+      while (true) {
+        try {
+          const response = await axios.get(
+            "http://localhost:5001/api/audio-client/devices"
+          );
+          const data = response.data;
+          // transform data to match the format of the NativeSelect component
+          const transformed = data.devices.map((device: any) => {
+            return {
+              label: device.name,
+              value: device.id,
+            };
+          });
+          // reset to initial devices state on first component render, then add the loaded devices
+          setDevices([...initialDevices, ...transformed]);
+          break; // break the loop if fetching was successful
+        } catch (error: any) {
+          console.log(
+            "Fehler beim Laden der angeschlossenen Geräte: " + error.message
+          );
+          // retry fetching devices
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
       }
     };
 
-    fetchDevices();
-  }, []);
+    // only fetch devices if the audio client is connected
+    if (sid !== "") {
+      fetchDevices();
+    } else {
+      setDevices(initialDevices);
+    }
+  }, [sid]);
 
   return (
     <Layout>
