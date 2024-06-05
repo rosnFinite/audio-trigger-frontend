@@ -6,6 +6,8 @@ import {
   Stack,
   Title,
   Text,
+  Loader,
+  Center,
 } from "@mantine/core";
 import Layout from "../components/Layout/Layout";
 import { useEffect, useState } from "react";
@@ -15,6 +17,7 @@ export default function Logs() {
   const [logs, setLogs] = useState("");
   const [selectedLog, setSelectedLog] = useState("server");
   const [reloadableSeed, setReloadableSeed] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -23,11 +26,13 @@ export default function Logs() {
           `http://localhost:5001/api/logs/${selectedLog}`
         );
         setLogs(response.data.text_content);
+        setLoading(false);
       } catch (error) {
         console.error(error);
       }
     };
 
+    setLoading(true);
     // setup interval to fetch logs
     const intervalTimer = setInterval(fetchLogs, 1000);
     setReloadableSeed(reloadableSeed + 1); // trigger re-render to update ScrollArea content (key changed)
@@ -38,7 +43,7 @@ export default function Logs() {
 
   return (
     <Layout>
-      <Stack h={"88vh"}>
+      <Stack h="100%">
         <Title order={2}>Logs</Title>
         <Divider />
         <Group align="flex-end">
@@ -50,18 +55,26 @@ export default function Logs() {
             data={["server", "client"]}
           />
         </Group>
-        <ScrollArea
-          key={reloadableSeed}
-          h="100%"
-          type="auto"
-          offsetScrollbars
-          scrollbarSize={8}
-          scrollHideDelay={1500}
-        >
-          <Text size="xs" style={{ whiteSpace: "pre-wrap" }}>
-            {logs}
-          </Text>
-        </ScrollArea>
+        {loading ? (
+          <Center mt="30vh">
+            <Loader size="xl" />
+          </Center>
+        ) : (
+          <>
+            <ScrollArea
+              key={reloadableSeed}
+              h="100%"
+              type="auto"
+              offsetScrollbars
+              scrollbarSize={8}
+              scrollHideDelay={1500}
+            >
+              <Text size="xs" style={{ whiteSpace: "pre-wrap" }}>
+                {logs}
+              </Text>
+            </ScrollArea>
+          </>
+        )}
       </Stack>
     </Layout>
   );
