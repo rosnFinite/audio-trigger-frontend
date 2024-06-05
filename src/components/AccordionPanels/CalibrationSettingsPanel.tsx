@@ -101,7 +101,11 @@ export default function CalibrationSettingsPanel({
 
   useEffect(() => {
     console.log("Calibration data changed useEffect");
-    if (settings.calibration_data !== null) {
+    if (
+      settings.calibration_data !== null &&
+      settings.calibration_data !== undefined
+    ) {
+      console.log(settings.calibration_data);
       numCalibPoints.current = Object.keys(settings.calibration_data).length;
       const nivoData = transformInNivoFormat(settings.calibration_data);
       setDataToVisualize(nivoData);
