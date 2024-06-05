@@ -25,10 +25,6 @@ import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
 import VoiceField from "../components/Field/VoiceField";
 
-interface ReloadableRecordingStats extends RecordingStats {
-  id: number;
-}
-
 export default function Dashboard() {
   const recordings = useAppSelector(
     (state) => state.voicemap.values.recordings
@@ -39,22 +35,16 @@ export default function Dashboard() {
   );
   const [activeRecordingTab, setActiveRecordingTab] = useState("new");
   const [reloadableSeed, setReloadableSeed] = useState(1);
-  const [newRecordings, setNewRecordings] = useState<
-    ReloadableRecordingStats[]
-  >([]);
+  const [newRecordings, setNewRecordings] = useState<RecordingStats[]>([]);
   const [acceptedRecordings, setAcceptedRecordings] = useState<
-    ReloadableRecordingStats[]
+    RecordingStats[]
   >([]);
   const [sortedBy, setSortedBy] = useState("timestamp");
   const [recordingSize, setRecordingSize] = useState(150);
 
   useEffect(() => {
-    // addind random id to each item to avoid key conflicts in dynamic rendering of Recording components
-    const tmp_data = recordings.map((item) => {
-      return { ...item, id: Math.random() };
-    });
-    setNewRecordings(tmp_data.filter((item) => !item.accepted));
-    setAcceptedRecordings(tmp_data.filter((item) => item.accepted));
+    setNewRecordings(recordings.filter((item) => !item.accepted));
+    setAcceptedRecordings(recordings.filter((item) => item.accepted));
   }, [recordings]);
 
   return (
@@ -204,12 +194,7 @@ export default function Dashboard() {
                 return 0;
               })
               .map((item) => (
-                <Recording
-                  key={item.id}
-                  data={item}
-                  acceptable={true}
-                  size={recordingSize}
-                />
+                <Recording data={item} acceptable={true} size={recordingSize} />
               ))
           ) : (
             acceptedRecordings
@@ -228,7 +213,6 @@ export default function Dashboard() {
               })
               .map((item) => (
                 <Recording
-                  key={item.id}
                   data={item}
                   acceptable={false}
                   size={recordingSize}

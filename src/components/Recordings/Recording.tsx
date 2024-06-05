@@ -9,10 +9,11 @@ import {
   Alert,
   ActionIcon,
   Stack,
+  Skeleton,
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Details from "./Details";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 import { useWebSocketCtx } from "../../context";
@@ -37,10 +38,14 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
   const [confirmOpened, setConfirmOpened] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
-  const apiRecordingBaseUrl = getRestBaseUrlForRecording(
-    saveLocation,
-    voicefieldBins.dba.length - data.dbaBin - 1,
-    data.freqBin
+  const endpoint = useMemo(
+    () =>
+      getRestBaseUrlForRecording(
+        saveLocation,
+        voicefieldBins.dba.length - data.dbaBin - 1,
+        data.freqBin
+      ),
+    [saveLocation, data.dbaBin, data.freqBin]
   );
 
   useEffect(() => {
@@ -48,12 +53,9 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
 
     const fetchImage = async () => {
       try {
-        const splittedLocation = saveLocation.split("\\");
-        const response = await fetch(
-          `/api/recordings/${splittedLocation.pop()}/${
-            voicefieldBins.dba.length - data.dbaBin - 1
-          }_${data.freqBin}/spectrogram_intensity.png`
-        );
+        console.log(endpoint);
+        console.log("Fetching image");
+        const response = await fetch(`${endpoint}/spectrogram_intensity.png`);
         if (!response.ok) {
           throw new Error(
             `Failed to fetch image (404): ${response.statusText}`
@@ -68,14 +70,17 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
       }
     };
 
-    fetchImage();
+    if (!imageSrc) {
+      fetchImage();
+    }
+
     // Clean up the timeout when the component unmounts or the dependencies change
     return () => {
       if (retryTimeoutId) {
         clearTimeout(retryTimeoutId);
       }
     };
-  }, [apiRecordingBaseUrl]);
+  }, []);
 
   return (
     <Card
@@ -102,7 +107,11 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
           });
         }}
       >
-        <Image src={imageSrc} h={size} w={size} />
+        {imageSrc === null ? (
+          <Skeleton height={size} w={size} />
+        ) : (
+          <Image src={imageSrc} h={size} w={size} />
+        )}
         <Stack ml={10} align="stretch" justify="center" gap={1}>
           <Group>
             <Text size="xs" fw={700}>
@@ -150,7 +159,7 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
           } Hz / ${data.qScore}`}
           opened={detailsOpened}
           onClose={() => setDetailsOpened(false)}
-          api_endpoint={apiRecordingBaseUrl}
+          api_endpoint={endpoint}
           recordingData={data}
         />
         {acceptable ? (
