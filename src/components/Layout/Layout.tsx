@@ -70,7 +70,7 @@ export default function Layout(props: { children: React.ReactNode }) {
             mt={5}
             visibleFrom="sm"
           >
-            0.9.2
+            0.9.3
           </Badge>
           <Group justify="flex-end" gap="xs" ml={"auto"} mr={"2%"}>
             <Text size="xs" visibleFrom="sm">
