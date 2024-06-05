@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/stateUtils";
 import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
-import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
-import VoiceFieldSelectionModal from "../modals/VoiceFieldSelectionModal";
+import VoiceFieldControlGroup from "../Controls/VoiceFieldControlGroup";
+import VoiceFieldSelectionModal from "../Modals/VoiceFieldSelectionModal";
 import QualityIndicator from "../QualityIndicator";
 import { useWebSocketCtx } from "../../context";
 

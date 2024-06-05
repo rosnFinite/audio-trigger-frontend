@@ -18,12 +18,12 @@ import {
 } from "@mantine/core";
 import { TbInfoCircle, TbRefresh, TbSwipe } from "react-icons/tb";
 import { Link } from "react-router-dom";
-import ControlButtonGroup from "../components/controls/ControlButtonGroup";
+import ControlButtonGroup from "../components/Controls/ControlButtonGroup";
 import Layout from "../components/Layout/Layout";
-import Recording from "../components/recording/Recording";
+import Recording from "../components/Recordings/Recording";
 import { useAppSelector } from "../redux/hooks";
 import { useEffect, useState } from "react";
-import VoiceField from "../components/field/VoiceField";
+import VoiceField from "../components/Field/VoiceField";
 
 interface ReloadableRecordingStats extends RecordingStats {
   id: number;

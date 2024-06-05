@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import VoicemapMinimal from "../components/field/VoiceFieldMinimal";
+import VoicemapMinimal from "../components/Field/VoiceFieldMinimal";
 import { Container, Flex, Progress, Stack } from "@mantine/core";
 import QualityIndicator from "../components/QualityIndicator";
 

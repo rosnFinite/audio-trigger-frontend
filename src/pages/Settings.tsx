@@ -7,7 +7,6 @@ import {
   Checkbox,
   Container,
   Divider,
-  FileInput,
   Group,
   NativeSelect,
   NumberInput,
@@ -31,6 +30,7 @@ import Layout from "../components/Layout/Layout";
 import { initialSettingsState } from "../utils/stateUtils";
 import { generateEmptyGrid } from "../utils/stateUtils";
 import { useWebSocketCtx } from "../context";
+import JsonFileInput from "../components/Input/JsonFileInput";
 
 const initialDevices = [{ label: "Kein Mikrofon gefunden", value: "-1" }];
 
@@ -273,9 +273,8 @@ export default function Settings() {
                   werden.
                 </Blockquote>
                 <Container ml={0} pl={0}>
-                  <FileInput
+                  <JsonFileInput
                     label="Kalibrierungsdatei"
-                    accept=".json"
                     description="Kalibrierungsdatei für das Mikrofon (.json)"
                     placeholder="Datei auswählen"
                     rightSection={<TbJson size={"20"} />}
