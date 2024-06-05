@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { TbCheck, TbInfoCircle, TbSwipe, TbTrashX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Details from "./Details";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 import { useWebSocketCtx } from "../../context";
@@ -35,12 +35,47 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
   const dispatch = useAppDispatch();
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [confirmOpened, setConfirmOpened] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   const apiRecordingBaseUrl = getRestBaseUrlForRecording(
     saveLocation,
     voicefieldBins.dba.length - data.dbaBin - 1,
     data.freqBin
   );
+
+  useEffect(() => {
+    let retryTimeoutId: NodeJS.Timeout | null = null;
+
+    const fetchImage = async () => {
+      try {
+        const splittedLocation = saveLocation.split("\\");
+        const response = await fetch(
+          `/api/recordings/${splittedLocation.pop()}/${
+            voicefieldBins.dba.length - data.dbaBin - 1
+          }_${data.freqBin}/spectrogram_intensity.png`
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch image (404): ${response.statusText}`
+          );
+        }
+        const blob = await response.blob();
+        setImageSrc(URL.createObjectURL(blob));
+      } catch (error) {
+        console.error("Failed to fetch image:", error);
+        // Retry after 1 second if an error occurs
+        retryTimeoutId = setTimeout(fetchImage, 1000);
+      }
+    };
+
+    fetchImage();
+    // Clean up the timeout when the component unmounts or the dependencies change
+    return () => {
+      if (retryTimeoutId) {
+        clearTimeout(retryTimeoutId);
+      }
+    };
+  }, [apiRecordingBaseUrl]);
 
   return (
     <Card
@@ -67,11 +102,7 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
           });
         }}
       >
-        <Image
-          src={`${apiRecordingBaseUrl}\\spectrogram_intensity.png`}
-          h={size}
-          w={size}
-        />
+        <Image src={imageSrc} h={size} w={size} />
         <Stack ml={10} align="stretch" justify="center" gap={1}>
           <Group>
             <Text size="xs" fw={700}>
