@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Tooltip } from "@mantine/core";
+import { Button, Center, Group, Paper, Tooltip } from "@mantine/core";
 import { TbPlayerRecord, TbPlayerStop, TbProgressX } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useEffect } from "react";
@@ -34,54 +34,73 @@ export default function ControlButtonGroup() {
   }, []);
 
   return (
-    <Tooltip.Group>
-      <Group justify="center" gap={"xs"}>
+    <Center>
+      <Tooltip.Group>
         <Paper shadow="lg" withBorder pt={5} pr={5} pb={5} pl={5}>
-          <Tooltip label="Startet den Triggerprozess" withArrow>
-            <Button
-              variant={
-                status === "ready" || status === "reset" ? "filled" : "outline"
-              }
-              color="green"
-              leftSection={<TbPlayerRecord size={"20"} />}
-              disabled={status === "running"}
-              onClick={() => {
-                socket?.emit("status_update_request", { trigger: "start" });
-              }}
-            >
-              Start
-            </Button>
-          </Tooltip>
-          <Tooltip label="Stoppt den Triggerprozess" withArrow>
-            <Button
-              variant={status === "running" ? "filled" : "outline"}
-              color="red"
-              leftSection={<TbPlayerStop size={"20"} />}
-              disabled={status === "ready" || status === "reset"}
-              onClick={() => {
-                socket?.emit("status_update_request", { trigger: "stop" });
-              }}
-            >
-              Stop
-            </Button>
-          </Tooltip>
-          <Tooltip label="Setzt das Stimmfeld zurück" withArrow>
-            <Button
-              variant={
-                status === "ready" || status === "reset" ? "filled" : "outline"
-              }
-              color="red"
-              leftSection={<TbProgressX size={"20"} />}
-              disabled={status === "running"}
-              onClick={() => {
-                socket?.emit("status_update_request", { trigger: "reset" });
-              }}
-            >
-              Reset
-            </Button>
-          </Tooltip>
+          <Group justify="center" gap={2}>
+            <Tooltip label="Startet den Triggerprozess" withArrow>
+              <Button
+                variant={
+                  status === "ready" || status === "reset"
+                    ? "filled"
+                    : "outline"
+                }
+                color="green"
+                leftSection={<TbPlayerRecord size={"20"} />}
+                disabled={
+                  status === "running" ||
+                  status === "waiting" ||
+                  status === "offline"
+                }
+                onClick={() => {
+                  socket?.emit("status_update_request", { trigger: "start" });
+                }}
+              >
+                Start
+              </Button>
+            </Tooltip>
+            <Tooltip label="Stoppt den Triggerprozess" withArrow>
+              <Button
+                variant={status === "running" ? "filled" : "outline"}
+                color="red"
+                leftSection={<TbPlayerStop size={"20"} />}
+                disabled={
+                  status === "ready" ||
+                  status === "reset" ||
+                  status === "waiting" ||
+                  status === "offline"
+                }
+                onClick={() => {
+                  socket?.emit("status_update_request", { trigger: "stop" });
+                }}
+              >
+                Stop
+              </Button>
+            </Tooltip>
+            <Tooltip label="Setzt das Stimmfeld zurück" withArrow>
+              <Button
+                variant={
+                  status === "ready" || status === "reset"
+                    ? "filled"
+                    : "outline"
+                }
+                color="red"
+                leftSection={<TbProgressX size={"20"} />}
+                disabled={
+                  status === "running" ||
+                  status === "waiting" ||
+                  status === "offline"
+                }
+                onClick={() => {
+                  socket?.emit("status_update_request", { trigger: "reset" });
+                }}
+              >
+                Reset
+              </Button>
+            </Tooltip>
+          </Group>
         </Paper>
-      </Group>
-    </Tooltip.Group>
+      </Tooltip.Group>
+    </Center>
   );
 }
