@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import "@mantine/core/styles.css";
 import {
   Accordion,
-  Blockquote,
   Button,
   Divider,
   Group,
   Stack,
   Title,
   TextInput,
+  Alert,
+  Tooltip,
 } from "@mantine/core";
 import { TbArrowBackUp, TbCheck } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
 import Layout from "../components/Layout/Layout";
-import { initialSettingsState } from "../utils/stateUtils";
 import { generateEmptyGrid } from "../utils/stateUtils";
 import { useWebSocketCtx } from "../context";
 import {
@@ -22,11 +22,11 @@ import {
   CalibrationSettingsPanel,
   TriggerSettingsPanel,
 } from "../components/AccordionPanels";
-const initialDevices = [{ label: "Kein Mikrofon gefunden", value: "-1" }];
 
 export default function Settings() {
   const { socket } = useWebSocketCtx();
   const [patientError, setPatientError] = useState("");
+  const stateSettings = useAppSelector((state) => state.settings.values);
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
   );
@@ -111,12 +111,16 @@ export default function Settings() {
     <Layout>
       <Stack h="100%">
         <Title order={2}>Einstellungen</Title>
-        {status !== "offline" ? (
-          <Blockquote color="green" icon={null} mt={0} pt={10} pb={10}>
-            Einstellungen der aktuellen Instanz. Speichern startet einen neue
-            Instanz. Aktuelle Aufnahme kann nicht fortgesetzt werden.
-          </Blockquote>
-        ) : null}
+        {status !== "offline" &&
+        JSON.stringify(settings) === JSON.stringify(stateSettings) ? (
+          <Alert color="green" icon={null} mt={0} pt={10} pb={10} w="270px">
+            Einstellungen des aktuellen Prozesses.
+          </Alert>
+        ) : status === "offline" ? null : (
+          <Alert color="red" icon={null} mt={0} pt={10} pb={10} w="270px">
+            Einstellung noch nicht angewendet.
+          </Alert>
+        )}
         <Divider />
         <TextInput
           label="Patient"
@@ -135,7 +139,6 @@ export default function Settings() {
           />
           <TriggerSettingsPanel settings={settings} setSettings={setSettings} />
         </Accordion>
-
         <Group justify="center">
           <Button
             color="green"
@@ -150,19 +153,32 @@ export default function Settings() {
           >
             Speichern
           </Button>
-          <Button
-            color="red"
-            rightSection={<TbArrowBackUp size={"20"} />}
-            onClick={() => {
-              if (!socket) {
-                console.error("Socket is not initialized");
-                return;
+          <Tooltip label="Setzt">
+            <Button
+              color="red"
+              disabled={
+                JSON.stringify(settings) === JSON.stringify(stateSettings)
               }
-              socket?.emit("settings_update_request", initialSettingsState);
-            }}
-          >
-            Zurücksetzen
-          </Button>
+              rightSection={<TbArrowBackUp size={"20"} />}
+              onClick={() => {
+                setSettings(stateSettings);
+                let message =
+                  "Auf Einstellungen des aktuellen Prozesses zurückgesetzt.";
+                if (status === "offline") {
+                  message = "Einstellungen auf Standardwerte zurückgesetzt.";
+                }
+                notifications.show({
+                  withCloseButton: true,
+                  title: "Einstellungen zurückgesetzt",
+                  message: message,
+                  color: "green",
+                  autoClose: 2000,
+                });
+              }}
+            >
+              Zurücksetzen
+            </Button>
+          </Tooltip>
         </Group>
       </Stack>
     </Layout>

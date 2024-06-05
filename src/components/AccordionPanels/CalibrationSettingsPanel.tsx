@@ -106,6 +106,9 @@ export default function CalibrationSettingsPanel({
       const nivoData = transformInNivoFormat(settings.calibration_data);
       setDataToVisualize(nivoData);
       console.log("Calibration data changed:", settings.calibration_data);
+    } else {
+      setFileContent(null);
+      setDataToVisualize(initialVisualizationData);
     }
   }, [settings.calibration_data]);
 

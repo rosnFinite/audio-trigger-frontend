@@ -29,6 +29,7 @@ export default function AudioSettingsPanel({
   setSettings: React.Dispatch<React.SetStateAction<SettingsState>>;
 }) {
   const sid = useAppSelector((state) => state.settings.values.sid);
+  const stateSettings = useAppSelector((state) => state.settings.values);
   const [devices, setDevices] = useState<Device[]>(initialDevices);
 
   useEffect(() => {
@@ -76,6 +77,11 @@ export default function AudioSettingsPanel({
             label="Aufnahmegerät"
             description="Auswahl des zu verwendenden Aufnahmegerätes. Bei 'Automatisch erkennen' wird standardmäßig das iMic-Microfon verwendet. Falls nicht verfügbar, wird das erste gefundene Gerät verwendet."
             data={devices}
+            value={
+              JSON.stringify(settings) === JSON.stringify(stateSettings)
+                ? stateSettings.device
+                : settings.device
+            }
             onChange={(event) => {
               setSettings({
                 ...settings,
