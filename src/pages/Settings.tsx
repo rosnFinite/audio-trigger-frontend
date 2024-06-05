@@ -129,7 +129,10 @@ export default function Settings() {
 
         <Accordion multiple defaultValue={["Audio"]} variant="separated">
           <AudioSettingsPanel settings={settings} setSettings={setSettings} />
-          <CalibrationSettingsPanel />
+          <CalibrationSettingsPanel
+            settings={settings}
+            setSettings={setSettings}
+          />
           <TriggerSettingsPanel settings={settings} setSettings={setSettings} />
         </Accordion>
 

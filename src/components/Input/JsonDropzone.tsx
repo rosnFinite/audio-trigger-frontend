@@ -1,16 +1,18 @@
 import { Group, Text } from "@mantine/core";
 import { Dropzone, DropzoneProps, MIME_TYPES } from "@mantine/dropzone";
-import { useEffect, useState } from "react";
 import { TbJson, TbX, TbCheck } from "react-icons/tb";
-
-interface IFileData {
+interface FileData {
   [key: string]: number[];
 }
 
-export default function JsonDropzone(props: Partial<DropzoneProps>) {
-  const [fileName, setFileName] = useState<string>("");
-  const [fileContent, setFileContent] = useState<IFileData | null>(null);
-
+export default function JsonDropzone({
+  setFileName,
+  setFileContent,
+  ...props
+}: {
+  setFileName: React.Dispatch<React.SetStateAction<string>>;
+  setFileContent: React.Dispatch<React.SetStateAction<FileData | null>>;
+} & Partial<DropzoneProps>) {
   const readFileContent = (file: File | null) => {
     console.log("Datei:", file);
     if (file === null) {
@@ -27,11 +29,6 @@ export default function JsonDropzone(props: Partial<DropzoneProps>) {
     };
     reader.readAsText(file);
   };
-
-  useEffect(() => {
-    console.log("Dateiname:", fileName);
-    console.log("Dateiinhalt:", fileContent);
-  }, [fileContent]);
 
   return (
     <Dropzone
@@ -74,7 +71,7 @@ export default function JsonDropzone(props: Partial<DropzoneProps>) {
             Kalbibrierungsdatei
           </Text>
           <Text size="xs" c="dimmed" inline mt={7}>
-            JSON-Datie hineinziehen oder auswählen
+            JSON-Datei hineinziehen oder auswählen
           </Text>
         </div>
       </Group>

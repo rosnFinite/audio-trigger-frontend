@@ -92,6 +92,7 @@ const initialSettingsState: SettingsState = {
   },
   min_score: 0.7,
   retrigger_percentage_improvement: 0.5,
+  calibration_data: null,
 };
 
 const initialVoiceState: VoiceState = {

@@ -4,6 +4,10 @@ interface BinSettings {
   steps: number;
 }
 
+interface CalibrationData {
+  [key: string]: number[];
+}
+
 interface SettingsState {
   sid: string;
   patient: string;
@@ -18,5 +22,6 @@ interface SettingsState {
   frequency: BinSettings;
   db: BinSettings;
   min_score: number;
+  calibration_data: CalibrationData | null;
   retrigger_percentage_improvement: number;
 }
