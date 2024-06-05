@@ -89,10 +89,25 @@ export default function App() {
       }
     };
 
+    const clientErrorHandler = (error: {
+      type: string;
+      title: string;
+      message: string;
+    }) => {
+      notifications.show({
+        withCloseButton: true,
+        title: error.title,
+        message: error.message,
+        color: error.type === "warning" ? "orange" : "red",
+        autoClose: 5000,
+      });
+    };
+
     socket.on("connect", connectHandler);
     socket.on("disconnect", disconnectHandler);
     socket.on("clients", clientsHandler);
     socket.on("connect_error", connectErrorHandler);
+    socket.on("client_error", clientErrorHandler);
 
     return () => {
       if (location.pathname === "/dashboard/patient") {
@@ -100,6 +115,7 @@ export default function App() {
         socket.off("disconnect", disconnectHandler);
         socket.off("clients", clientsHandler);
         socket.off("connect_error", connectErrorHandler);
+        socket.off("client_error", clientErrorHandler);
       }
     };
   }, []);
