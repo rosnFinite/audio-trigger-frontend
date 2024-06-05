@@ -30,6 +30,7 @@ function createWindow() {
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
+  mainWindow.setMenuBarVisibility(false);
   mainWindow.on("closed", function () {
     mainWindow = null;
   });
