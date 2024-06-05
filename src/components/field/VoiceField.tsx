@@ -66,7 +66,6 @@ export default function VoiceField({
   });
   const [modalOpened, setModalOpened] = useState(false);
   const [selectionId, setSelectionId] = useState("");
-  const [score, setScore] = useState(0);
 
   useEffect(() => {
     setSelectedData(getVoiceFieldDataByKey(field, selectedStat));
@@ -108,7 +107,6 @@ export default function VoiceField({
 
     const voiceHandler = (data: any) => {
       console.log("voice    VaoiceField.tsx", data);
-      setScore(data.score);
       dispatch({
         type: "voicemap/SET_ANNOTATION",
         // Heatmap naturally reverses dbaBin order (y-axis, from top to bottom, high -> low), therefore we need to maniupulate incoming dbaBin (low -> high to high -> low)
@@ -151,10 +149,6 @@ export default function VoiceField({
         type: "voicemap/SET_DATAMAP",
         payload: generateEmptyGrid(dbBinSettings, freqBinSettings),
       });
-      setScore(0);
-    }
-    if (status === "ready") {
-      setScore(0);
     }
   }, [dispatch, dbBinSettings, freqBinSettings, status]);
 
