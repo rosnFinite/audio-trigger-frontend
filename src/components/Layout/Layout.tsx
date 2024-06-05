@@ -63,7 +63,6 @@ export default function Layout(props: { children: React.ReactNode }) {
             Laryngeal Voice Range Field (LVRF)
           </Text>
           <Badge
-            rightSection={<TbAlpha />}
             size="sm"
             variant="gradient"
             gradient={{ from: "blue", to: "green", deg: 90 }}
@@ -71,7 +70,7 @@ export default function Layout(props: { children: React.ReactNode }) {
             mt={5}
             visibleFrom="sm"
           >
-            Alpha
+            0.9.2
           </Badge>
           <Group justify="flex-end" gap="xs" ml={"auto"} mr={"2%"}>
             <Text size="xs" visibleFrom="sm">
