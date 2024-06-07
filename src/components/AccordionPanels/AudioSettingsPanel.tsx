@@ -74,6 +74,7 @@ export default function AudioSettingsPanel({
       <Accordion.Panel>
         <Stack>
           <NativeSelect
+            aria-label="Aufnahmegerät"
             label="Aufnahmegerät"
             description="Auswahl des zu verwendenden Aufnahmegerätes. Bei 'Automatisch erkennen' wird standardmäßig das iMic-Microfon verwendet. Falls nicht verfügbar, wird das erste gefundene Gerät verwendet."
             data={devices}
@@ -91,9 +92,11 @@ export default function AudioSettingsPanel({
           />
           <Group grow>
             <NumberInput
+              aria-label="Abtastrate"
               label="Abtastrate"
               defaultValue={16000}
               value={settings.sampling_rate}
+              allowDecimal={false}
               placeholder="16000"
               suffix=" Hz"
               hideControls
@@ -105,9 +108,11 @@ export default function AudioSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Buffergröße"
               label="Buffergröße"
               defaultValue={0.2}
               value={settings.buffer_size}
+              decimalScale={3}
               placeholder="0.2"
               suffix=" Sek."
               hideControls
@@ -119,9 +124,11 @@ export default function AudioSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Chunksize"
               label="Chunksize"
               defaultValue={1024}
               value={settings.chunk_size}
+              allowDecimal={false}
               placeholder="1024"
               hideControls
               onValueChange={(event) => {
@@ -143,6 +150,7 @@ export default function AudioSettingsPanel({
             aufgezeichnet.
           </Blockquote>
           <Checkbox
+            aria-label="Monosignal"
             label="Monosignal (1 Kanal)"
             checked={settings.mono}
             size="md"

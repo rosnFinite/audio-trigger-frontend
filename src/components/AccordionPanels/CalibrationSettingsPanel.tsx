@@ -160,6 +160,7 @@ export default function CalibrationSettingsPanel({
             </Blockquote>
             <Center>
               <Button
+                aria-label="Kalibrierung entfernen"
                 mt={10}
                 size="xs"
                 onClick={() => {
