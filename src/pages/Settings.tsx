@@ -159,6 +159,10 @@ export default function Settings() {
         <Group justify="center">
           <Button
             color="green"
+            disabled={
+              JSON.stringify(settings) === JSON.stringify(stateSettings) ||
+              status === "offline"
+            }
             rightSection={<TbCheck size={"20"} />}
             onClick={() => {
               if (
