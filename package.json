@@ -1,6 +1,6 @@
 {
-  "name": "LVRF-App",
-  "version": "0.9.3",
+  "name": "LVRF",
+  "version": "0.9.4",
   "author": "Fabio Rose",
   "description": "Webanwendung für die Durchführung und Visualisierung von Stimmfeldaufnahmen",
   "homepage": "./",
