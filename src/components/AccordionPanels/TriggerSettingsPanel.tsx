@@ -38,10 +38,12 @@ export default function TriggerSettingsPanel({
           </Blockquote>
           <Group grow>
             <NumberInput
+              aria-label="Untere Frequenzgrenze"
               label="Untere Frequenzgrenze"
               description="Untere Grenze des relevanten Frequenzbereichs"
               defaultValue={55}
               value={settings.frequency.lower}
+              decimalScale={2}
               placeholder="55"
               suffix=" Hz"
               hideControls
@@ -56,10 +58,12 @@ export default function TriggerSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Obere Frequenzgrenze"
               label="Obere Frequenzgrenze"
               description="Obere Grenze des relevanten Frequenzbereichs"
               defaultValue={1600}
               value={settings.frequency.upper}
+              decimalScale={2}
               placeholder="1600"
               suffix=" Hz"
               hideControls
@@ -74,10 +78,12 @@ export default function TriggerSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Halbtonschritte"
               label="Halbtonschritte"
               description="Größe der zusammengefassten Frequenzbereiche"
               defaultValue={2}
               value={settings.frequency.steps}
+              allowDecimal={false}
               placeholder="2"
               hideControls
               onValueChange={(event) => {
@@ -93,10 +99,12 @@ export default function TriggerSettingsPanel({
           </Group>
           <Group grow>
             <NumberInput
+              aria-label="Untere Dezibelgrenze"
               label="Untere Dezibelgrenze"
               description="Untere Grenze des relevanten Schalldruckpegels"
               defaultValue={35}
               value={settings.db.lower}
+              allowDecimal={false}
               placeholder="35"
               suffix=" dB"
               hideControls
@@ -108,10 +116,12 @@ export default function TriggerSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Obere Dezibelgrenze"
               label="Obere Dezibelgrenze"
               description="Obere Grenze des relevanten Schalldruckpegels"
               defaultValue={115}
               value={settings.db.upper}
+              allowDecimal={false}
               placeholder="115"
               suffix=" dB"
               hideControls
@@ -123,10 +133,12 @@ export default function TriggerSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Dezibelschritte"
               label="Dezibelschritte"
               description="Größe der zusammengefassten Schalldruckpegelbereiche"
               defaultValue={5}
               value={settings.db.steps}
+              allowDecimal={false}
               placeholder="5"
               suffix=" dB"
               hideControls
@@ -142,10 +154,12 @@ export default function TriggerSettingsPanel({
           <Divider />
           <Group ml={0} pl={0} justify="space-between" grow>
             <NumberInput
+              aria-label="Mindest-Score für Trigger"
               label="Mindest-Score"
               description="Zu erreichender Score für das Erfassen eines Events. Wertebereich: 0.0 - 1.0. "
               defaultValue={0.7}
               value={settings.min_score}
+              decimalScale={2}
               placeholder="0.7"
               min={0}
               max={1}
@@ -158,13 +172,15 @@ export default function TriggerSettingsPanel({
               }}
             />
             <NumberInput
+              aria-label="Prozentuale Verbesserung für Retrigger"
               label="Retrigger Scoreverbesserung [%]"
               description="Prozentuale Verbesserung eines bereits hinterlegten Scores, um ein erneutes Triggern zu ermöglichen."
               defaultValue={10}
               placeholder="10"
+              decimalScale={2}
               suffix="%"
-              min={1}
-              max={90}
+              min={0}
+              max={100}
               hideControls
               onValueChange={(event) => {
                 setSettings({
