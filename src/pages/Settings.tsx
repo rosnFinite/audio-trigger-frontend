@@ -22,16 +22,28 @@ import {
   CalibrationSettingsPanel,
   TriggerSettingsPanel,
 } from "../components/AccordionPanels";
+import ConfirmationModal from "../components/Modals/ConfirmationModal";
+import { Socket } from "socket.io-client";
+
+function emitSettings(socket: Socket, settings: SettingsState) {
+  if (!socket) {
+    console.error("Socket is not initialized");
+    return;
+  }
+  console.log("Emitting settings_update event", settings);
+  socket.emit("settings_update_request", settings);
+}
 
 export default function Settings() {
   const { socket } = useWebSocketCtx();
   const [patientError, setPatientError] = useState("");
-  const stateSettings = useAppSelector((state) => state.settings.values);
+  const [confirmationModalOpened, setConfirmationModalOpened] = useState(false);
   const [settings, setSettings] = useState(
     useAppSelector((state) => state.settings.values)
   );
-  const status = useAppSelector((state) => state.settings.values.status);
   const [patient, setPatient] = useState(settings.patient);
+  const status = useAppSelector((state) => state.settings.values.status);
+  const stateSettings = useAppSelector((state) => state.settings.values);
   const dispatch = useAppDispatch();
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,11 +111,16 @@ export default function Settings() {
         icon: <TbCheck size={"20"} />,
       });
     };
+    const statusUpdateHandler = (changedStatus: any) => {
+      dispatch({ type: "settings/UPDATE_STATUS", payload: changedStatus });
+    };
 
     socket.on("settings_update_complete", settingsUpdateHandler);
+    socket.on("status_update_complete", statusUpdateHandler);
 
     return () => {
       socket.off("settings_update_complete", settingsUpdateHandler);
+      socket.off("status_update_complete", statusUpdateHandler);
     };
   }, []);
 
@@ -144,11 +161,18 @@ export default function Settings() {
             color="green"
             rightSection={<TbCheck size={"20"} />}
             onClick={() => {
-              if (!socket) {
-                console.error("Socket is not initialized");
-                return;
+              if (
+                status !== "offline" &&
+                JSON.stringify(settings) !== JSON.stringify(stateSettings)
+              ) {
+                setConfirmationModalOpened(true);
               }
-              socket.emit("settings_update_request", settings);
+              if (
+                status === "offline" &&
+                JSON.stringify(settings) !== JSON.stringify(stateSettings)
+              ) {
+                emitSettings(socket, settings);
+              }
             }}
           >
             Speichern
@@ -180,6 +204,24 @@ export default function Settings() {
             </Button>
           </Tooltip>
         </Group>
+        <ConfirmationModal
+          size="lg"
+          title={"Laufenden Prozess beenden?"}
+          descriptionTitle={
+            "Soll der laufende Prozess wirklich beendet werden?"
+          }
+          descriptionText={
+            "Anwenden neuer Parameter beendet den laufenden Prozess und startet einen neuen. Das Fortsetzen der aktuellen Aufnahme ist daraufhin nicht mehr möglich. Alle bisher erhobenen Daten bleiben gespeichert."
+          }
+          opened={confirmationModalOpened}
+          onAbort={() => setConfirmationModalOpened(false)}
+          onConfirm={() => {
+            emitSettings(socket, settings);
+            setConfirmationModalOpened(false);
+          }}
+          confirmBtnText="Ja"
+          abortBtnText="Nein"
+        />
       </Stack>
     </Layout>
   );
