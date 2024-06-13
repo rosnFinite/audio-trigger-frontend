@@ -53,8 +53,6 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
 
     const fetchImage = async () => {
       try {
-        console.log(endpoint);
-        console.log("Fetching image");
         const response = await fetch(`${endpoint}/image_grid.png`);
         if (!response.ok) {
           throw new Error(
