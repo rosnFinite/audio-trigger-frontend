@@ -160,8 +160,7 @@ export default function Settings() {
           <Button
             color="green"
             disabled={
-              JSON.stringify(settings) === JSON.stringify(stateSettings) ||
-              status === "offline"
+              JSON.stringify(settings) === JSON.stringify(stateSettings)
             }
             rightSection={<TbCheck size={"20"} />}
             onClick={() => {

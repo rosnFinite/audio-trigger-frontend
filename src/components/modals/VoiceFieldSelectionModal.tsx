@@ -1,9 +1,8 @@
-import { Modal, Stack, Image, Group, Button } from "@mantine/core";
+import { Modal, Stack, Image, Group, Button, Center } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getRecordingBySelectionId } from "../../utils/selectionUtils";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
 import { useContext, useEffect, useState } from "react";
-import SocketContext from "../../context/SocketContext";
 import { useWebSocketCtx } from "../../context";
 
 interface VoiceFieldSelectionModalProps {
@@ -78,11 +77,13 @@ export default function VoiceFieldSelectionModal({
       onClose={onClose}
     >
       <Stack>
-        <Image
-          src={`${apiRecordingBaseUrl}\\spectrogram_intensity.png`}
-          h={"100%"}
-          w={"100%"}
-        />
+        <Center>
+          <Image
+            src={`${apiRecordingBaseUrl}\\image_grid.png`}
+            h={"90%"}
+            w={"90%"}
+          />
+        </Center>
         <Group grow>
           {recording.accepted ? (
             <Button size="lg" color="red" onClick={onClose}>
