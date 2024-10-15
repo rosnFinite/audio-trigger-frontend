@@ -21,7 +21,7 @@ const initialDevices: Device[] = [
   { label: "Kein Mikrofon gefunden", value: "-1" },
 ];
 
-export default function AudioSettingsPanel({
+export default function AudioSettings({
   settings,
   setSettings,
 }: {

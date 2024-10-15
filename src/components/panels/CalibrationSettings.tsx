@@ -74,7 +74,7 @@ const transformInNivoFormat = (data: FileData): NivoData[] => {
   return [micData, refData, corrData, calibData];
 };
 
-export default function CalibrationSettingsPanel({
+export default function CalibrationSettings({
   settings,
   setSettings,
 }: {
@@ -97,7 +97,7 @@ export default function CalibrationSettingsPanel({
       setSettings({ ...settings, calibration_data: fileContent });
       console.log("File content changed:", fileContent);
     }
-  }, [fileContent]);
+  }, [fileContent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     console.log("Calibration data changed useEffect");

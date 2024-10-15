@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { TbFlagExclamation, TbInfoCircle } from "react-icons/tb";
 
-export default function TriggerSettingsPanel({
+export default function TriggerSettings({
   settings,
   setSettings,
 }: {
