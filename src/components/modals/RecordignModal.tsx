@@ -2,7 +2,7 @@ import { Modal, Stack, Image, Group, Button, Center } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getRecordingBySelectionId } from "../../utils/selectionUtils";
 import { getRestBaseUrlForRecording } from "../../utils/apiUtils";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useWebSocketCtx } from "../../context";
 
 interface VoiceFieldSelectionModalProps {
@@ -11,7 +11,7 @@ interface VoiceFieldSelectionModalProps {
   onClose: () => void;
 }
 
-export default function VoiceFieldSelectionModal({
+export default function RecordingModal({
   selectionId,
   opened,
   onClose,
@@ -64,7 +64,7 @@ export default function VoiceFieldSelectionModal({
     setRecording(tmp_recording);
     setFrequency(freq());
     setDecibel(fieldBinNames.dba[tmp_recording?.dbaBin] + " dB");
-  }, [recording, selectionId]);
+  }, [recording, selectionId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (recording === undefined) {
     return null;

@@ -25,7 +25,7 @@ interface ConfirmationModalProps {
   btnVariant?: ButtonVariant;
 }
 
-export default function ConfirmationModal({
+export default function Confirmation({
   size = "md",
   confirmBtnText = "Bestätigen",
   abortBtnText = "Abbrechen",
