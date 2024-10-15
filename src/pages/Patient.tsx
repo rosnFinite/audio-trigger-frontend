@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import VoicemapMinimal from "../components/Field/VoiceFieldMinimal";
-import { Container, Flex, Progress, Stack } from "@mantine/core";
+import VoicemapMinimal from "../components/field/VoiceFieldMinimal";
+import { Container } from "@mantine/core";
 import QualityIndicator from "../components/QualityIndicator";
 
 export default function Patient() {
@@ -33,11 +33,10 @@ export default function Patient() {
 
     window.addEventListener("storage", handleStorageChange);
 
-    console.log("voicemap", voicemap);
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container fluid>

@@ -69,7 +69,7 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     if (progressBarRef.current) {
@@ -94,7 +94,7 @@ export default function QualityIndicator(props: QualityIndicatorProps) {
       setColor("green");
     }
     prevStatus.current = status;
-  }, [score, status]);
+  }, [score, status, props.threshold]);
 
   return (
     <Container pos={"relative"} {...props}>

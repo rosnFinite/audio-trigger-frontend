@@ -3,7 +3,7 @@ import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 import { useEffect, useState } from "react";
 import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
 
-export default function VoicemapMinimal({
+export default function VoiceFieldMinimal({
   field,
   annotation,
 }: {

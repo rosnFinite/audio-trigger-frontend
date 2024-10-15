@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { useAppDispatch } from "./redux/hooks";
 import { persistor } from "./redux/store";
 import { useWebSocketCtx } from "./context";
 import Logs from "./pages/Logs";
@@ -118,7 +118,7 @@ export default function App() {
         socket.off("client_error", clientErrorHandler);
       }
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Careful  when using HashRouter: Different behaviour between NavLink in Layout and Link from react-router-dom. href in NavLink needs /#/pathname whereas Link works without prepending /# to /pathname
   return (

@@ -13,7 +13,7 @@ import {
   Button,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { TbAlpha, TbMusicSearch, TbSettings, TbNotes } from "react-icons/tb";
+import { TbMusicSearch, TbSettings, TbNotes } from "react-icons/tb";
 import { useAppSelector } from "../../redux/hooks";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "./Logo";

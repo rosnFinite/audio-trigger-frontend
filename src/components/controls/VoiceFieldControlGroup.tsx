@@ -111,7 +111,7 @@ export default function VoiceFieldControlGroup({
     setColorMinMax({ min: color.min, max: color.max });
     setDataMinMax({ min: min, max: max });
     setStatColorSettings(color);
-  }, [stat, field, statColorSettings.min, statColorSettings.max]);
+  }, [stat, field, statColorSettings.min, statColorSettings.max, colorSettings, minScore]);
 
   return (
     <Group align="flex-end">

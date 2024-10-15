@@ -14,15 +14,15 @@ import {
 import { TbArrowBackUp, TbCheck } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { notifications } from "@mantine/notifications";
-import Layout from "../components/Layout/Layout";
+import Layout from "../components/layout/Layout";
 import { generateEmptyGrid } from "../utils/stateUtils";
 import { useWebSocketCtx } from "../context";
 import {
   AudioSettingsPanel,
   CalibrationSettingsPanel,
   TriggerSettingsPanel,
-} from "../components/AccordionPanels";
-import ConfirmationModal from "../components/Modals/ConfirmationModal";
+} from "../components/panels";
+import ConfirmationModal from "../components/modals/Confirmation";
 import { Socket } from "socket.io-client";
 
 function emitSettings(socket: Socket, settings: SettingsState) {
@@ -122,7 +122,7 @@ export default function Settings() {
       socket.off("settings_update_complete", settingsUpdateHandler);
       socket.off("status_update_complete", statusUpdateHandler);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Layout>

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { generateEmptyGrid } from "../../utils/stateUtils";
 import { getVoiceFieldDataByKey } from "../../utils/selectionUtils";
-import VoiceFieldControlGroup from "../Controls/VoiceFieldControlGroup";
-import VoiceFieldSelectionModal from "../Modals/VoiceFieldSelectionModal";
+import VoiceFieldControlGroup from "../controls/VoiceFieldControlGroup";
+import RecordingModal from "../modals/RecordignModal";
 import QualityIndicator from "../QualityIndicator";
 import { useWebSocketCtx } from "../../context";
 
@@ -140,7 +140,7 @@ export default function VoiceField({
       socket.off("voice", voiceHandler);
       socket.off("trigger", triggerHandler);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // reset the grid on status changed to 'reset'
   useEffect(() => {
@@ -272,7 +272,7 @@ export default function VoiceField({
           );
         }}
       />
-      <VoiceFieldSelectionModal
+      <RecordingModal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
         selectionId={selectionId}

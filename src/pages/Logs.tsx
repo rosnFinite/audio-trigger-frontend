@@ -9,7 +9,7 @@ import {
   Loader,
   Center,
 } from "@mantine/core";
-import Layout from "../components/Layout/Layout";
+import Layout from "../components/layout/Layout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -39,7 +39,7 @@ export default function Logs() {
 
     // function to clean up effect when component unmounts
     return () => clearInterval(intervalTimer);
-  }, [selectedLog]); // empty dependency array to run when mounted
+  }, [selectedLog]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Layout>

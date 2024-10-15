@@ -28,7 +28,7 @@ export default function Details({
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [api_endpoint]);
 
   return (
     <Modal {...rest} opened={opened} onClose={onClose} title={title} size="90%">

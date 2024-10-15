@@ -1,5 +1,5 @@
 import { Group, Text } from "@mantine/core";
-import { Dropzone, DropzoneProps, MIME_TYPES } from "@mantine/dropzone";
+import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import { TbJson, TbX, TbCheck } from "react-icons/tb";
 interface FileData {
   [key: string]: number[];

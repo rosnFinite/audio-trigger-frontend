@@ -45,7 +45,7 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
         voicefieldBins.dba.length - data.dbaBin - 1,
         data.freqBin
       ),
-    [saveLocation, data.dbaBin, data.freqBin]
+    [saveLocation, data.dbaBin, data.freqBin, voicefieldBins.dba.length]
   );
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function Recording({ data, acceptable, size }: RecordingProps) {
         clearTimeout(retryTimeoutId);
       }
     };
-  }, []);
+  }, [endpoint, imageSrc]);
 
   return (
     <Card

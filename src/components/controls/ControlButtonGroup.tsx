@@ -31,7 +31,7 @@ export default function ControlButtonGroup() {
     return () => {
       socket.off("status_update_complete", statusUpdateHandler);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Center>
