@@ -73,23 +73,15 @@ export default function AudioSettings({
       <Accordion.Control icon={<TbMicrophone2 />}>Audio</Accordion.Control>
       <Accordion.Panel>
         <Stack>
-          <NativeSelect
-            aria-label="Aufnahmegerät"
-            label="Aufnahmegerät"
-            description="Auswahl des zu verwendenden Aufnahmegerätes. Bei 'Automatisch erkennen' wird standardmäßig das iMic-Microfon verwendet. Falls nicht verfügbar, wird das erste gefundene Gerät verwendet."
-            data={devices}
-            value={
-              JSON.stringify(settings) === JSON.stringify(stateSettings)
-                ? stateSettings.device
-                : settings.device
-            }
-            onChange={(event) => {
-              setSettings({
-                ...settings,
-                device: Number(event.currentTarget.value),
-              });
-            }}
-          />
+          <Blockquote
+              iconSize={20}
+              icon={<TbInfoCircle size="20px" />}
+              mt="xs"
+              pt={10}
+              pb={10}
+            >
+              Vergewissern Sie sich, dass externe Gerät korrekt an das DAQ-Board angeschlossenen sind: Mikrofon (AI0), Schalldruckmessgerät (AI1)
+          </Blockquote>
           <Group grow>
             <NumberInput
               aria-label="Abtastrate"
@@ -139,28 +131,6 @@ export default function AudioSettings({
               }}
             />
           </Group>
-          <Blockquote
-            iconSize={20}
-            icon={<TbInfoCircle size="20px" />}
-            mt="xs"
-            pt={10}
-            pb={10}
-          >
-            Beim Aktivieren des Monosignals werden keine EGG-Daten
-            aufgezeichnet.
-          </Blockquote>
-          <Checkbox
-            aria-label="Monosignal"
-            label="Monosignal (1 Kanal)"
-            checked={settings.mono}
-            size="md"
-            onChange={(event) => {
-              setSettings({
-                ...settings,
-                mono: event.currentTarget.checked,
-              });
-            }}
-          />
         </Stack>
       </Accordion.Panel>
     </Accordion.Item>
